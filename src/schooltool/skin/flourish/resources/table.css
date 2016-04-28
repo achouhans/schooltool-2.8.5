@@ -1,0 +1,200 @@
+/*
+
+  Table CSS:
+
+*/
+
+table {
+    margin-bottom: 8px;
+    margin-top: 16px;
+    width: 100%;
+}
+
+.zc-table-sortable {
+    cursor: pointer;
+}
+
+.zc-table-sort-asc:after
+{
+content: " ""\25BE";
+}
+
+.zc-table-sort-desc:after
+{
+content: " ""\25B4";
+}
+
+.zc-table-sort-asc-primary:after
+{
+content: " ""\25BC";
+}
+
+.zc-table-sort-desc-primary:after
+{
+content: " ""\25B2";
+}
+
+thead {
+    border-bottom: none;
+}
+
+tbody {
+    border-top-style: solid;
+    border-top-width: 1px;
+}
+
+tbody tr {
+    border-bottom-style: dotted;
+    border-bottom-width: 1px;
+}
+
+td, th {
+    text-align: left;
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+th {
+    font-weight: bold;
+}
+
+tbody th {
+    font-weight: normal;
+}
+
+table.person-view-sections th {
+    width: 33%;
+}
+
+table.person-view-demographics .label {
+    width: 33%;
+}
+
+/* Styles used in tables in relationship views */
+
+table button.image {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+}
+
+table.relationships-table button.image {
+    vertical-align: middle;
+}
+
+table.data {
+    margin-top: 0px;
+}
+
+table.groups-table th.title,
+table.groups-table th.schoolyear {
+    width: 40%;
+}
+
+table.groups-table th.action {
+    width: 20%;
+}
+
+table.persons-table th.last-name,
+table.persons-table th.first-name {
+    width: 40%;
+}
+
+table.persons-table th.action {
+    width: 20%;
+}
+
+table.contacts-table th.last-name,
+table.contacts-table th.first-name {
+    width: 30%;
+}
+
+table.contacts-table th.action {
+    width: 15%;
+}
+
+table.section-terms .active-term {
+    font-weight: bold;
+}
+
+table.errors-settings .label {
+    width: 45%;
+}
+
+table.exceptions .time {
+    width: 20%;
+}
+
+table.exceptions .username {
+    width: 20%;
+}
+
+table.exceptions .exception-link div {
+    width: 290px;
+    overflow: hidden;
+}
+
+table.report-reference .category {
+    width: 13%;
+}
+
+table.report-reference .title {
+    width: 22%;
+}
+
+table.report-reference .file-type {
+    width: 8%
+}
+
+table.schooldaymodel tbody td.schoolday {
+    font-weight: bold;
+}
+
+table.schoolday-legend td.schoolday {
+    font-weight: bold;
+}
+
+table.schoolday-legend td.legend {
+    width: 15%;
+}
+
+table.schoolday-legend td.schoolday,
+table.schoolday-legend td.holiday {
+    width: 25%;
+    text-align: center;
+}
+
+/* XXX: select a better class name for these tables */
+
+table.form-fields .label {
+    width: 35%;
+}
+
+table.show-photo {
+    width: 78%;
+}
+
+.st-table-spinner {
+    position: absolute;
+    right:4px;
+    z-index: 1001;
+}
+
+img.st-table-button-spinner {
+    margin: 3px 0px 0px 0px;
+}
+
+table.report-dialog-message td:first-child {
+    width: 20%;
+}
+
+table.relationship-states td {
+    padding: 0 4px;
+    vertical-align: middle;
+}
+
+table.relationship-states input[type="text"] {
+    width: 100%;
+}

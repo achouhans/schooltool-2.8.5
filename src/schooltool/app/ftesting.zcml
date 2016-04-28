@@ -1,0 +1,20 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           i18n_domain="zope">
+
+  <include package="schooltool.common" />
+
+  <include package="schooltool.course" />
+  <include package="schooltool.term" />
+  <include package="schooltool.schoolyear" />
+  <include package="schooltool.term" file="time_machine.zcml" />
+  <include package="schooltool.timetable" />
+  <include package="schooltool.timetable.browser" file="configure-oldskin.zcml" />
+
+  <include package="schooltool.app.browser.ftests" file="brokenview-ftesting.zcml" />
+
+  <include package="schooltool.basicperson" />
+
+  <browser:defaultSkin name="SchoolTool" />
+
+</configure>

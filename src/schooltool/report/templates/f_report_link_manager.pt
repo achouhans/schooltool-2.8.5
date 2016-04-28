@@ -1,0 +1,41 @@
+
+<div i18n:domain="schooltool">
+  <table>
+    <thead>
+      <tr>
+        <th i18n:translate="">Title</th>
+        <th i18n:translate="">Description</th>
+      </tr>
+    </thead>
+    <tal:block repeat="group view/table">
+      <tr>
+        <th colspan="2" i18n:translate="">
+          <span tal:content="${group/file_type}" i18n:name="file_type" /> Reports
+        </th>
+      </tr>
+      <tr tal:repeat="row group/rows">
+        <td>
+          <a tal:attributes="href row/url;
+                             id row/link_id"
+             tal:content="row/title" />
+          <div tal:attributes="id row/form_id">
+          </div>
+        </td>
+        <td tal:content="row/description" />
+      </tr>
+    </tal:block>
+  </table>
+</div>
+
+<script>ST.state.push()</script>
+<tal:script tal:replace="structure scriptlocal: groups view/table" />
+<script>
+  for(var i=0, groups_len=ST.local.groups.length;
+      group=ST.local.groups[i], i<groups_len; i++) {
+      for(var j=0, rows_len=group.rows.length;
+          row=group.rows[j], j<rows_len; j++) {
+          ST.dialogs.modal_form(row.link_id, row.url, row.form_id, row.title);
+      };
+  };
+</script>
+<script>ST.state.pop()</script>

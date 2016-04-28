@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+
+  <navigationViewlet
+      name="levels"
+      for="*"
+      manager="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      template="templates/link_to_levels.pt"
+      permission="schooltool.edit"
+      title="Levels"
+      order="250"
+      />
+
+  <zope:adapterTraverserPlugin
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      name="levels"
+      adapter="schooltool.level.interfaces.ILevelContainer"
+      />
+
+  <zope:adapter
+      factory=".level.LevelContainerAbsoluteURLAdapter"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL" />
+
+  <zope:adapter
+      factory=".level.LevelContainerAbsoluteURLAdapter"
+      provides="zope.interface.Interface"
+      name="absolute_url"/>
+
+  <page
+      name="index.html"
+      for="schooltool.level.interfaces.ILevelContainer"
+      class="schooltool.level.browser.level.LevelContainerView"
+      permission="schooltool.edit"
+      />
+
+  <page
+      name="edit.html"
+      for="schooltool.level.interfaces.ILevel"
+      class=".level.LevelEditView"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Edit"
+      />
+
+</configure>

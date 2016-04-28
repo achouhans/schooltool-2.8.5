@@ -1,0 +1,93 @@
+Deleting SchoolTool objects
+===========================
+
+This is, partially, a regression test.  When you delete a SchoolTool object,
+all of its relationships should be broken -- otherwise other related object
+will have references to an object that does not exist (due to ZODB garbage
+collection semantics the object will exist, but it will have no __parent__
+and will, therefore, break views that try to determine its absolute URL).
+
+Set up
+------
+
+We go to the front page
+
+    >>> manager = Browser('manager', 'schooltool')
+
+Set up a basic school:
+
+    >>> from schooltool.app.browser.ftests.setup import setUpBasicSchool
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> setUpBasicSchool()
+
+We add a group
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Year').click()
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('New Group').click()
+
+    >>> manager.getControl('Title').value = 'group1'
+    >>> manager.getControl('Add').click()
+
+    >>> 'group1' in manager.contents
+    True
+
+We add a person
+
+    >>> addPerson('person1', 'person1', 'person', groups=['group1'])
+
+We look at the groups of the person we added
+
+    >>> manager.open('http://localhost/persons')
+    >>> manager.getLink('person1').click()
+
+    >>> 'group1' in manager.contents
+    True
+
+We look at the members of the group
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Year').click()
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('group1').click()
+    >>> 'person1' in manager.contents
+    True
+
+
+Test
+----
+
+We delete the person
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getControl(name='delete.person').value = ['on']
+    >>> manager.getControl('Delete').click()
+    >>> manager.getControl('Confirm').click()
+
+It is no longer there
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> 'person1' not in manager.contents
+    True
+
+We look at the members of the group (this used to cause internal errors in an
+earlier version of SchoolTool):
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Year').click()
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('group1').click()
+    >>> manager.headers['status']
+    '200 Ok'
+
+'person1' is no longer there
+
+    >>> 'person1' not in manager.contents
+    True
+

@@ -1,0 +1,181 @@
+/*
+
+  Page CSS:
+
+  - header (title)
+  - sidebars (refine and related) and content container columns
+
+*/
+
+@media all {
+
+/* Header */
+
+.page > .header {
+    padding: 24px;
+}
+
+.page > .header h1,
+.page > .header h2 {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.page > .header h1 {
+    font-size: 36px;
+    line-height: 40px;
+    margin-right: 16px;
+}
+
+.page > .header h2 {
+    font-size: 36px;
+    line-height: 40px;
+    margin: 0px;
+}
+
+/* Tertiary navigation */
+
+.page .third-nav {
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    float: right;
+    height: 32px;
+    margin-right: 16px;
+    position: relative;
+    width: 752px;
+}
+
+.page .third-nav-narrow {
+    margin-right: 208px;
+    width: 560px;
+}
+
+.page .third-nav > li {
+    display: inline-block;
+    margin-left: -5px;
+    margin-top: -1px;
+}
+
+.page .third-nav > li:first-child {
+    margin-left: 0px;
+}
+
+.page .third-nav > li a,
+.page .third-nav > li span {
+    border-style: solid;
+    border-width: 1px;
+    display: block;
+    font-size: 12px;
+    line-height: 16px;
+    padding: 8px;
+    text-decoration: none;
+
+    -moz-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+}
+
+.page > .third-nav li:first-child a {
+    margin-left: 16px;
+}
+
+/* Page layout */
+
+.page > .body {
+    margin: 0px auto;
+    overflow: auto;
+    width: 944px;
+}
+
+.page > .body > .sidebar {
+    display: block;
+    padding: 32px 16px 0px 16px;
+    width: 144px;
+}
+
+.page > .body > .refine {
+    float: left;
+}
+
+.page > .body > .related {
+    float: right;
+    margin-left: 16px;
+}
+
+.page > .body > .container {
+    display: block;
+    float: right;
+    padding: 16px 208px 16px 16px;
+    width: 528px;
+}
+
+.page > .body > .container > .main > .content > .body > p.hint {
+    margin-top: -8px;
+    font-size: 10px;
+}
+
+.page > .body > .related ~ .container {
+    padding: 16px;
+}
+
+.page > .body > .widecontainer {
+    width: 720px;
+    padding: 16px;
+}
+
+.page > .body > .extra-wide-container {
+    width: 912px;
+    padding: 16px;
+}
+
+/* Sidebar */
+
+.page > .body > .sidebar .content {
+    margin-bottom: 16px;
+}
+
+.page > .body > .sidebar .content > .header {
+    border-bottom-style: dotted;
+    border-bottom-width: 1px;
+    font-size: 14px;
+    line-height: 16px;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+.page > .body > .sidebar .content > .body > ul.filter {
+    margin-left: 8px;
+}
+
+.page > .body > .sidebar .content > .body > ul.filter > li {
+    padding-bottom: 2px;
+}
+
+.page > .body > .sidebar .content > .body > ul.filter > li.active {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.page > .body > .sidebar .content > .body > ul.filter > li > a {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+
+.page > .body > .sidebar .content > .header > .photo-display > img,
+.page > .body > .sidebar .content > .header > .photo-display {
+    float: none;
+    width: 128px;
+    height: auto;
+    margin: 0px;
+    text-align: center;
+}
+
+.page > .body > .sidebar .content > .header > .photo-display {
+    padding: 0px 8px;
+}
+
+.page > .body > .sidebar .content > .header > .photo-display > img {
+    padding: 0px;
+}
+
+}

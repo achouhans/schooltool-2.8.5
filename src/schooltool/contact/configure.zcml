@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           xmlns:grok="http://namespaces.zope.org/grok"
+           i18n_domain="schooltool">
+
+  <include file="security.zcml" />
+
+  <class class=".contact.Contact">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable" />
+    <require
+        permission="schooltool.edit"
+        set_schema="schooltool.contact.interfaces.IContact" />
+    <require
+        permission="schooltool.view"
+        interface="schooltool.contact.interfaces.IContact" />
+  </class>
+
+  <class class=".basicperson.BoundContact">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable" />
+    <require
+        permission="schooltool.edit"
+        set_schema="schooltool.contact.basicperson.IBoundContact" />
+    <require
+        permission="schooltool.view"
+        interface="schooltool.contact.basicperson.IBoundContact" />
+  </class>
+
+  <class class=".contact.ContactPersonInfo">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable" />
+    <require
+        permission="schooltool.edit"
+        set_schema="schooltool.contact.interfaces.IContactPersonInfo" />
+    <require
+        permission="schooltool.view"
+        interface="schooltool.contact.interfaces.IContactPersonInfo" />
+  </class>
+
+  <class class=".contact.ContactContainer">
+    <allow interface="zope.container.interfaces.ISimpleReadContainer" />
+    <require permission="schooltool.view"
+             attributes="keys values items __iter__ __len__ has_key" />
+    <require permission="schooltool.edit"
+             interface="zope.container.interfaces.IWriteContainer" />
+  </class>
+
+  <include package="schooltool.contact.browser" />
+
+  <adapter
+      factory=".contact.ContactAppStartup"
+      name="schooltool.contact.contact" />
+
+  <adapter
+      factory=".contact.ContactInit"
+      name="schooltool.contact.contact" />
+
+  <adapter
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      factory=".contact.Contactable" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".contact.getContactContainer" />
+
+  <adapter factory=".basicperson.getPersonOfBoundContact" />
+
+  <adapter
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      factory=".basicperson.getBoundContact" />
+
+   <adapter
+      factory=".basicperson.PersonAddedSubsciber"
+      name="autovivify_person_contact" />
+
+   <adapter
+      factory=".basicperson.PersonModifiedSubsciber"
+      name="notify_person_contact_modified" />
+
+   <adapter
+      factory=".basicperson.PersonRemovedSubsciber"
+      name="notify_person_contact_removed" />
+
+  <adapter
+      factory=".contact.ContactCatalog"
+      name="schooltool.contact.contact.ContactCatalog" />
+
+  <adapter
+      for=".interfaces.IContactContainer"
+      provides="zope.catalog.interfaces.ICatalog"
+      factory=".contact.getContactCatalog" />
+
+   <adapter
+      factory=".contact.getContactFormKey" />
+
+   <adapter
+      factory=".basicperson.getBoundContactFormKey" />
+
+  <adapter factory=".contact.SearchableTextContact" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".contact.ContactStatesStartup"
+      provides="schooltool.app.interfaces.IPluginInit"
+      name="schooltool.contact.contact-relationship" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".contact.ContactStatesStartup"
+      provides="schooltool.app.interfaces.IPluginStartUp"
+      name="schooltool.contact.contact-relationship" />
+
+  <utility
+     factory=".contact.ContactStatesVocabularyFactory"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     name="schooltool.contact.contact.relationship_states" />
+
+</configure>

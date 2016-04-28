@@ -1,0 +1,27 @@
+Metadata-Version: 1.1
+Name: schooltool
+Version: 2.8.5
+Summary: A common information systems platform for school administration.
+Home-page: http://www.schooltool.org
+Author: SchoolTool Developers
+Author-email: schooltool-developers@lists.launchpad.net
+License: GPL
+Description: 
+        SchoolTool is an open source school management information system.  It is
+        a web application, usable with an ordinary browser.
+        
+        Any modern web browser is suitable for the web application interface.  The
+        interface degrades gracefully, so a browser that does not support CSS or
+        Javascript will be usable, although perhaps not very nice or convenient.
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Zope
+Classifier: Topic :: Education

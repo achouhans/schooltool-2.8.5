@@ -1,0 +1,38 @@
+<div i18n:domain="schooltool">
+  <form method="POST" tal:attributes="action request/URL">
+    <div class="status" tal:condition="view/error">
+      <div class="summary ui-state-error ui-corner-all">
+        <span class="ui-icon ui-icon-alert">icon</span>
+        <tal:block content="view/error" />
+      </div>
+    </div>
+    <div class="required-info"
+         metal:define-macro="required-info">
+      <span class="required">*</span>
+      &ndash; <span i18n:translate="">signifies a required field</span>
+    </div>
+    <fieldset>
+      <legend>
+        <span i18n:translate="">Schedule exception</span>
+      </legend>
+      <div class="row">
+        <div class="label">
+          <label for="date">
+            <span i18n:translate="">Date</span>
+            <span class="required">*</span>
+          </label>
+        </div>
+        <div class="widget">
+          <input type="text" name="date" id="date" class="text-widget date-field"
+                 tal:attributes="value request/date|nothing"/>
+        </div>
+      </div>
+    </fieldset>
+    <div class="buttons">
+      <input type="submit" class="button-ok" name="CHOOSE" value="Proceed"
+             i18n:attributes="value" />
+      <input type="submit" class="button-cancel" name="CANCEL" value="Cancel"
+             i18n:attributes="value cancel-button" />
+    </div>
+  </form>
+</div>

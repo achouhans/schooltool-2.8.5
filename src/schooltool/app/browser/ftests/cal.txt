@@ -1,0 +1,548 @@
+Functional doctest for calendaring
+==================================
+
+Set up
+------
+
+    >>> from schooltool.app.browser.ftests.setup import setUpBasicSchool
+    >>> setUpBasicSchool()
+    >>> manager = Browser('manager', 'schooltool')
+
+Let's create a person so that we can fool around with his calendar:
+
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> addPerson('The', 'Frog', 'frog', 'pwd')
+
+Let's create a second person so that we can test access control.
+
+    >>> addPerson('A', 'Toad', 'toad', 'doat')
+
+Also, let's create a group:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('New Group').click()
+
+    >>> manager.getControl('Title').value = 'Animals'
+
+    >>> manager.getControl('Add').click()
+    >>> 'Animals' in manager.contents
+    True
+
+
+Calendar views
+--------------
+
+First, let's have a look at the person's empty calendar in iCalendar format.
+We should find just a placeholder there.
+
+    >>> frog = Browser()
+    >>> frog.handleErrors = False
+    >>> frog.open('http://localhost/')
+    >>> frog.getLink('Log In').click()
+    >>> frog.getControl('Username').value = 'frog'
+    >>> frog.getControl('Password').value = 'pwd'
+    >>> frog.getControl('Log in').click()
+
+    >>> frog.getLink('Calendar').click()
+    >>> frog.getLink('Open in iCal').click()
+    >>> frog.headers['content-type']
+    'text/calendar; charset=UTF-8'
+    >>> print frog.contents
+    <BLANKLINE>
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//SchoolTool.org/NONSGML SchoolTool//EN
+    BEGIN:VEVENT
+    UID:empty-calendar-placeholder@schooltool.org
+    SUMMARY:Empty calendar
+    DTSTART:19700101T000000Z
+    DURATION:P0D
+    DTSTAMP:...
+    END:VEVENT
+    END:VCALENDAR
+    <BLANKLINE>
+
+Now just the VFREEBUSY component of calendar
+
+    # XXX: Where is the link for this file?
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/calendar.vfb')
+    >>> frog.headers['content-type']
+    'text/calendar; charset=UTF-8'
+    >>> print frog.contents
+    <BLANKLINE>
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//SchoolTool.org/NONSGML SchoolTool//EN
+    METHOD:PUBLISH
+    BEGIN:VFREEBUSY
+    END:VFREEBUSY
+    END:VCALENDAR
+    <BLANKLINE>
+
+Let's render the weekly calendar view:
+
+    # XXX: There is no link in the app for this URL.
+    >>> frog.open('http://localhost/persons/frog/calendar/weekly.html')
+    >>> frog.headers['status']
+    '200 Ok'
+
+
+Now let's render the monthly calendar view:
+
+    # XXX: There is no link in the app for this URL.
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/monthly.html')
+    >>> frog.headers['status']
+    '200 Ok'
+
+The yearly calendar view should also be rendered just fine:
+
+    # XXX: There is no link in the app for this URL.
+    >>> frog.open('http://localhost/persons/frog/calendar/yearly.html')
+    >>> frog.headers['status']
+    '200 Ok'
+
+The daily calendar view works too:
+
+    # XXX: There is no link in the app for this URL.
+    >>> frog.open('http://localhost/persons/frog/calendar/daily.html')
+    >>> frog.headers['status']
+    '200 Ok'
+
+The atom view should be here
+
+    # XXX: There is no link in the app for this URL.
+    >>> frog.open('http://localhost/persons/frog/calendar/atom.xml')
+    >>> frog.headers['status']
+    '200 Ok'
+    >>> print frog.contents
+    <BLANKLINE>
+    ...
+    <feed xmlns="http://purl.org/atom/ns#"
+    ...
+    </feed>
+
+While PDF views will always be disabled when SchoolTool is running as a
+content object in Zope 3, it may be possible to enable PDF views for this
+test.  We shall try to enable them.
+
+    >>> from schooltool.app.tests.test_pdf import tryToSetUpReportLab
+    >>> pdf_enabled = tryToSetUpReportLab()
+
+    >>> if pdf_enabled:
+    ...     frog.open('http://localhost/'
+    ...               'persons/frog/calendar/2005-07-01.pdf')
+    ...     '%PDF-1.3' in frog.contents
+    ... else:
+    ...     True
+    True
+
+Let's make sure that the site-wide calendar is rendered, assuming that PDF
+support is enabled.
+
+    >>> if pdf_enabled:
+    ...     manager.open('http://localhost/calendar/2005-07-01.pdf')
+    ...     '%PDF-1.3' in frog.contents
+    ... else:
+    ...     True
+    True
+
+Now we will try disabling PDF views and check if the switch works.
+
+    >>> from schooltool.app import pdf
+    >>> real_pdf_enabled = pdf.enabled
+    >>> pdf.enabled = False
+
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/2005-07-01.pdf')
+    >>> frog.headers['content-type']
+    'text/plain;charset=utf-8'
+    >>> print frog.contents
+    <BLANKLINE>
+    PDF support is disabled...
+
+    >>> pdf.enabled = real_pdf_enabled
+
+The daily view should be the default:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/')
+    >>> 'calendar-view-day' in frog.contents
+    True
+
+You can also use nice URLs for the calendar views:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2004-07-15')
+    >>> 'calendar-view-day' in frog.contents
+    True
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2004-07')
+    >>> 'calendar-view-month' in frog.contents
+    True
+
+
+Adding new events
+-----------------
+
+Let's add an ordinary event that takes place on 3rd February, 2005:
+
+    >>> frog.getLink('New Event').click()
+
+    >>> frog.getControl('Title').value = 'Sleeping'
+    >>> frog.getControl('Date').value = '2005-02-03'
+    >>> frog.getControl('Time').value = '01:00'
+    >>> frog.getControl('Duration').value = '500'
+
+    >>> frog.getControl('Add').click()
+
+The event should be visible in the daily calendar view:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-02-03')
+    >>> 'Sleeping' in frog.contents
+    True
+
+We should be able to find the event in the iCalendar view too.  This time,
+let's use an aliased URL (directly on the person rather than on the calendar):
+
+    >>> frog.getLink('Open in iCal').click()
+    >>> print frog.contents
+    <BLANKLINE>
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//SchoolTool.org/NONSGML SchoolTool//EN
+    ...BEGIN:VEVENT
+    UID:...
+    SUMMARY:Sleeping
+    DTSTART:20050203T010000Z
+    DURATION:PT8H20M
+    DTSTAMP:...
+    END:VEVENT...
+    END:VCALENDAR
+    <BLANKLINE>
+
+And lets make sure that time is listed as BUSY
+
+    >>> frog.open('http://localhost/persons/frog/calendar/calendar.vfb')
+    >>> print frog.contents
+    <BLANKLINE>
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//SchoolTool.org/NONSGML SchoolTool//EN
+    METHOD:PUBLISH
+    BEGIN:VFREEBUSY
+    FREEBUSY:20050203T010000/20050203T09200000Z
+    END:VFREEBUSY
+    END:VCALENDAR
+    <BLANKLINE>
+
+Check the other views:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-w05')
+    >>> 'Sleeping' in frog.contents
+    True
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-02')
+    >>> 'Sleeping' in frog.contents
+    True
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005')
+    >>> 'class="cal_yearly_day_busy">3</a>' in frog.contents
+    True
+
+Now let's add an allday event 29th March, 2005:
+
+    >>> frog.getLink('New Event').click()
+
+    >>> frog.getControl('Title').value = 'A Birthday'
+    >>> frog.getControl('Date').value = '2005-03-29'
+    >>> frog.getControl('All day').click()
+
+    >>> frog.getControl('Add').click()
+
+The event should be visible in the daily calendar view but separate from
+normal events
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-03-29')
+    >>> print frog.contents
+    <BLANKLINE>
+    ...
+    ...A Birthday...
+    ...
+    ...calendar-view-day...
+    ...
+
+We should see it in all the views:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-w13')
+    >>> print frog.contents
+    <BLANKLINE>
+    ...
+    ...Current week...
+    ...
+    <span>A Birthday</span>
+    (<span>All day</span>)
+    ...
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-03')
+    >>> print frog.contents
+    <BLANKLINE>
+    ...
+    ...Current month...
+    ...
+    <span>A Birthday</span>
+    (<span>All day</span>)
+    ...
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005')
+    >>> print frog.contents
+    <BLANKLINE>
+    ...
+    ...Current year...
+    ...
+    ...class="cal_yearly_day_busy">3</a>...
+    ...
+    ...class="cal_yearly_day_busy">29</a>...
+    ...
+
+
+At some point, Frog has to go to bed every night. So a few years down the
+road, let's create a recurring event.
+
+    >>> print http(r"""
+    ... PUT /persons/frog/calendar/calendar.ics HTTP/1.1
+    ... Host: localhost:7080
+    ... Authorization: Basic frog:pwd
+    ... Content-Type: text/calendar
+    ...
+    ... BEGIN:VCALENDAR
+    ... VERSION:2.0
+    ... PRODID:-//SchoolTool.org/NONSGML SchoolTool//EN
+    ... BEGIN:VEVENT
+    ... UID:lalala/fooo
+    ... SUMMARY:Sleep alot
+    ... DTSTART:20070205T100000
+    ... DURATION:PT1H
+    ... DTSTAMP:20070205T150000
+    ... RRULE:FREQ=DAILY;INTERVAL=1
+    ... END:VEVENT
+    ... END:VCALENDAR
+    ... """, handle_errors=False)
+    HTTP/1.1 200 Ok
+    Cache-Control: no-cache="Set-Cookie,Set-Cookie2"
+    Content-Length: 0
+    Expires: ...
+    Pragma: no-cache
+    Set-Cookie: ...
+    <BLANKLINE>
+
+
+Let's see that in all the views
+
+Daily:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2007-02-05')
+    >>> 'Sleep alot' in frog.contents
+    True
+
+It recurs
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2007-02-06')
+    >>> 'Sleep alot' in frog.contents
+    True
+
+Regression test for events with ids that have slashes in them:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2007-02-06')
+    >>> frog.getLink('Sleep alot').click()
+
+    >>> import re
+    >>> frog.open('http://localhost/persons/frog/calendar/2007-w6')
+    >>> contents = analyze.queryHTML('//div[@id="column-center"]', frog.contents)[0]
+    >>> len(re.findall('Sleep alot', contents))
+    14
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2007-02')
+    >>> contents = analyze.queryHTML('//div[@id="column-center"]', frog.contents)[0]
+    >>> len(re.findall('Sleep alot', contents))
+    28
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2007-02')
+    >>> len(re.findall('cal_yearly_day_busy', frog.contents))
+    55
+
+Let's just check that when we update the form, the duration type last entered
+is preserved (regression test for http://issues.schooltool.org/issue197):
+
+    >>> frog.getLink('New Event').click()
+
+    >>> frog.getControl('Title').value = 'A Birthday'
+    >>> frog.getControl('Date').value = '2005-03-29'
+    >>> frog.getControl('All day').click()
+    >>> frog.getControl(name='field.duration_type').value = ['hours']
+
+    >>> frog.getControl('Update form').click()
+    >>> '<option value="hours" selected="selected">' in frog.contents
+    True
+
+The duration should be set even if form has errors in it:
+
+    >>> frog.getLink('New Event').click()
+
+    >>> frog.getControl('Date').value = '2005-03-29'
+    >>> frog.getControl('All day').click()
+    >>> frog.getControl(name='field.duration_type').value = ['hours']
+
+    >>> frog.getControl('Add').click()
+    >>> '<option value="hours" selected="selected">' in frog.contents
+    True
+
+
+Editing events
+--------------
+
+Let's add a calendar through iCalendar PUT view (so we would know the event id):
+
+    >>> print http(r"""
+    ... PUT /persons/frog/calendar/calendar.ics HTTP/1.1
+    ... Host: localhost:7080
+    ... Authorization: Basic frog:pwd
+    ... Content-Type: text/calendar
+    ...
+    ... BEGIN:VCALENDAR
+    ... VERSION:2.0
+    ... PRODID:-//SchoolTool.org/NONSGML SchoolTool//EN
+    ... BEGIN:VEVENT
+    ... UID:dummy-uid
+    ... SUMMARY:Important event
+    ... DTSTART:20050204T100000
+    ... DURATION:PT1H
+    ... DTSTAMP:20050203T150000
+    ... END:VEVENT
+    ... END:VCALENDAR
+    ... """, handle_errors=False)
+    HTTP/1.1 200 Ok
+    Content-Length: 0
+    <BLANKLINE>
+
+Let Frog modify this event:
+
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/ZHVtbXktdWlk/edit.html?date=2005-02-04')
+    >>> frog.getControl('Title').value = 'Sleeping'
+    >>> frog.getControl('Date').value = '2005-02-03'
+    >>> frog.getControl('Time').value = '01:00'
+    >>> frog.getControl('Duration').value = '500'
+    >>> frog.getControl('Update', index=1).click()
+
+Let's check the new values.  Also, notice that the date value from the
+request got into a hidden field:
+
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/ZHVtbXktdWlk/edit.html')
+    >>> 'Sleeping' in frog.contents
+    True
+    >>> '2005-02-03' in frog.contents
+    True
+    >>> '01:00' in frog.contents
+    True
+    >>> '500' in frog.contents
+    True
+
+Let's enter some invalid values:
+
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/ZHVtbXktdWlk/edit.html?date=2005-02-04')
+
+    >>> frog.getControl('Date').value = '20050203'
+    >>> frog.getControl('Time').value = '0100'
+    >>> frog.getControl('Duration').value = '500h'
+
+    >>> frog.getControl('Update', index=1).click()
+    >>> print frog.contents
+    <BLANKLINE>
+    ...
+    ...<input type="hidden" name="date" value="2005-02-04" />
+    ...
+    ...<input class="textType" id="field.start_date" name="field.start_date" size="10" type="text" value="20050203"  />
+    ...<div class="error"><span class="error">Invalid datetime data</span></div>
+    ...
+    ...<input class="textType" id="field.duration" name="field.duration" size="10" type="text" value="500h"  />
+    ...</div>
+      <div class="clear">&nbsp;</div>
+      <div class="error"><span class="error">Invalid integer data</span></div>
+    ...
+
+If we cancel the form - we should be redirected to the day "date" tells us:
+
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/ZHVtbXktdWlk/edit.html?date=2005-02-07')
+    >>> frog.getControl('Cancel').click()
+
+    # XXX: This test says nothing; in fact it shows that this feature does not
+    #      work.
+    #>>> '2005-02-07' in frog.contents
+    #True
+
+Let's change the recurrence of the event a bit more this time:
+
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/ZHVtbXktdWlk/edit.html')
+
+    >>> frog.getControl('Recurring').click()
+    >>> frog.getControl(name='field.recurrence_type').value = ['monthly']
+    >>> frog.getControl('1st Thursday of every month').click()
+    >>> frog.getControl('Repeat until').click()
+    >>> frog.getControl(name='field.until').value = '2005-12-01'
+
+    >>> frog.getControl('Update', index=1).click()
+
+Let's check the new values:
+
+    >>> frog.open('http://localhost/'
+    ...           'persons/frog/calendar/ZHVtbXktdWlk/edit.html')
+
+    >>> frog.getControl('Recurring').selected
+    True
+    >>> frog.getControl(name='field.recurrence_type').value
+    ['monthly']
+    >>> frog.getControl('1st Thursday of every month').selected
+    True
+    >>> frog.getControl('Repeat until').selected
+    True
+    >>> frog.getControl(name='field.until').value
+    '2005-12-01'
+
+
+Uploading iCalendar files
+-------------------------
+
+We can try and put an updated calendar:
+
+    >>> print http("""
+    ... PUT /persons/frog/calendar/calendar.ics HTTP/1.1
+    ... Host: localhost:7080
+    ... Authorization: Basic frog:pwd
+    ... Content-Type: text/calendar
+    ...
+    ... BEGIN:VCALENDAR
+    ... VERSION:2.0
+    ... PRODID:-//SchoolTool.org/NONSGML SchoolTool//EN
+    ... BEGIN:VEVENT
+    ... UID:empty-calendar-placeholder@schooltool.org
+    ... SUMMARY:Empty calendar
+    ... DTSTART:20050204T100000
+    ... DURATION:PT1H
+    ... DTSTAMP:20050203T150000
+    ... END:VEVENT
+    ... END:VCALENDAR
+    ... """, handle_errors=False)
+    HTTP/1.1 200 Ok
+    Content-Length: 0
+    <BLANKLINE>
+
+This should have cleared the calendar.
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-02-03')
+    >>> 'Sleeping' in frog.contents
+    False

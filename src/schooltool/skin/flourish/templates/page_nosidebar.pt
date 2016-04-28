@@ -1,0 +1,28 @@
+<div class="body">
+
+<div tal:attributes="class view/container_class">
+  <div class="main"
+       tal:define="main_content view/content_template|nothing"
+       tal:condition="main_content">
+    <div class="content">
+      <!--
+      <div class="header"
+           tal:define="actions context/schooltool:content/actions|nothing"
+           tal:condition="actions"
+           tal:content="structure actions">
+        [action] [buttons]
+      </div>
+      -->
+      <div class="body" tal:content="structure main_content">
+        [ Main content here ]
+      </div>
+    </div>
+  </div>
+  <div class="additional"
+       tal:define="additional providers/page_content|nothing"
+       tal:condition="additional">
+    [Additional content blocks]
+  </div>
+</div>
+
+</div>

@@ -1,0 +1,20 @@
+<tal:block i18n:domain="schooltool">
+
+<h3 i18n:translate="">Deleting a contact is permanent and irreversible.</h3>
+<div metal:use-macro="macro:form">
+  <metal:block metal:fill-slot="extra-widgets">
+    <tal:block define="relationships view/relationships">
+      <ul>
+        <li tal:repeat="info relationships">
+          <span i18n:translate="">
+            <tal:block tal:replace="info/title" i18n:name="relationship" />
+            of
+          </span>
+          <a tal:replace="structure info/person/schooltool:content/link" />
+        </li>
+      </ul>
+    </tal:block>
+  </metal:block>
+</div>
+
+</tal:block>

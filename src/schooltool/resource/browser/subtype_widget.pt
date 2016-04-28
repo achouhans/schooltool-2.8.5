@@ -1,0 +1,14 @@
+<tal:block i18n:domain="schooltool">
+<input type="text"
+       tal:attributes="id string:${view/name}.newSubType;
+		       name string:${view/name}.newSubType;
+                       value view/freeTextValue" />
+<select tal:attributes="id string:${view/name};
+			name string:${view/name}">
+  <option value="" i18n:translate="">Choose One</option>
+  <option tal:repeat="type view/subTypes"
+          tal:attributes="value type;
+                          selected python:type==view.value and 'selected' or None"
+	  tal:content="type">subtype</option>
+</select>
+</tal:block>

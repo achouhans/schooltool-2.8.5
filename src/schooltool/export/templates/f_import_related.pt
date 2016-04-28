@@ -1,0 +1,37 @@
+<metal:block i18n:domain="schooltool">
+  <div class="header" i18n:translate="">
+    What is This?
+  </div>
+  <div class="body">
+    <p i18n:translate="">
+      In addition to entering data through SchoolTool's web interface, you
+      can also import data from a spreadsheet using this template:
+      <a i18n:name="link-to-empty-data-file" href="empty_data.xls"
+         tal:attributes="href context/++resource++empty_data.xls">empty_data.xls</a>.
+    </p>
+    <p i18n:translate="">
+      Data included in the spreadsheet will be added to data in the system;
+      importing will not cause data to be removed.
+    </p>
+    <p i18n:translate="">
+      You do not have to import all worksheets at the same time.  You can import
+      individual worksheets sequentially.
+    </p>
+    <p i18n:translate="">
+      For people interested in testing and exploring SchoolTool, we provide
+      a set of sample data:
+      <a i18n:name="link-to-sample-data-file" href="sample_data.xls"
+         tal:attributes="href context/++resource++sample_data.xls">sample_data.xls</a>.
+    </p>
+    <p i18n:translate="">
+      We also provide a large data set:
+      <a i18n:name="link-to-sample-data-file" href="large_sample_data.xls"
+         tal:attributes="href context/++resource++large_sample_data.xls">
+        large_sample_data.xls
+      </a>
+      -- 1000 students over multiple years -- for performance testing.
+      This set can take a very long time to be imported and may fail
+      on systems with inadequate memory.
+    </p>
+  </div>
+</metal:block>

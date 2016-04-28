@@ -1,0 +1,27 @@
+<div i18n:domain="schooltool">
+  <div>
+    <h3>
+      <tal:block tal:content="view/view/subtitle" />
+      <a class="modify" href="" title="Edit this school year's information"
+         tal:attributes="href string:${context/@@absolute_url}/@@edit.html"
+         i18n:attributes="title"
+         tal:condition="view/canModify">
+        <img tal:attributes="src context/++resource++schooltool.skin.flourish/edit-icon.png"
+             alt="Edit"
+             i18n:attributes="alt" />
+      </a>
+    </h3>
+    <table class="form-fields">
+      <tbody>
+        <tr tal:repeat="widget view/widgets/values">
+          <td tal:content="widget/label" class="label"/>
+          <td tal:content="structure widget/render" />
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 class="done-link">
+    <a tal:attributes="href string:${context/schooltool:app/@@absolute_url}/schoolyears"
+       i18n:translate="">Done</a>
+  </h3>
+</div>

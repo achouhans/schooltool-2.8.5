@@ -1,0 +1,53 @@
+Sample Data Generation
+======================
+
+A manager logs in.
+
+    >>> from zope.testbrowser.testing import Browser
+    >>> manager = Browser()
+    >>> manager.addHeader('Authorization', 'Basic manager:schooltool')
+    >>> manager.handleErrors = False
+    >>> manager.open('http://localhost/')
+
+He sees an entry for Sample Data Generation in the Manage menu and
+clicks on it
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Sample data').click()
+
+The Sample Data Generation page appears
+
+    >>> print analyze.queryHTML("//title", manager.contents)[0]
+    <title> Sample Data Generation </title>
+
+    >>> print analyze.queryHTML("//h1", manager.contents)[0]
+    <h1>Sample Data Generation</h1>
+
+    >>> print analyze.queryHTML("//form", manager.contents)[0]
+    <form method="POST" class="standalone" action="http://localhost/@@sampledata.html">
+    ...<input name="seed" value="SchoolTool" />...
+    ...<input type="submit" class="button-ok" name="SUBMIT" value="Generate" />...
+    </form>
+
+Let's do it, thinks our valiant manager, and pushes the button.
+
+  Since the full data set requires HUGE amounts of RAM (on the order of 700 megs)
+  and time, we will cheat and ask the attendance sample data plugin to 
+  only generate data for 2 weeks.
+
+    >>> from zope.component import queryUtility
+    >>> from schooltool.sampledata.interfaces import ISampleDataPlugin
+    >>> plugin = queryUtility(ISampleDataPlugin, 'attendance')
+    >>> if plugin is not None:
+    ...     plugin.only_last_n_days = 14
+
+    >>> manager.getControl('Generate').click()
+
+Several minutes later he gets a result
+
+    >>> print manager.contents
+    <BLANKLINE>
+    ...<title> Sample Data Generation </title>...
+    ...<h1>Sample Data Generation</h1>...
+    ...<p>Sample data generated...
+

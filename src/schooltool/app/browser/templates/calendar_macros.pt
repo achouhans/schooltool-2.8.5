@@ -1,0 +1,202 @@
+
+<metal:block define-macro="navigation" i18n:domain="schooltool">
+  <a id="calendar-navigation-context-previous"
+     tal:attributes="href view/prev;
+                     title view/go_to_prev_title">
+    <span tal:replace="view/prev_title">Previous</span>
+  </a>
+  <a id="calendar-navigation-context-current"
+     tal:attributes="href view/current;
+                     title view/go_to_current_title">
+    <span tal:replace="view/current_title">Current</span>
+  </a>
+  <a id="calendar-navigation-context-next"
+     tal:attributes="href view/next;
+                     title view/go_to_next_title">
+    <span tal:replace="view/next_title">Next</span>
+  </a>
+</metal:block>
+
+<metal:block define-macro="mode" i18n:domain="schooltool">
+    <div id="calendar-navigation">
+
+      <div id="calendar-navigation-daily">
+        <a tal:attributes="href python:view.calURL('daily')"
+           i18n:translate=""
+           i18n:attributes="title"
+           title="View daily calendar">Daily</a>
+      </div>
+      <div id="calendar-navigation-weekly">
+        <a tal:attributes="href python:view.calURL('weekly')"
+           i18n:translate=""
+           i18n:attributes="title"
+           title="View weekly calendar">Weekly</a>
+      </div>
+      <div id="calendar-navigation-monthly">
+        <a tal:attributes="href python:view.calURL('monthly')"
+           i18n:translate=""
+           i18n:attributes="title"
+           title="View monthly calendar">Monthly</a>
+      </div>
+      <div id="calendar-navigation-yearly">
+        <a tal:attributes="href python:view.calURL('yearly')"
+           i18n:translate=""
+           i18n:attributes="title"
+           title="View yearly calendar">Yearly</a>
+      </div>
+    </div>
+</metal:block>
+
+<metal:block define-macro="page" i18n:domain="schooltool">
+  <html metal:use-macro="view/@@standard_macros/page">
+
+    <title metal:fill-slot="title" i18n:translate="">
+        Calendar for <span tal:replace="context/title"
+            i18n:name="title" /> - <span i18n:name="calendar_title"
+                                         tal:replace="view/title" />
+    </title>
+    <metal:block fill-slot="extrahead">
+      <link rel="service.feed" type="application/atom+xml"
+            title="Upcoming Events" href=""
+            tal:attributes="href string:${context/@@absolute_url}/atom.xml" />
+    </metal:block>
+
+    <metal:block fill-slot="content-header">
+
+    </metal:block>
+
+    <metal:block fill-slot="navigation-box">
+      <tal:block define="app context/schooltool:app"
+                 condition="python:context.__parent__ == app">
+        <div metal:define-slot="navigation-box"
+             tal:replace="structure provider:schooltool.Navigation"/>
+       </tal:block>
+    </metal:block>
+
+    <metal:block fill-slot="column-left-extra">
+      <div id="column-left">
+        <div id="column-left-top"></div>
+        <div metal:use-macro="view/@@schooltool_macros/calendar/portlets"/>
+      </div>
+    </metal:block>
+    <metal:block fill-slot="content">
+      <div id="column-center" style="margin-left: 14em;">
+        <div id="content-header">
+          <metal:block define-slot="content-header"/>
+        </div>
+        <div id="content-body">
+         <div class="calcontent">
+           <h1 i18n:translate="">
+             Calendar for <span tal:replace="context/title"
+             i18n:name="title" /> - <span i18n:name="calendar_title"
+             tal:replace="view/title" />
+           </h1>
+           <div id="calendar-navigation-context">
+             <div metal:use-macro="view/@@schooltool_macros/calendar/mode"/>
+             <div metal:use-macro="view/@@schooltool_macros/calendar/navigation" />
+           </div>
+           <div metal:define-slot="calendar-body"/>
+         </div>
+        </div>
+      </div>
+    </metal:block>
+  </html>
+</metal:block>
+
+<!-- BEGIN CALENDAR MACROS -->
+
+<metal:block define-macro="portlet-calendar-overlay" i18n:domain="schooltool">
+  <div tal:replace="structure context/@@calendar_overlay" />
+</metal:block>
+
+<metal:block define-macro="portlet-calendar-jumpto" i18n:domain="schooltool">
+  <div id="portlet-jumpto" class="portlet">
+
+    <h4 i18n:translate="">Jump To ...</h4>
+    <form class="center" action="">
+      <div>
+        <select name="jump" onChange="jumpTo(this);">
+          <option value="" i18n:translate="">Month</option>
+          <tal:loop repeat="month view/getJumpToMonths">
+            <option
+              tal:attributes="value month/href"
+              tal:content="month/label" />
+          </tal:loop>
+        </select>
+      </div>
+    </form>
+
+    <form class="center" action="">
+      <div>
+        <select name="jump" onChange="jumpTo(this);">
+          <option value='' i18n:translate="">Year</option>
+          <tal:loop repeat="year view/getJumpToYears">
+            <option value=""
+              tal:attributes="value year/href;
+                              selected year/selected"
+              tal:content="year/label" />
+          </tal:loop>
+        </select>
+      </div>
+    </form>
+  </div>
+</metal:block>
+
+
+<metal:block define-macro="brief-month-view" i18n:domain="schooltool">
+  <table class="month" cellpadding="0" cellspacing="0">
+    <tr>
+      <th colspan="7" class="month-title"
+          tal:define="mtit python:view.monthTitle(month[1][0].date)">
+        <a tal:content="mtit"
+            tal:attributes="href python:view.calURL('monthly',
+                            month[1][0].date);
+                            title mtit"/>
+      </th>
+    </tr>
+    <tr tal:repeat="week month">
+      <td tal:replace="structure
+          python:view.renderRow(week, month[1][0].date.month)" />
+    </tr>
+
+  </table>
+
+</metal:block>
+
+<metal:block define-macro="portlet-calendar-view-month"
+             i18n:domain="schooltool">
+
+  <div id="portlet-calendar-view-month" class="portlet">
+
+      <tal:block define="month python:view.getMonth(view.prevMonth());">
+          <metal:block use-macro="
+              view/@@schooltool_macros/calendar/brief-month-view" />
+      </tal:block>
+
+      <tal:block define="month python:view.getMonth(view.cursor);">
+          <metal:block use-macro="
+              view/@@schooltool_macros/calendar/brief-month-view" />
+      </tal:block>
+
+      <tal:block define="month python:view.getMonth(view.nextMonth());">
+          <metal:block use-macro="
+              view/@@schooltool_macros/calendar/brief-month-view" />
+      </tal:block>
+
+  </div>
+
+</metal:block>
+
+<metal:block define-macro="portlets">
+  <br>
+  <div tal:replace="structure provider:schooltool.CalendarPortlet"/>
+
+  <metal:block use-macro="
+      view/@@schooltool_macros/calendar/portlet-calendar-jumpto"/>
+
+  <metal:block use-macro="
+      view/@@schooltool_macros/calendar/portlet-calendar-view-month"/>
+
+</metal:block>
+
+<!-- END CALENDAR MACROS -->

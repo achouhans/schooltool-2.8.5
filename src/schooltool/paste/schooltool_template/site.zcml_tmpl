@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <!-- To disable a plugin, add an exclude, e.g.
+
+  <exclude package="schooltool.gradebook" />
+  -->
+
+  <include package="${instance_package}" />
+
+  <include files="plugins/*.zcml" />
+
+</configure>

@@ -1,0 +1,50 @@
+<div i18n:domain="schooltool">
+  <h2 i18n:translate="">Advisory</h2>
+  <div>
+    <div>
+      <h3>
+        <tal:block i18n:translate="">Advisors</tal:block>
+        <a class="modify" href="" title="Manage this person's advisors"
+           tal:attributes="href string:${context/@@absolute_url}/@@advisors.html"
+           i18n:attributes="title"
+           tal:condition="view/canModify">
+          <img tal:attributes="src context/++resource++schooltool.skin.flourish/edit-icon.png"
+               alt="Edit"
+               i18n:attributes="alt" />
+        </a>
+      </h3>
+
+      <tal:block define="has_advisors python:bool(len(list(view.context.advisors)))">
+        <!-- XXX: need a shorthand to access ajax parts -->
+        <div tal:condition="has_advisors"
+             tal:content="structure view/view/view/providers/ajax/view/context/advisors/person_table"/>
+        <p tal:condition="not:has_advisors"
+           i18n:translate="">
+          The person has no advisors.
+        </p>
+      </tal:block>
+    </div>
+    <div>
+      <h3>
+        <tal:block i18n:translate="">Advisees</tal:block>
+        <a class="modify" href="" title="Manage this person's advisees"
+           tal:attributes="href string:${context/@@absolute_url}/@@advisees.html"
+           i18n:attributes="title"
+           tal:condition="view/canModify">
+          <img tal:attributes="src context/++resource++schooltool.skin.flourish/edit-icon.png"
+               alt="Edit"
+               i18n:attributes="alt" />
+        </a>
+      </h3>
+      <tal:block define="has_advisees python:bool(len(list(view.context.advisees)))">
+        <!-- XXX: need a shorthand to access ajax parts -->
+        <div tal:condition="has_advisees"
+             tal:content="structure view/view/view/providers/ajax/view/context/advisees/person_table"/>
+        <p tal:condition="not:has_advisees"
+            i18n:translate="">
+          The person has no advisees.
+        </p>
+      </tal:block>
+    </div>
+  </div>
+</div>

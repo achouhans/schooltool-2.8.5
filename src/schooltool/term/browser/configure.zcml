@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<configure
+    xmlns="http://namespaces.zope.org/browser"
+    xmlns:zope="http://namespaces.zope.org/zope"
+    i18n_domain="schooltool">
+
+  <page
+      name="add.html"
+      for="..interfaces.ITermContainer"
+      class=".term.TermAddForm"
+      permission="schooltool.edit"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.ITerm"
+      class=".term.TermView"
+      template="templates/term.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="edit.html"
+      for="..interfaces.ITerm"
+      class=".term.TermEditForm"
+      permission="schooltool.edit"
+      menu="schooltool_actions" title="Edit"
+      />
+
+  <page
+      name="emergency.html"
+      for="..interfaces.ITerm"
+      class=".emergency.EmergencyDayView"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Cancel School in Emergency"
+      />
+
+  <zope:view
+      for="schooltool.term.interfaces.ITerm"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="schooltool.traverser.browser.PluggableBrowserTraverser"
+      permission="zope.Public"
+      />
+
+  <zope:adapter
+      for="schooltool.term.interfaces.ITermContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory="schooltool.table.table.FilterWidget" />
+
+  <zope:adapter
+      for="schooltool.term.interfaces.ITermContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory="schooltool.table.table.SchoolToolTableFormatter " />
+
+  <zope:adapter
+      factory=".errors.OverlapErrorViewSnippet" />
+  <zope:adapter
+      factory=".term.TermFormAdapter" />
+  <zope:adapter
+      factory=".term.AddTermFormValidator" />
+  <zope:adapter
+      factory=".term.EditTermFormValidator" />
+  <zope:adapter
+      factory=".term.FirstTermBoundsValidator" />
+  <zope:adapter
+      factory=".term.LastTermBoundsValidator" />
+
+</configure>

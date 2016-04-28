@@ -1,0 +1,6 @@
+<div i18n:domain="schooltool"
+     tal:define="year view/year; terms view/terms">
+  <div tal:condition="not:year/empty"
+       tal:content="structure context/schooltool:content/ajax/view/schoolyear/terms_table" />
+  <h3 tal:condition="year/empty" i18n:translate="">There are no terms.</h3>
+</div>

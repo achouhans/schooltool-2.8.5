@@ -1,0 +1,138 @@
+<tal:tag condition="view/update"/>
+<html metal:use-macro="context/@@standard_macros/view"
+      i18n:domain="schooltool">
+<body>
+<div metal:fill-slot="body">
+
+<div metal:define-macro="body">
+
+  <form tal:attributes="action request/URL" method="post"
+        enctype="multipart/form-data" class="standalone">
+
+    <div metal:define-macro="formbody">
+
+      <h3 tal:condition="view/label"
+          tal:content="view/label"
+          metal:define-slot="heading"
+          >Edit something</h3>
+
+      <p tal:define="status view/update"
+         tal:condition="status" tal:content="status" />
+
+      <p tal:condition="view/errors" i18n:translate="">
+        There are <strong tal:content="python:len(view.errors)"
+                          i18n:name="num_errors">6</strong> input errors.
+      </p>
+
+      <div metal:define-slot="extra_info" tal:replace="nothing">
+      </div>
+
+      <fieldset>
+        <div class="row"
+             metal:define-slot="extra_top" tal:replace="nothing">
+          <div class="label">Extra top</div>
+          <div class="field"><input type="text" style="width:100%" /></div>
+        </div>
+
+        <div metal:use-macro="context/@@form_macros/widget_rows" />
+
+        <div class="separator"></div>
+
+        <div class="row"
+             metal:define-slot="extra_bottom" tal:replace="nothing">
+          <div class="label">Extra bottom</div>
+          <div class="field"><input type="text" style="width:100%" /></div>
+        </div>
+        <div class="separator"></div>
+      </fieldset>
+    </div>
+
+    <div class="controls">
+      <tal:block metal:use-macro="view/@@standard_macros/apply-button" />
+      <tal:block metal:use-macro="view/@@standard_macros/cancel-button" />
+    </div>
+    <div class="row" metal:define-slot="extra_buttons" tal:replace="nothing">
+    </div>
+
+    <div class="separator"></div>
+
+    <fieldset>
+      <legend i18n:translate="">Linked sections</legend>
+
+      <div class="row" tal:define="section context/previous">
+        <div class="label" i18n:translate="">Previous</div>
+        <p class="hint" i18n:translate="">
+          Section in the previous term.
+        </p>
+        <div class="field" tal:condition="section">
+          <tal:block i18n:translate="">
+            <tal:block i18n:name="section_title"
+              tal:replace="structure section/@@link" />
+            for
+            <tal:block i18n:name="term"
+               tal:replace="structure section/@@index.html/term/title"/>
+          </tal:block>
+          <input type="submit" class="button-cancel"
+            name="UNLINK_PREVIOUS" value="Unlink"
+            i18n:attributes="value unlink-section-button" />
+        </div>
+        <div class="field" tal:condition="not:section">
+          <tal:block condition="view/previous_term">
+            <a tal:attributes="
+                href string:${view/context/@@absolute_url}/@@link_previous.html"
+                i18n:translate="">
+              Pick a section from
+              <tal:block content="view/previous_term/title" i18n:name="term">
+                TERM
+              </tal:block>
+            </a>
+          </tal:block>
+          <tal:block condition="not:view/previous_term" i18n:translate="">
+            Not linked.
+          </tal:block>
+        </div>
+      </div>
+
+      <div class="row" tal:define="section context/next">
+        <div class="label" i18n:translate="">Next</div>
+        <p class="hint" i18n:translate="">
+          Section in the next term.
+        </p>
+        <div class="field" tal:condition="section">
+          <tal:block i18n:translate="">
+            <tal:block i18n:name="section_title"
+              tal:replace="structure section/@@link" />
+            for
+            <tal:block i18n:name="term"
+               tal:replace="structure section/@@index.html/term/title"/>
+          </tal:block>
+          <input type="submit" class="button-cancel"
+            name="UNLINK_NEXT" value="Unlink"
+            i18n:attributes="value unlink-section-button" />
+        </div>
+        <div class="field" tal:condition="not:section">
+          <tal:block condition="view/next_term">
+            <a tal:attributes="
+                href string:${view/context/@@absolute_url}/@@link_next.html"
+                i18n:translate="">
+              Pick a section from
+              <tal:block content="view/next_term/title" i18n:name="term">
+                TERM
+              </tal:block>
+            </a>
+          </tal:block>
+          <tal:block condition="not:view/next_term" i18n:translate="">
+            Not linked.
+          </tal:block>
+        </div>
+      </div>
+
+    </fieldset>
+
+  </form>
+
+</div>
+
+</div>
+</body>
+</html>

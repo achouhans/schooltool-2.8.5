@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="schooltool">
+
+  <include file="security.zcml" />
+  <include file="schoolyear.zcml" />
+  <include package=".browser" />
+
+</configure>

@@ -1,0 +1,109 @@
+Test for courses getting copied from the active school year to the new one
+==========================================================================
+
+A manager logs in
+
+    >>> manager = Browser('manager', 'schooltool')
+
+Sets the time
+
+    >>> manager.open('http://localhost/time')
+    >>> manager.getControl('Today').value = "2005-02-15"
+    >>> manager.getControl('Apply').click()
+
+    >>> 'Data successfully updated.' in manager.contents
+    True
+
+And create a new school year:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Years').click()
+    >>> manager.getLink('New School Year').click()
+    >>> manager.getControl('Title').value = '2005-2006'
+    >>> manager.getControl('First day').value = '2005-09-01'
+    >>> manager.getControl('Last day').value = '2006-07-15'
+    >>> manager.getControl('Add').click()
+
+Now let's add a couple of courses to it:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Courses').click()
+
+    >>> manager.getLink('Add Course').click()
+    >>> manager.getControl('Title').value = 'History 5'
+    >>> manager.getControl('Description').value = 'History course for fifth-graders'
+    >>> manager.getControl('Course ID').value = 'history-local'
+    >>> manager.getControl('Alternate ID').value = 'history-gov'
+    >>> manager.getControl('Credits').value = '5'
+    >>> manager.getControl('Add').click()
+
+    >>> manager.getLink('Add Course').click()
+    >>> manager.getControl('Title').value = 'English 6'
+    >>> manager.getControl('Description').value = 'English course for sixth-graders'
+    >>> manager.getControl('Credits').value = '0.5'
+    >>> manager.getControl('Add').click()
+
+The couses are there now:
+
+    >>> for item in analyze.queryHTML('//div[@class="course"]', manager.contents): print item
+    <div class="course">
+      <input type="checkbox" name="delete.english-6" /><a href="http://localhost/schoolyears/2005-2006/courses/english-6">English 6</a>
+    </div>
+    <div class="course">
+      <input type="checkbox" name="delete.history-5" /><a href="http://localhost/schoolyears/2005-2006/courses/history-5">History 5</a>
+    </div>
+
+Let's add one more school year and import all the existing courses:
+
+    >>> manager.open('http://localhost/')
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Years').click()
+    >>> manager.getLink('New School Year').click()
+    >>> manager.getControl('Title').value = '2006-2007'
+    >>> manager.getControl('First day').value = '2006-09-01'
+    >>> manager.getControl('Last day').value = '2007-07-15'
+    >>> manager.getControl(name='importAllCourses').value = True
+    >>> manager.getControl('Add').click()
+
+Now this school year should have all the same courses copied:
+
+    >>> manager.getLink('2006-2007').click()
+    >>> manager.getLink('Courses').click()
+
+    >>> for item in analyze.queryHTML('//div[@class="course"]', manager.contents): print item
+    <div class="course">
+      <input type="checkbox" name="delete.english-6" /><a href="http://localhost/schoolyears/2006-2007/courses/english-6">English 6</a>
+    </div>
+    <div class="course">
+      <input type="checkbox" name="delete.history-5" /><a href="http://localhost/schoolyears/2006-2007/courses/history-5">History 5</a>
+    </div>
+
+Let's check that all the course attributes were copied:
+
+    >>> manager.getLink('History 5').click()
+    >>> manager.printQuery('id("course-view")/p[@class="description"]/text()')
+    History course for fifth-graders
+    >>> manager.printQuery('id("course-view")/div[@class="info-block"][1]/p')
+    <p>
+      Course ID:
+      history-local
+    </p>
+    <p>
+      Alternate ID:
+      history-gov
+    </p>
+    <p>
+      Credits:
+      5
+    </p>
+
+    >>> manager.getLink('2006-2007').click()
+    >>> manager.getLink('Courses').click()
+    >>> manager.getLink('English 6').click()
+    >>> manager.printQuery('id("course-view")/p[@class="description"]/text()')
+    English course for sixth-graders
+    >>> manager.printQuery('id("course-view")/div[@class="info-block"][1]/p')
+    <p>
+      Credits:
+      0.5
+    </p>

@@ -1,0 +1,30 @@
+<div i18n:domain="schooltool" tal:define="rows view/table">
+  <table tal:condition="rows">
+    <thead>
+      <tr>
+        <th i18n:translate="">Title</th>
+      </tr>
+    </thead>
+    <tr tal:repeat="row rows">
+      <td>
+        <span tal:content="row/level/title" />
+
+        <a class="modify" href=""
+           title="Edit this level"
+           tal:condition="row/level/schooltool:can_edit"
+           tal:attributes="href string:${row/level/@@absolute_url}/edit.html"
+           i18n:attributes="title">
+          <img tal:attributes="src context/++resource++schooltool.skin.flourish/edit-icon.png"
+               alt="Edit"
+               i18n:attributes="alt" />
+        </a>
+      </td>
+    </tr>
+  </table>
+  <h3 i18n:translate="" tal:condition="not:rows">There are none.</h3>
+  <h3 class="done-link">
+    <a tal:attributes="href string:${context/schooltool:app/@@absolute_url}/manage"
+       i18n:translate="">Done</a>
+  </h3>
+</div>
+

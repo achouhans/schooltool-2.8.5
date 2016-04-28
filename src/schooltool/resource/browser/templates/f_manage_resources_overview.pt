@@ -1,0 +1,42 @@
+<tal:block condition="view/has_schoolyear">
+<div class="manage-view" i18n:domain="schooltool"
+     tal:define="resource_types view/resource_types;
+                 resources_link view/resources_url">
+  <h3>
+    <a title="Manage resources"
+       tal:attributes="href resources_link"
+       i18n:attributes="title"
+       i18n:translate="">
+      Resources
+    </a>
+  </h3>
+  <table>
+    <thead>
+      <tr>
+        <th i18n:translate="">School Resources</th>
+        <th i18n:translate="">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr tal:condition="not:resource_types">
+        <td colspan="2" i18n:translate="">
+          There are no
+          <a tal:attributes="href resources_link"
+            i18n:name="resources" i18n:translate="">school resources</a> set up.
+        </td>
+      </tr>
+      <tr tal:repeat="resource resource_types/values">
+        <td>
+          <a tal:content="resource/title"
+             tal:attributes="href string:${resources_link}/?SEARCH_TYPE=${resource/id}">
+            [link]
+          </a>
+        </td>
+        <td tal:content="resource/amount">
+          [number]
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</tal:block>

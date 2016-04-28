@@ -1,0 +1,45 @@
+<div i18n:domain="schooltool">
+  <h2 i18n:translate="">Groups</h2>
+  <div>
+    <h3>
+      <tal:block i18n:translate="">Group memberships</tal:block>
+      <a class="modify" href="" title="Manage this person's memberships"
+         tal:attributes="href string:${context/@@absolute_url}/@@groups.html"
+         i18n:attributes="title"
+         tal:condition="view/canModify">
+        <img tal:attributes="src context/++resource++schooltool.skin.flourish/edit-icon.png"
+             alt="Edit"
+             i18n:attributes="alt" />
+      </a>
+    </h3>
+    <div class="tree_list groups_tree" tal:condition="view/schoolyears">
+      <ul>
+        <li tal:repeat="schoolyear view/schoolyears" class="year">
+          <a tal:attributes="href schoolyear/obj/@@absolute_url;
+                             title schoolyear/obj/title;
+                             class schoolyear/css_class;"
+             tal:content="schoolyear/obj/title"></a>
+          <ul>
+            <li tal:repeat="group_data schoolyear/groups" class="group">
+              <a tal:attributes="href
+                                 string:${group_data/obj/@@absolute_url}?done_link=${request/URL};
+                               title group_data/title"
+                 tal:content="group_data/title"
+                 class="leaf_url"></a>
+              <ul>
+                <li tal:repeat="state group_data/states">
+                  <tal:block replace="state/title" />
+                  (<tal:block replace="state/date/@@mediumDate" />)
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <p tal:condition="not: view/schoolyears"
+        i18n:translate="">
+      The person is not a member of any groups.
+    </p>
+  </div>
+</div>

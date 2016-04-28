@@ -1,0 +1,44 @@
+<tal:block i18n:domain="schooltool">
+<metal:block define-macro="edit">
+  <form action="." method="post"
+        tal:attributes="action request/URL"
+        class="standalone" enctype="multipart/form-data">
+
+    <h3 tal:content="view/title | nothing">
+    </h3>
+
+    <div class="info" tal:condition="view/status" tal:content="view/status" />
+
+    <fieldset>
+      <legend tal:define="legend view/legend | nothing"
+              tal:condition="legend" tal:content="legend">
+      </legend>
+
+      <div metal:use-macro="context/@@form_macros/widget_rows" />
+    </fieldset>
+
+    <div class="controls">
+      <metal:block define-slot="controls">
+        <tal:block metal:use-macro="view/@@standard_macros/apply-button-formlib" />
+        <tal:block metal:use-macro="view/@@standard_macros/cancel-button-formlib" />
+      </metal:block>
+    </div>
+
+  </form>
+</metal:block>
+
+<metal:block define-macro="display">
+  <fieldset>
+    <div class="row" tal:repeat="widget view/widgets">
+      <div class="label" tal:content="widget/label"/>
+      <tal:block condition="repeat/widget/even">
+        <div class="field-even"><tal:block replace="structure widget" />&nbsp;</div>
+      </tal:block>
+      <tal:block condition="not: repeat/widget/even">
+        <div class="field-odd"><tal:block replace="structure widget" />&nbsp;</div>
+      </tal:block>
+      <div class="clear"/>
+    </div>
+  </fieldset>
+</metal:block>
+</tal:block>

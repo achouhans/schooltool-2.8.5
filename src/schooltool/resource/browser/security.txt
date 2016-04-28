@@ -1,0 +1,135 @@
+Functional doctest for Security
+===============================
+
+This test verifies the security checking for booked resources and
+events that book them.
+
+Setup / Create Manager
+----------------------
+
+    >>> manager = Browser('manager', 'schooltool')
+
+Let's create several people who have different permissions for resource booking:
+
+    >>> from schooltool.app.browser.ftests.setup import setUpBasicSchool
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> setUpBasicSchool()
+    >>> addPerson('Teacher', 'Smith', 'teacher', 'pwd')
+    >>> addPerson('Leader', 'Jones', 'leader', 'pwd')
+
+Now lets create a resources that can be booked:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Resources').click()
+
+    >>> manager.getLink('Add Resource').click()
+    >>> manager.getControl('Title').value = 'Classroom'
+    >>> manager.getControl('Add').click()
+    >>> manager.getLink('Resource', index=2).click()
+    >>> manager.getLink('Classroom').click()
+
+Create new Browsers for 'Teacher' & 'Leader' and log them in
+
+    >>> teacher = Browser('teacher', 'pwd')
+    >>> leader = Browser('leader', 'pwd')
+
+Simple users cannot list the resources:
+
+    >>> teacher.open('http://localhost/resources')
+    Traceback (most recent call last):
+    ...
+    Unauthorized: ...
+
+Simple users should not be able to add the events (even if he can guess the url):
+
+    >>> teacher.open('http://localhost/resources/classroom/calendar/add.html')
+    Traceback (most recent call last):
+    ...
+    Unauthorized: (<...>, 'browserDefault', 'schooltool.edit')
+
+Now we will put these people into the teacher group
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('Teachers').click()
+    >>> manager.getLink('edit members').click()
+    >>> manager.getControl('Teacher').click()
+    >>> manager.getControl('Add').click()
+
+The leader should not be able to edit this event (yet) because the
+leader is not yet a member of the resource's leader list.
+
+    >>> leader.open('http://localhost/resources/classroom')
+    Traceback (most recent call last):
+    ...
+    Unauthorized: (<...>, 'browserDefault', 'schooltool.view')
+
+So now we will make this leader the leader of the resource.
+
+    >>> manager.open('http://localhost/resources/classroom')
+    >>> manager.getLink('Edit Leaders').click()
+    >>> manager.getControl('Leader').click()
+    >>> manager.getControl('Add').click()
+
+Now the leader should be able to schedule a new event
+
+    >>> leader.open('http://localhost/resources/classroom')
+    >>> leader.getLink('View Calendar').click()
+    >>> leader.getLink('New Event').click()
+    >>> leader.getControl('Title').value = 'Classroom Event'
+    >>> leader.getControl('Time').value = '08:00'
+    >>> leader.getControl('Add').click()
+    >>> 'Classroom Event' in leader.contents
+    True
+
+The leader should be able to edit the event that they created.
+
+    >>> leader.getLink('Classroom Event').click()
+    >>> leader.getControl('Time').value = '09:00'
+    >>> leader.getControl('Update', index=1).click()
+
+The leader should also be able to schedule a new event from their
+personal calendar.
+
+    >>> leader.getLink('Calendar').click()
+    >>> leader.getLink('New Event').click()
+    >>> leader.getControl('Title').value = 'Classroom Event'
+    >>> leader.getControl('Time').value = '11:00'
+    >>> leader.getControl('Book Resources').click()
+    >>> leader.getControl('Add').click()
+    >>> leader.getControl('Classroom').click()
+    >>> leader.getControl('Book').click()
+    >>> leader.getLink('Calendar').click()
+    >>> 'Classroom Event' in leader.contents
+    True
+
+Check to see that the classroom is booked as well.
+
+    >>> print leader.contents
+    <BLANKLINE>
+    ...
+      <h6 class="booked-resource-header"
+          style="background: #7590ae">
+        <a style="color: #000;"
+           href="http://localhost/persons/leader/calendar/.../booking.html?date=...">Booked resources</a></h6>
+    <BLANKLINE>
+        <a href="http://localhost/resources/classroom">Classroom</a>
+    ...
+
+Create another Resource.
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Resources').click()
+    >>> manager.getLink('Add Resource').click()
+    >>> manager.getControl('Title').value = 'Lobby'
+    >>> manager.getControl('Add').click()
+    >>> manager.getLink("Resource", index=2).click()
+    >>> manager.getLink('Classroom').click()
+
+The Leader is not the leader of 'Lobby' but is of 'Classroom', make sure that
+Leader cannot edit an event in 'Lobby'.
+
+    >>> leader.open('http://localhost/resources/lobby')
+    Traceback (most recent call last):
+    ...
+    Unauthorized: (<...>, 'browserDefault', 'schooltool.view')

@@ -1,0 +1,1420 @@
+Functional test for timetable schema add wizard
+===============================================
+
+There are several paths through the timetable schema wizard.  We shall test
+several of those, so that all pages are rendered, and all the branches are
+taken.
+
+   |testpath1| |testpath2| |testpath3| |testpath4| |testpath5| |testpath6|
+
+.. |testpath1| image:: images/ttschema-wizard-1-tiny.png
+.. |testpath2| image:: images/ttschema-wizard-2-tiny.png
+.. |testpath3| image:: images/ttschema-wizard-3-tiny.png
+.. |testpath4| image:: images/ttschema-wizard-4-tiny.png
+.. |testpath5| image:: images/ttschema-wizard-5-tiny.png
+.. |testpath6| image:: images/ttschema-wizard-6-tiny.png
+
+.. contents:: Overview
+   :backlinks: none
+
+.. You can generate the png pictures from GraphViz files by running the
+.. update-images.sh shell script in the images/ subdirectory.
+
+The usual setup
+
+    >>> from schooltool.app.browser.ftests.setup import setUpBasicSchool
+    >>> setUpBasicSchool()
+    >>> manager = Browser('manager', 'schooltool')
+
+Weekly timetable
+----------------
+
+.. image:: images/ttschema-wizard-1.png
+
+Let's go to the `new timetable schema` wizard:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+    >>> '<h1>New timetable</h1>' in manager.contents
+    True
+
+We enter a title and press `Next` button:
+
+    >>> manager.getControl('Title').value = 'Weekly'
+    >>> manager.getControl('Next').click()
+
+You can now choose the general type of the schedule. Let's choose the weekly
+type for now -- we'll try the rotating cycle later.
+
+    >>> manager.getControl('Days of the week').click()
+
+Now you can choose whether the classes start at the same time every day. Let's
+say that classes begin at the same time:
+
+    >>> manager.getControl('Same time each day').click()
+
+Enter now start and end times for each slot, one slot (HH:MM - HH:MM) per
+line. By default there are two periods. Let's add two more entries.
+
+    >>> manager.getControl(name='field.times').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+    >>> manager.getControl('Next').click()
+
+Do periods have names or are they simply designated by time? For now, let's
+say that periods are designated by time.
+
+    >>> manager.getControl('Designated by time').click()
+
+Do we use a homeroom period?  Let's say no:
+
+    >>> manager.getControl('No').click()
+
+The timetable gets created. Now we see the newly created timetable
+schema in the list.
+
+    >>> manager.getLink('Weekly')
+    <Link text='Weekly' url='http://localhost/schoolyears/2005-2006/timetables/Timetable'>
+
+Let's look at it.
+
+    >>> manager.getLink('Weekly').click()
+
+    >>> manager.printQuery('//table[@class="timetable"]', skip_inner_blank=True)
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="14%">Monday</th>
+    <th colspan="2" class="day" width="14%">Tuesday</th>
+    <th colspan="2" class="day" width="14%">Wednesday</th>
+    <th colspan="2" class="day" width="14%">Thursday</th>
+    <th colspan="2" class="day" width="14%">Friday</th>
+    <th colspan="2" class="day" width="14%">Saturday</th>
+    <th colspan="2" class="day" width="14%">Sunday</th>
+    </tr>
+    <tr><th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    </table>
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="14%">Monday</th>
+    <th colspan="2" class="day" width="14%">Tuesday</th>
+    <th colspan="2" class="day" width="14%">Wednesday</th>
+    <th colspan="2" class="day" width="14%">Thursday</th>
+    <th colspan="2" class="day" width="14%">Friday</th>
+    <th colspan="2" class="day" width="14%">Saturday</th>
+    <th colspan="2" class="day" width="14%">Sunday</th>
+    </tr>
+    <tr><th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    </table>
+
+
+Rotating timetable
+------------------
+
+.. image:: images/ttschema-wizard-2.png
+
+Let's do it again!
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+
+We enter a title and press the `Next` button:
+
+    >>> manager.getControl('Title').value = 'Rotating'
+    >>> manager.getControl('Next').click()
+
+Let's choose rotating.
+
+    >>> manager.getControl('Rotating cycle').click()
+
+Enter names of days in cycle, one per line. We shall have three days,
+designated A, B, and ... (oh no! the suspense!) ...  C.
+
+
+    >>> manager.getControl(name='field.days').value = """\
+    ... A
+    ... B
+    ... C
+    ... """
+    >>> manager.getControl('Next').click()
+
+Do classes begin and end at the same time each day in your school's timetable?
+Let's say that classes begin at the same time:
+
+    >>> manager.getControl('Same time each day').click()
+
+Enter start and end times for each slot, one slot (HH:MM - HH:MM) per
+line. Let's add two more periods.
+
+    >>> manager.getControl(name='field.times').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+    >>> manager.getControl('Next').click()
+
+Do periods have names or are they simply designated by time? This time, let's
+say that periods are named.
+
+    >>> manager.getControl('Have names').click()
+
+Enter names of periods, one per line.
+
+    >>> manager.getControl(name='field.periods').value = """\
+    ... Period_A
+    ... Period_C
+    ... Period_B
+    ... Period_D
+    ... """
+    >>> manager.getControl('Next').click()
+
+We get to choose whether sequences of periods in all days are the same. Let's
+say they are the same.
+
+    >>> manager.getControl('Same').click()
+
+We can rearrange the periods now:
+
+    >>> manager.getControl('Next').click()
+
+Do we use a homeroom period?  Let's say yes:
+
+    >>> manager.getControl('Yes').click()
+
+Please indicate the homeroom period for each day.  Easy.  To make it more
+interesting, let's say that day A uses Period_A for homeroom, day B gets
+Period_B, while day C skips attendance.
+
+    >>> manager.getControl(name='homeroom_0_Period_A').value = 'checked'
+    >>> manager.getControl(name='homeroom_1_Period_C').value = 'checked'
+    >>> manager.getControl(name='homeroom_1_Period_D').value = 'checked'
+    >>> manager.getControl('Next').click()
+
+Now we see the newly created timetable schema in the list.
+
+    >>> manager.getLink('Rotating')
+    <Link text='Rotating' url='http://localhost/schoolyears/2005-2006/timetables/Timetable-2'>
+
+Let's look at it.
+
+    >>> manager.getLink('Rotating').click()
+
+    >>> manager.printQuery('//table[@class="timetable"]', skip_inner_blank=True)
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="33%">A</th>
+    <th colspan="2" class="day" width="33%">B</th>
+    <th colspan="2" class="day" width="33%">C</th>
+    </tr>
+    <tr><th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Homeroom</td>
+    <th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Homeroom</td>
+    <th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Homeroom</td>
+    <th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    </table>
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="33%">A</th>
+    <th colspan="2" class="day" width="33%">B</th>
+    <th colspan="2" class="day" width="33%">C</th>
+    </tr>
+    <tr><th class="period" width="3%">09:30-10:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">09:30-10:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">09:30-10:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">10:30-11:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">10:30-11:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">10:30-11:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">11:30-12:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">11:30-12:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">11:30-12:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">12:30-13:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">12:30-13:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">12:30-13:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    </table>
+
+
+Rotating timetable, different daily period order
+------------------------------------------------
+
+.. image:: images/ttschema-wizard-3.png
+
+Let's do it again!
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+
+We enter a title and press the `Next` button:
+
+    >>> manager.getControl('Title').value = 'Rotating 2'
+    >>> manager.getControl('Next').click()
+
+Let's choose rotating.
+
+    >>> manager.getControl('Rotating cycle').click()
+
+We shall have three days, designated A, B, and C.
+
+    >>> manager.getControl(name='field.days').value = """\
+    ... A
+    ... B
+    ... C
+    ... """
+    >>> manager.getControl('Next').click()
+
+Do classes begin and end at the same time each day in your school's timetable?
+Let's say that classes begin at the same time:
+
+    >>> manager.getControl('Same time each day').click()
+
+Enter start and end times for each slot, one slot (HH:MM - HH:MM) per
+line. Let's add two more periods to the default two:
+
+    >>> manager.getControl(name='field.times').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+    >>> manager.getControl('Next').click()
+
+Do periods have names or are they simply designated by time? Let's say that
+periods are named.
+
+    >>> manager.getControl('Have names').click()
+
+Enter names of periods, one per line.
+
+    >>> manager.getControl(name='field.periods').value = """\
+    ... Period_A
+    ... Period_B
+    ... Period_C
+    ... Period_D
+    ... """
+    >>> manager.getControl('Next').click()
+
+We get to choose whether sequences of periods in all days are the same. Let's
+say they are different.
+
+    >>> manager.getControl('Different').click()
+
+Please put the periods in order for each day. We can rearrange them to our
+liking:
+
+    >>> manager.getControl(name='period_0_0').value = ['Period_A']
+    >>> manager.getControl(name='period_0_1').value = ['Period_C']
+    >>> manager.getControl(name='period_0_2').value = ['Period_B']
+    >>> manager.getControl(name='period_0_3').value = ['Period_D']
+
+    >>> manager.getControl(name='period_1_0').value = ['Period_D']
+    >>> manager.getControl(name='period_1_1').value = ['Period_B']
+    >>> manager.getControl(name='period_1_2').value = ['Period_C']
+    >>> manager.getControl(name='period_1_3').value = ['Period_A']
+
+    >>> manager.getControl(name='period_2_0').value = ['Period_A']
+    >>> manager.getControl(name='period_2_1').value = ['Period_B']
+    >>> manager.getControl(name='period_2_2').value = ['Period_C']
+    >>> manager.getControl(name='period_2_3').value = ['Period_D']
+    >>> manager.getControl('Next').click()
+
+Do we use a homeroom period?  Let's say no:
+
+    >>> manager.getControl('No').click()
+
+The schema is now created:
+
+    >>> manager.getLink('Rotating 2').click()
+
+    >>> manager.printQuery('//table[@class="timetable"]', skip_inner_blank=True)
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="33%">A</th>
+    <th colspan="2" class="day" width="33%">B</th>
+    <th colspan="2" class="day" width="33%">C</th>
+    </tr>
+    <tr><th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    </table>
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="33%">A</th>
+    <th colspan="2" class="day" width="33%">B</th>
+    <th colspan="2" class="day" width="33%">C</th>
+    </tr>
+    <tr><th class="period" width="3%">09:30-10:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">09:30-10:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">09:30-10:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">10:30-11:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">10:30-11:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">10:30-11:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">11:30-12:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">11:30-12:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">11:30-12:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">12:30-13:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">12:30-13:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">12:30-13:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    </table>
+
+
+Weekly timetable, named periods
+-------------------------------
+
+.. image:: images/ttschema-wizard-4.png
+
+Let's go to the timetable schema wizard:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+
+We enter a title and press Next
+
+    >>> manager.getControl('Title').value = 'Weekly 2'
+    >>> manager.getControl('Next').click()
+
+Does your school's timetable cycle use days of the week, or a rotating cycle?
+Let's choose weekly again.
+
+    >>> manager.getControl('Days of the week').click()
+
+Do classes begin and end at the same time each day in your school's timetable?
+Let's say that classes begin at different times:
+
+    >>> manager.getControl('Different times').click()
+
+Enter start and end times for each slot on each day, one slot (HH:MM - HH:MM)
+per line.  Let's add a few periods.  All days have the same periods, except
+Friday.
+
+    >>> manager.getControl(name='times.0').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+
+    >>> manager.getControl(name='times.1').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+
+    >>> manager.getControl(name='times.2').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+
+    >>> manager.getControl(name='times.3').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+
+    >>> manager.getControl(name='times.4').value = """\
+    ... 9:30-10:20
+    ... 10:25-11:15
+    ... 11:20-12:10
+    ... """
+
+    >>> manager.getControl('Next').click()
+
+Do periods have names or are they simply designated by time? Let's say that
+periods are named.
+
+    >>> manager.getControl('Have names').click()
+
+Now enter names of periods, one per line. We will name them periods A, B, C,
+D, E, F.  Next we get to choose whether sequences of periods in all days are
+the same:
+
+    >>> manager.getControl(name='field.periods').value = """\
+    ... A
+    ... B
+    ... C
+    ... D
+    ... E
+    ... F
+    ... """
+    >>> manager.getControl('Next').click()
+
+Is the sequence of periods each day the same or different? Let's say they are
+different.
+
+    >>> manager.getControl('Different').click()
+
+Please put the periods in order for each day. We can rearrange a little bit:
+
+    >>> manager.getControl(name='period_0_0').value = ['A']
+    >>> manager.getControl(name='period_0_1').value = ['B']
+    >>> manager.getControl(name='period_0_2').value = ['C']
+    >>> manager.getControl(name='period_0_3').value = ['D']
+
+    >>> manager.getControl(name='period_1_0').value = ['B']
+    >>> manager.getControl(name='period_1_1').value = ['C']
+    >>> manager.getControl(name='period_1_2').value = ['D']
+    >>> manager.getControl(name='period_1_3').value = ['E']
+
+    >>> manager.getControl(name='period_2_0').value = ['C']
+    >>> manager.getControl(name='period_2_1').value = ['D']
+    >>> manager.getControl(name='period_2_2').value = ['E']
+    >>> manager.getControl(name='period_2_3').value = ['F']
+
+    >>> manager.getControl(name='period_3_0').value = ['D']
+    >>> manager.getControl(name='period_3_1').value = ['E']
+    >>> manager.getControl(name='period_3_2').value = ['F']
+    >>> manager.getControl(name='period_3_3').value = ['A']
+
+    >>> manager.getControl(name='period_4_0').value = ['C']
+    >>> manager.getControl(name='period_4_1').value = ['D']
+    >>> manager.getControl(name='period_4_2').value = ['E']
+
+    >>> manager.getControl('Next').click()
+
+Do we use a homeroom period?  Let's say no:
+
+    >>> manager.getControl('No').click()
+
+The schema is now created:
+
+    >>> manager.getLink('Weekly 2').click()
+
+    >>> manager.printQuery('//table[@class="timetable"]', skip_inner_blank=True)
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="14%">Monday</th>
+    <th colspan="2" class="day" width="14%">Tuesday</th>
+    <th colspan="2" class="day" width="14%">Wednesday</th>
+    <th colspan="2" class="day" width="14%">Thursday</th>
+    <th colspan="2" class="day" width="14%">Friday</th>
+    <th colspan="2" class="day" width="14%">Saturday</th>
+    <th colspan="2" class="day" width="14%">Sunday</th>
+    </tr>
+    <tr><th class="period" width="1%">A</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">B</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">C</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">D</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">C</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">B</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">C</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">D</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">E</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">D</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">C</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">D</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">E</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">F</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">E</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">D</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">E</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">F</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">A</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    </table>
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="14%">Monday</th>
+    <th colspan="2" class="day" width="14%">Tuesday</th>
+    <th colspan="2" class="day" width="14%">Wednesday</th>
+    <th colspan="2" class="day" width="14%">Thursday</th>
+    <th colspan="2" class="day" width="14%">Friday</th>
+    <th colspan="2" class="day" width="14%">Saturday</th>
+    <th colspan="2" class="day" width="14%">Sunday</th>
+    </tr>
+    <tr><th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:20</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:25-11:15</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:20-12:10</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    </table>
+
+
+
+Weekly timetable, lessons on saturday
+-------------------------------------
+
+Let's go to the timetable schema wizard:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+
+We enter a title and press Next
+
+    >>> manager.getControl('Title').value = 'Weekly 3'
+    >>> manager.getControl('Next').click()
+
+Does your school's timetable cycle use days of the week, or a rotating cycle?
+Let's choose weekly again.
+
+    >>> manager.getControl('Days of the week').click()
+
+Do classes begin and end at the same time each day in your school's timetable?
+Let's say that classes begin at different times:
+
+    >>> manager.getControl('Different times').click()
+
+Enter start and end times for each slot on each day, one slot (HH:MM -
+HH:MM) per line.  Let's add a few periods.  All days have the same
+periods. But this time let's add some periods on Saturday:
+
+    >>> periods = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+
+    >>> for day in range(6):
+    ...     manager.getControl(name='times.%s' % day).value = periods
+
+    >>> manager.getControl('Next').click()
+
+Do periods have names or are they simply designated by time? For now, let's
+say that periods are designated by time.
+
+    >>> manager.getControl('Designated by time').click()
+
+Do we use a homeroom period?  Let's say no:
+
+    >>> manager.getControl('No').click()
+
+The schema is now created:
+
+    >>> manager.getLink('Weekly 3').click()
+
+    >>> manager.printQuery('//table[@class="timetable"]', skip_inner_blank=True)
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="14%">Monday</th>
+    <th colspan="2" class="day" width="14%">Tuesday</th>
+    <th colspan="2" class="day" width="14%">Wednesday</th>
+    <th colspan="2" class="day" width="14%">Thursday</th>
+    <th colspan="2" class="day" width="14%">Friday</th>
+    <th colspan="2" class="day" width="14%">Saturday</th>
+    <th colspan="2" class="day" width="14%">Sunday</th>
+    </tr>
+    <tr><th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%">Lesson</td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    </table>
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="14%">Monday</th>
+    <th colspan="2" class="day" width="14%">Tuesday</th>
+    <th colspan="2" class="day" width="14%">Wednesday</th>
+    <th colspan="2" class="day" width="14%">Thursday</th>
+    <th colspan="2" class="day" width="14%">Friday</th>
+    <th colspan="2" class="day" width="14%">Saturday</th>
+    <th colspan="2" class="day" width="14%">Sunday</th>
+    </tr>
+    <tr><th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    </table>
+
+
+Rotating timetable, different period times (per weekday)
+--------------------------------------------------------
+
+.. image:: images/ttschema-wizard-5.png
+
+Let's do it again!
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+
+We enter a title and press Next
+
+    >>> manager.getControl('Title').value = 'Rotating 3'
+    >>> manager.getControl('Next').click()
+
+Let's choose rotating.
+
+    >>> manager.getControl('Rotating cycle').click()
+
+We shall have three days, designated A, B, and C.
+
+    >>> manager.getControl(name='field.days').value = """\
+    ... A
+    ... B
+    ... C
+    ... """
+    >>> manager.getControl('Next').click()
+
+Let's say that classes begin at different times
+
+    >>> manager.getControl('Different').click()
+
+Do start and end times vary based on the day of the week (Monday -
+Friday) or the day in the cycle?  We'll go with weekly.
+
+    >>> manager.getControl('Day of week').click()
+
+Let's add a few periods.  All days must have the same number of periods.
+
+    >>> for day in [0, 1, 2, 3]:
+    ...     manager.getControl(name='times.%d' % day).value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+
+    >>> manager.getControl(name='times.4').value = """\
+    ... 9:30-10:20
+    ... 10:25-11:15
+    ... 11:20-12:10
+    ... 12:15-13:05
+    ... """
+
+    >>> manager.getControl('Next').click()
+
+Do periods have names or are they simply designated by time? Let's say that
+periods are named.
+
+    >>> manager.getControl('Have names').click()
+
+We will name them periods A, B, C, D.
+
+    >>> manager.getControl(name='field.periods').value = """\
+    ... Period_A
+    ... Period_B
+    ... Period_C
+    ... Period_D
+    ... """
+    >>> manager.getControl('Next').click()
+
+We get to choose whether sequences of periods in all days are the same:
+Let's say they are different.
+
+    >>> manager.getControl('Different').click()
+
+Please put the periods in order for each day. We can rearrange them a bit:
+
+    >>> manager.getControl(name='period_0_0').value = ['Period_A']
+    >>> manager.getControl(name='period_0_1').value = ['Period_C']
+    >>> manager.getControl(name='period_0_2').value = ['Period_B']
+    >>> manager.getControl(name='period_0_3').value = ['Period_D']
+
+    >>> manager.getControl(name='period_1_0').value = ['Period_D']
+    >>> manager.getControl(name='period_1_1').value = ['Period_B']
+    >>> manager.getControl(name='period_1_2').value = ['Period_C']
+    >>> manager.getControl(name='period_1_3').value = ['Period_A']
+
+    >>> manager.getControl(name='period_2_0').value = ['Period_A']
+    >>> manager.getControl(name='period_2_1').value = ['Period_B']
+    >>> manager.getControl(name='period_2_2').value = ['Period_C']
+    >>> manager.getControl(name='period_2_3').value = ['Period_D']
+
+    >>> manager.getControl('Next').click()
+
+Do we use a homeroom period?  Let's say no:
+
+    >>> manager.getControl('No').click()
+
+The schema is now created:
+
+    >>> manager.getLink('Rotating 3').click()
+
+    >>> manager.printQuery('//table[@class="timetable"]', skip_inner_blank=True)
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="33%">A</th>
+    <th colspan="2" class="day" width="33%">B</th>
+    <th colspan="2" class="day" width="33%">C</th>
+    </tr>
+    <tr><th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_B</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_C</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_A</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">Period_D</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    </table>
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="14%">Monday</th>
+    <th colspan="2" class="day" width="14%">Tuesday</th>
+    <th colspan="2" class="day" width="14%">Wednesday</th>
+    <th colspan="2" class="day" width="14%">Thursday</th>
+    <th colspan="2" class="day" width="14%">Friday</th>
+    <th colspan="2" class="day" width="14%">Saturday</th>
+    <th colspan="2" class="day" width="14%">Sunday</th>
+    </tr>
+    <tr><th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">09:30-10:20</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:30-11:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">10:25-11:15</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:30-12:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">11:20-12:10</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    <tr><th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:30-13:25</th>
+    <td class="activity" width="12%"></td>
+    <th class="period" width="1%">12:15-13:05</th>
+    <td class="activity" width="12%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    <td class="activity" colspan="2" width="14%"></td>
+    </tr>
+    </table>
+
+
+Rotating timetable, different period times (rotating day)
+---------------------------------------------------------
+
+.. image:: images/ttschema-wizard-6.png
+
+Let's do it one last time!
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+
+We enter a title and press the `Next` button:
+
+    >>> manager.getControl('Title').value = 'Rotating 4'
+    >>> manager.getControl('Next').click()
+
+Let's choose rotating.
+
+    >>> manager.getControl('Rotating cycle').click()
+
+We shall have three days, designated Day A, Day B, and Day C.
+
+    >>> manager.getControl(name='field.days').value = """\
+    ... Day A
+    ... Day B
+    ... Day C
+    ... """
+    >>> manager.getControl('Next').click()
+
+Do classes begin and end at the same time each day in your school's timetable?
+Let's say that classes begin at the same time:
+
+    >>> manager.getControl('Different times').click()
+
+Do start and end times vary based on the day of the week (Monday -
+Friday) or the day in the cycle?
+
+    >>> manager.getControl('Day in cycle').click()
+
+Enter start and end times for each slot on each day, one slot (HH:MM - HH:MM)
+per line. Let's add a few periods.  Day 2 will have one period more.
+
+    >>> manager.getControl(name='times.0').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+
+    >>> manager.getControl(name='times.1').value = """\
+    ... 9:00-9:55
+    ... 10:00-10:55
+    ... 11:00-11:55
+    ... 12:00-12:55
+    ... 13:00-13:55
+    ... """
+
+    >>> manager.getControl(name='times.2').value = """\
+    ... 9:30-10:25
+    ... 10:30-11:25
+    ... 11:30-12:25
+    ... 12:30-13:25
+    ... """
+    >>> manager.getControl('Next').click()
+
+Do periods have names or are they simply designated by time? Let's say that
+periods are named.
+
+    >>> manager.getControl('Have names').click()
+
+We will name them periods A, B, C, D, E, F.  Next we get to choose whether
+sequences of periods in all days are the same:
+
+    >>> manager.getControl(name='field.periods').value = """\
+    ... A
+    ... B
+    ... C
+    ... D
+    ... E
+    ... F
+    ... """
+    >>> manager.getControl('Next').click()
+
+Is the sequence of periods each day the same or different? Let's say they are
+different.
+
+    >>> manager.getControl('Different').click()
+
+Please put the periods in order for each day. We can rearrange them a bit:
+
+    >>> manager.getControl(name='period_0_0').value = ['A']
+    >>> manager.getControl(name='period_0_1').value = ['B']
+    >>> manager.getControl(name='period_0_2').value = ['C']
+    >>> manager.getControl(name='period_0_3').value = ['D']
+
+    >>> manager.getControl(name='period_1_0').value = ['B']
+    >>> manager.getControl(name='period_1_1').value = ['C']
+    >>> manager.getControl(name='period_1_2').value = ['D']
+    >>> manager.getControl(name='period_1_3').value = ['E']
+    >>> manager.getControl(name='period_1_4').value = ['F']
+
+    >>> manager.getControl(name='period_2_0').value = ['C']
+    >>> manager.getControl(name='period_2_1').value = ['D']
+    >>> manager.getControl(name='period_2_2').value = ['E']
+    >>> manager.getControl(name='period_2_3').value = ['F']
+
+    >>> manager.getControl('Next').click()
+
+Do we use a homeroom period?  Let's say no:
+
+    >>> manager.getControl('No').click()
+
+The schema is now created:
+
+    >>> manager.getLink('Rotating 4').click()
+
+    >>> manager.printQuery('//table[@class="timetable"]', skip_inner_blank=True)
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="33%">Day A</th>
+    <th colspan="2" class="day" width="33%">Day B</th>
+    <th colspan="2" class="day" width="33%">Day C</th>
+    </tr>
+    <tr><th class="period" width="3%">A</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">B</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">C</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">B</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">C</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">D</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">C</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">D</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">E</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><th class="period" width="3%">D</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">E</th>
+    <td class="activity" width="30%">Lesson</td>
+    <th class="period" width="3%">F</th>
+    <td class="activity" width="30%">Lesson</td>
+    </tr>
+    <tr><td class="activity" colspan="2" width="33%"></td>
+    <th class="period" width="3%">F</th>
+    <td class="activity" width="30%">Lesson</td>
+    <td class="activity" colspan="2" width="33%"></td>
+    </tr>
+    </table>
+    <table class="timetable">
+    <tr><th colspan="2" class="day" width="33%">Day A</th>
+    <th colspan="2" class="day" width="33%">Day B</th>
+    <th colspan="2" class="day" width="33%">Day C</th>
+    </tr>
+    <tr><th class="period" width="3%">09:30-10:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">09:00-09:55</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">09:30-10:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">10:30-11:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">10:00-10:55</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">10:30-11:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">11:30-12:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">11:00-11:55</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">11:30-12:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><th class="period" width="3%">12:30-13:25</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">12:00-12:55</th>
+    <td class="activity" width="30%"></td>
+    <th class="period" width="3%">12:30-13:25</th>
+    <td class="activity" width="30%"></td>
+    </tr>
+    <tr><td class="activity" colspan="2" width="33%"></td>
+    <th class="period" width="3%">13:00-13:55</th>
+    <td class="activity" width="30%"></td>
+    <td class="activity" colspan="2" width="33%"></td>
+    </tr>
+    </table>
+
+
+The Cancel button
+-----------------
+
+Let's do it once more!
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+
+We enter a title and press Next
+
+    >>> manager.getControl('Title').value = 'Rotating'
+    >>> manager.getControl('Next').click()
+
+And now we suddenly realize that we don't need another schema.  We can't
+simply go away and forget about this wizard, because it remembers the
+last step we completed:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+    >>> "Days of the week" in manager.contents
+    True
+    >>> "Rotating cycle" in manager.contents
+    True
+
+However we can press the Cancel button and go back to the beginning
+
+    >>> manager.getControl('Cancel').click()
+    >>> manager.url
+    'http://localhost/schoolyears/2005-2006/timetables'
+
+If we now click on the New Timetable button, we'll see the first page
+again.
+
+    >>> manager.getLink('New Timetable').click()
+    >>> manager.getControl('Title')
+    <Control name='field.title' type='text'>
+
+.. vim: ft=rest fdm=indent

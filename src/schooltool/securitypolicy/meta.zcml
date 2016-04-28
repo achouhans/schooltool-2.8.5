@@ -1,0 +1,61 @@
+<configure xmlns="http://namespaces.zope.org/meta">
+
+  <directives namespace="http://schooltool.org/securitypolicy">
+
+    <directive
+      name="crowd"
+      schema=".metadirectives.ICrowdDirective"
+      handler=".metaconfigure.crowd"
+      />
+
+    <directive
+      name="allow"
+      schema=".metadirectives.IAllowDirective"
+      handler=".metaconfigure.allow"
+      />
+
+    <directive
+      name="deny"
+      schema=".metadirectives.IAllowDirective"
+      handler=".metaconfigure.deny"
+      />
+
+    <directive
+      name="describe_group"
+      schema=".metadirectives.IDescribeGroup"
+      handler=".metaconfigure.describe_group"
+      />
+
+    <directive
+      name="describe_action"
+      schema=".metadirectives.IDescribeAction"
+      handler=".metaconfigure.describe_action"
+      />
+
+    <directive
+      name="describe_crowd"
+      schema=".metadirectives.IDescribeCrowd"
+      handler=".metaconfigure.describe_crowd"
+      />
+
+    <directive
+      name="setting"
+      schema=".metadirectives.ISettingDirective"
+      handler=".metaconfigure.setting"
+      />
+
+    <directive
+      name="aggregate_crowd"
+      schema=".metadirectives.IAggregateCrowdDirective"
+      handler=".metaconfigure.aggregate_crowd"
+      />
+
+    <directive
+      name="switch_description"
+      schema=".metadirectives.ISwitchDescription"
+      handler=".metaconfigure.switch_description"
+      />
+
+  </directives>
+
+</configure>

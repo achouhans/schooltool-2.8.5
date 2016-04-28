@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <!-- XXX: what's the right place for this? -->
+  <zope:adapter factory=".form.FlourishRadioBoolTerms" />
+
+  <zope:adapter factory=".widgets.PromptRequiredDemoField"
+                name="prompt" />
+
+  <zope:view
+      type="schooltool.skin.flourish.IFlourishLayer"
+      for="zope.html.field.IHtmlFragmentField"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".widgets.FlourishCkeditorFormlibWidget"
+      permission="zope.Public"
+      />
+
+  <zope:view
+      type="schooltool.skin.flourish.IFlourishLayer"
+      for="zope.html.field.IXhtmlFragmentField"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory="schooltool.skin.widgets.CkeditorFormlibWidget"
+      permission="zope.Public"
+      />
+
+  <zope:view
+      for="schooltool.common.fields.ImageFile"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      factory=".widgets.ImageView"
+      permission="zope.Public"
+      />
+
+  <zope:adapter
+      factory=".form.FlourishErrorViewSnippet"
+      trusted="True"
+      permission="zope.Public"
+      />
+
+  <zope:adapter
+      for="zope.schema.interfaces.IDate
+           schooltool.skin.flourish.IFlourishLayer"
+      provides="zope.formlib.interfaces.ISimpleInputWidget"
+      factory=".widgets.FormlibDateWidget"
+      permission="zope.Public"
+      />
+
+  <zope:adapter
+      factory="schooltool.skin.widgets.CustomDateFieldTextWidget"
+      provides="z3c.form.interfaces.IFieldWidget"
+      for="zope.schema.interfaces.IDate
+           schooltool.skin.flourish.IFlourishLayer"
+      />
+
+  <zope:adapter
+      factory=".widgets.FlourishCkeditorFieldWidget"
+      for="zope.html.field.IHtmlFragmentField
+           schooltool.skin.flourish.IFlourishLayer"
+      />
+
+  <zope:adapter
+      factory="schooltool.skin.flourish.widgets.Flourish_ckeditor_config"
+      name="config"
+      />
+
+  <zope:class class=".widgets.FlourishCkeditorZ3CFormWidget">
+    <require
+        permission="zope.Public"
+        interface="schooltool.skin.widgets.ICkeditorWidget"
+        />
+  </zope:class>
+
+  <zope:adapter
+      factory=".widgets.ImageFieldWidget"
+      provides="z3c.form.interfaces.IFieldWidget"
+      for="schooltool.common.fields.IImage
+           schooltool.skin.flourish.IFlourishLayer"
+      />
+
+  <zope:adapter factory=".widgets.ImageDataConverter" />
+
+  <zope:class class=".widgets.ImageWidget">
+    <require
+        permission="zope.Public"
+        interface="z3c.form.interfaces.IFileWidget"
+        />
+  </zope:class>
+
+  <z3c:widgetTemplate
+      mode="input"
+      widget=".widgets.IImageWidget"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      template="templates/image_input.pt"
+      />
+
+</configure>

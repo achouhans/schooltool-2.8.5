@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<configure xmlns="http://schooltool.org/securitypolicy"
+           xmlns:zope="http://namespaces.zope.org/zope">
+
+  <describe_crowd
+      crowd_factory="schooltool.securitypolicy.crowds._GroupCrowd"
+      factory=".security.GroupCrowdDescription" />
+
+  <describe_crowd
+      crowd_factory="schooltool.securitypolicy.crowds.ManagersCrowd"
+      factory=".security.ManagersCrowdDescription" />
+
+  <crowd
+      name="leaders"
+      factory=".security.LeaderCrowd" />
+
+  <crowd
+      name="group_members"
+      factory=".membership.GroupMemberCrowd" />
+
+  <allow
+      interface="schooltool.group.interfaces.IGroup"
+      permission="schooltool.view"
+      crowds="group_members" />
+
+  <allow
+      interface="schooltool.app.interfaces.ISchoolToolApplication"
+      crowds="everybody"
+      permission="schooltool.view" />
+  <allow
+      interface="schooltool.app.interfaces.ISchoolToolApplication"
+      crowds="managers superuser"
+      permission="schooltool.edit" />
+
+  <allow
+      interface="schooltool.app.interfaces.ISchoolToolApplication"
+      crowds="managers superuser"
+      permission="zope.ManageSite" />
+
+  <!-- Security declarations for calendaring -->
+
+  <crowd
+      name="calendar_viewers"
+      factory=".security.CalendarViewersCrowd" />
+
+  <crowd
+      name="calendar_editors"
+      factory=".security.CalendarEditorsCrowd" />
+
+  <allow
+      interface=".interfaces.ISchoolToolCalendar"
+      permission="schooltool.view"
+      crowds="administrators clerks calendar_viewers" />
+
+  <allow
+      interface=".interfaces.ISchoolToolCalendar"
+      permission="schooltool.edit"
+      crowds="clerks owner calendar_editors superuser" />
+
+  <!-- Security descriptions -->
+
+  <describe_group name="schooltool.app"
+    title="SchoolTool application" />
+
+  <describe_action
+     group="schooltool.app" name="view" title="Access"
+     order="10"
+     interface="schooltool.app.interfaces.ISchoolToolApplication"
+     permission="schooltool.view"
+  />
+
+  <describe_action
+     group="schooltool.app" name="modify"
+     title="Manage school settings and configuration"
+     order="20"
+     interface="schooltool.app.interfaces.ISchoolToolApplication"
+     permission="schooltool.edit"
+  />
+
+  <describe_action
+     group="schooltool.app" name="view_calendar"
+     title="View calendar"
+     order="50"
+     interface="schooltool.app.interfaces.ISchoolToolCalendar"
+     permission="schooltool.view"
+  />
+
+  <describe_action
+     group="schooltool.app" name="change_calendar"
+     title="Change calendar"
+     order="60"
+     interface="schooltool.app.interfaces.ISchoolToolCalendar"
+     permission="schooltool.edit"
+  />
+
+  <!-- Parent crowds -->
+
+  <zope:adapter
+      factory="schooltool.securitypolicy.crowds.EverybodyCrowd"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      provides=".security.ICalendarParentCrowd"
+      name="schooltool.view" />
+
+  <switch_description
+     group="schooltool.app"
+     crowd_factory="schooltool.app.security.CalendarViewersCrowd"
+     use_crowd_factory="schooltool.securitypolicy.crowds.EverybodyCrowd"
+  />
+
+</configure>

@@ -1,0 +1,1111 @@
+=======
+CHANGES
+=======
+
+2.8.5 (2016-02-13)
+------------------
+
+- Fixed group delete view when school year or group was created with non-ascii title (https://bugs.launchpad.net/bugs/1545236)
+
+
+2.8.4 (2015-07-02)
+------------------
+
+- Updated footer and about page
+- Fixed ckeditor widget in gradebook overview popup dialog
+  (https://launchpad.net/bugs/1436881)
+
+
+2.8.3 (2014-11-11)
+------------------
+
+- Specified 24 hour format for slots in timetable wizard (https://bugs.launchpad.net/bugs/892941)
+- Moved custom CSS handling to /etc/schooltool/standard/custom-css
+
+
+2.8.2 (2014-10-14)
+------------------
+
+- Added Sign In & Out report for groups/sections
+- Added Mailing Labels report for groups/sections
+- Added Name Labels report for groups
+- Updated Roster report for sections
+
+
+2.8.1 (2014-08-25)
+------------------
+
+- Added un-enroll functionality for students
+- Added accordion and edit view for student level
+- Added custom CSS handling
+- Fixed row indexing in group importer after relationship change
+- Added relationship states to group accordion in person view
+- Fixed permissions for school year report links and manage year link
+- Fixed page numbers in pdf reports
+- Avoid insecure content warning for fonts.googleapis.com when accessing
+  schooltool through https (https://launchpad.net/bugs/1330106)
+- Fixed email forms
+- Ampersand breaks student detail report (https://launchpad.net/bugs/1328619)
+- Fixed reorder demographics view (https://launchpad.net/bugs/1341514)
+- Updated translations
+
+
+2.8.0 (2014-05-08)
+------------------
+
+- Added 'Added in error' state for temporal relationships
+- Added What is this info to membership state edit view (https://launchpad.net/bugs/1308944)
+
+
+2.6.4 (2014-05-01)
+------------------
+
+- Support CKEditor 4.x (https://launchpad.net/bugs/1309133)
+- Delete schedules that reference a deleted timetable (https://launchpad.net/bugs/1280528)
+- Improve tab style to make active tab more clear (https://launchpad.net/bugs/1023378)
+- Timetables copied from active year retain old start/end dates (https://launchpad.net/bugs/1005962)
+- Updated translations
+
+
+2.7.0 (2014-04-12)
+------------------
+
+New features
+++++++++++++
+
+- Temporal relationships
+- Checkboxes in relationship views
+- Levels for courses and persons
+- Parent access
+- Background import
+- Added descriptions for demographic fields
+
+
+2.6.3 (2014-04-12)
+------------------
+
+New features
+++++++++++++
+
+- Switch to CKEditor (https://launchpad.net/bugs/485898)
+- Celery 3 support (https://launchpad.net/bugs/1276384)
+- Latest translations from Launchpad
+
+Bugfixes
+++++++++
+
+- Fixed exception dates format in calendar widget of recurring events (https://launchpad.net/bugs/372889)
+- Fixed export of deleted timetables (https://launchpad.net/bugs/1281335)
+- Updated copyright (https://launchpad.net/bugs/1289277)
+- Fixed term/section navigation in a different school year (https://launchpad.net/bugs/1281050)
+
+
+2.6.2 (2014-02-15)
+------------------
+
+- Fix upgrade from a fresh install of version 2.6.0 (https://launchpad.net/bugs/1258529)
+- Fix delete year/term if it contains non-ascii chars.
+- Updated translations
+
+
+2.6.1 (2013-11-21)
+------------------
+
+- Synchronize timezone set in preferences with timetables and schedules (https://launchpad.net/bugs/1239468)
+- Set initial timezone from ``/etc/timezone`` (https://launchpad.net/bugs/1030211)
+- Add SchoolTool versions to the Server page.
+- Person cannot see his own preferences (https://launchpad.net/bugs/1247825)
+- Do not escape extra spaces in comments (https://launchpad.net/bugs/1241022)
+- Fix error when trying to replace existing school logo (https://launchpad.net/bugs/1250733)
+- Restore the warning about unsaved changes in gradebook, broken after adding
+  autocompletion (https://launchpad.net/bugs/1253070)
+- Updated translations
+
+
+2.6.0 (2013-10-10)
+------------------
+
+- Don't reverse name order (https://launchpad.net/bugs/1201887)
+- Add "Name sorting" option to Server settings, display the selected name
+  column first in person tables.
+- Person search does not find by full name (https://launchpad.net/bugs/894798)
+- Change manager's full name to "Default Manager" (https://launchpad.net/bugs/1227220)
+- Fix timetable wizard for weekly timetables with different periods order.
+- Fix crash when displaying timetables with only one day (https://launchpad.net/bugs/1235150)
+- Fix navigation inside the School tab if a non-active school year is selected,
+  or school years title contains accented characters (https://launchpad.net/bugs/1234690)
+- Setting multiple languages in schooltool.conf breaks remote reports (https://launchpad.net/bugs/1229013)
+- Improvements to PDF grid and table style.
+- Extra info in traceback page and submit to launchpad button
+- Updated translations, removed unsupported ones (less than 25% translated).
+
+
+2.5.3 (2013-09-17)
+------------------
+
+Bugfixes
+++++++++
+
+- Fix integer demographic fields handling in importer (https://launchpad.net/bugs/1211613)
+- Add Activate school year link in School tab under Customize (https://launchpad.net/bugs/1216992 )
+- Fix links and Done buttons inside School tab when a different school year is selected
+- Add manager to Site Managers and Clerks groups (https://launchpad.net/bugs/1216915)
+- Access setting: allow instructor to add students to their section (https://launchpad.net/bugs/637759)
+- Access setting: allow instructor to modify their section (https://launchpad.net/bugs/683313)
+- Access setting: instructors can schedule their own sections (https://launchpad.net/bugs/604643)
+- Display contact information of a person in profile.
+- Updated translations
+
+Internals
++++++++++
+
+- Add ability to disable views in customized packages (https://launchpad.net/bugs/716346)
+
+
+2.5.2 (2013-08-22)
+------------------
+
+- Autocompletion in gradebook for discrete score systems.
+- TAB key in gradebook moves to the next cell.
+- Further updates to permissions.
+- Clerks and administrators now have appropriate access to parts of the School.
+- Update GPL license and file headers from gnu.org (https://launchpad.net/bugs/1211145)
+- Fix failures when creating timetables with rotating periods and weekly time slots (https://launchpad.net/bugs/1214131)
+- Updated translations
+
+
+2.5.1 (2013-08-01)
+------------------
+
+- Differentiate permissions of administrators, clerks, and managers.
+- Scripts and styles for the new attendance features.
+- Updated translations
+
+
+2.5.0 (2013-06-03)
+------------------
+
+Reports
++++++++
+
+- Background XLS import (disabled)
+- Background XLS export
+- Background report generation
+- Multiple reports in a .zip archive
+- Messages about finished background tasks
+- Added resource library for filtered/chart reports
+- Removed Person XML reports
+
+Server
+++++++
+
+- There are now 4 processes, controlled by ``supervisor``: ``schooltool``, ``zeo``,
+  ``celery_report``, and ``redis``.
+- New ``make`` targets: start, stop, restart, rerun, status.
+- You have to install ``redis-server`` package on the system. Other new
+  dependencies are Python packages.
+- Instances have to be updated to run this version. If you run from a sandbox,
+  do ``bin/make-schooltool-instance instance``.
+
+
+2.4.1 (2013-05-30)
+------------------
+
+Reports
++++++++
+
+- Fixed report generation to not do network requests (https://launchpad.net/bugs/1185418).
+- Fixed ratio of school logo.
+- Fixed rendering of "&" in headers.
+
+Bugfixes
+++++++++
+
+- Warn about unsaved changes when leaving gradebook (https://launchpad.net/bugs/907999)
+- Comment dialog submits the gradebook
+
+Language
+++++++++
+
+- Replaced Filter by... labels
+- Updated Italian, Greek, Portuguese, and other translations.
+
+
+2.4.0 (2013-04-19)
+------------------
+
+- Fix crash on startup in 2.4b1 release
+- Fix PDF reports crashing with newer z3c.rml (https://launchpad.net/bugs/1169723)
+- Remove dependency on ``zope.app.server``
+- Remove or deprecate unused schooltool.conf options
+- Do not echo password being entered using ``schooltool-server --restore-manager -``
+
+
+2.4b1 (2013-04-17)
+------------------
+
+Bugfixes
+++++++++
+
+- Fixed setting up section schedules for multiple terms
+- Home and Calendar tabs work incorrectly when looking at other persons (https://launchpad.net/bugs/1166926)
+- Prevented XLS importer from crashing with non-xls files (https://launchpad.net/bugs/904968)
+
+Translations
+++++++++++++
+
+- Updated translations, added Thai. Special thanks to Vitali Oleshkevich, who
+  has completed both Russian and Ukrainian translations!
+
+
+2.4a2 (2013-02-18)
+------------------
+
+- Move User fieldset up in Add person page (https://launchpad.net/bugs/896848)
+- Removed unsupported translations: af, bn, fo, et, hu, te.
+- Updated translations.
+
+
+2.4a1 (2013-01-23)
+------------------
+
+- Javascript for entering comments in gradebook cells.
+- Support table grouping by column.
+- Updated translations.
+
+Reports
++++++++
+
+- New PDF page design and implementation.
+- Render forms, tables, and grids to RML (PDF).
+- Add section roster, person profile, and resources reports.
+
+Development tools
++++++++++++++++++
+
+- Removed API Docs and Introspector
+
+
+2.3.1 (2012-11-27)
+------------------
+
+- Indexed table improvements for cando.
+- Automatically include plugin overrides.zcml
+- Updated translations.
+
+
+2.3.0 (2012-10-19)
+------------------
+
+- Update scheduled calendar event titles on section title change (https://launchpad.net/bugs/899368)
+- Allow student's instructors edit his contact's data (https://launchpad.net/bugs/479336)
+- Schedule for all terms at once (https://launchpad.net/bugs/1047266)
+
+
+2.2.4 (2012-10-09)
+------------------
+
+New features
+++++++++++++
+
+- School logo (https://launchpad.net/bugs/314151)
+- Photos for contacts (https://launchpad.net/bugs/970201)
+- Highlight today in calendars (https://launchpad.net/bugs/79865)
+- Done links now look like buttons
+- New script, schooltool-server, to enable --pack and --restore-password
+  commands (https://launchpad.net/bugs/505824)
+
+Bugfixes
+++++++++
+
+- SectionTimetables sheet doesn't add calendar events (https://launchpad.net/bugs/1061385)
+- Log In button should remember where you came from (https://launchpad.net/bugs/1039194)
+- Permission fixes
+- Updated translations.
+
+
+2.2.3 (2012-09-13)
+------------------
+
+- Section add form needs title and location (https://launchpad.net/bugs/1042267)
+- Person links in group view return to group
+
+
+2.2.2 (2012-08-31)
+------------------
+
+- We need person filters on the group page (https://launchpad.net/bugs/1038845)
+- Ignore trailing space in ID cells (https://launchpad.net/bugs/1042773)
+- Unrecognized day id error on localized XLS import (https://launchpad.net/bugs/901267)
+- Updated translations
+
+
+2.2.1 (2012-08-15)
+------------------
+
+XLS
++++
+
+- Handle empty Weekends table (https://launchpad.net/bugs/1035969)
+- Skip empty rows if there is only one table in the sheet (https://launchpad.net/bugs/1035088)
+
+
+2.2.0 (2012-08-07)
+------------------
+
+New features
+++++++++++++
+
+- Refactored gradebook/journal javascript and style
+- Add teachers column sections list
+- Add filter by course and term to sections list
+- Show term details in term view
+
+Old features
+++++++++++++
+
+- Show sections and groups of a person in a tree, grouped by term, like in old skin.
+- List sections in course view (https://launchpad.net/bugs/868396)
+
+XLS
++++
+
+- New sections sheets to replace section sheets per term (https://launchpad.net/bugs/1020836)
+- Remove the old Sections exporter and tests (https://launchpad.net/bugs/1020837).
+  Old section import still supported.
+- New LinkedSectionImport sheet for import only (https://launchpad.net/bugs/1020838)
+- Import errors grouped by sheet and error type, displayed in a textarea
+  (https://launchpad.net/bugs/1020839)
+- ResourceImporter needs to process description cells (https://launchpad.net/bugs/1020840)
+
+Bugfixes
+++++++++
+
+- Allow teachers to see attributes of all sections and resources.
+
+Development tools
++++++++++++++++++
+
+- Selenium downloads
+- XLS file testing helpers
+
+
+2.1.1 (2012-08-16)
+------------------
+
+Translations
+++++++++++++
+
+- Updated translations
+- Added Bosnian, Croatian, Slovenian translations
+
+XLS
++++
+
+- Added course_id, government_id and credits to Courses sheet import/export.
+- Exporters must skip sections with no courses (https://launchpad.net/bugs/1020842)
+
+Bugfixes
+++++++++
+
+- Missing hexes.svg background in released packages (https://launchpad.net/bugs/1030218)
+- Timetables evolution fails on exception days (https://launchpad.net/bugs/1003834)
+- Advisory accordion doesn't show advisees (https://launchpad.net/bugs/1005989)
+- Fix upgrade from schooltool < 1.5 crashing (https://launchpad.net/bugs/1007361)
+- Remove demographics when person is deleted.
+- Users cannot see their own photo (https://launchpad.net/bugs/1007145)
+
+Development tools
++++++++++++++++++
+
+- Selenium screenshots
+
+
+2.1.0 (2012-04-19)
+------------------
+
+Final release for Ubuntu 12.04 LTS
+
+New features
+++++++++++++
+
+- Add Calendar tab, configure default tab (https://launchpad.net/bugs/938825)
+- Add a background with hexes (https://launchpad.net/bugs/967233)
+- XLS import now has Teachers and Students sheets
+- Updated many translations, added Sinhalese (si).
+
+Bugfixes
+++++++++
+
+- Fix date validation to not crash on years before 1900 (https://launchpad.net/bugs/960367)
+- Fixed section delete view when school year was created with non-ascii title (https://launchpad.net/bugs/963740)
+- Fixed resource views when the resource title has non-ascii characters (https://launchpad.net/bugs/916086)
+- Show all demographics fields in person index view (https://launchpad.net/bugs/944471)
+- XLS import automatically adds teachers and students to the corresponding groups
+- Fix breakage if intervention plugin was used, but then disabled (https://launchpad.net/bugs/969221)
+- Replace PIL dependency with Pillow to fix image libraries detection when
+  building from source on Ubuntu.
+
+
+2.0.3 (2012-03-19)
+------------------
+
+New features
+++++++++++++
+
+- Dynamic javascript person and other tables
+- Can search persons and contacts by full name or partial names
+- Add all search results button in relationship views
+- Photos for persons (https://launchpad.net/bugs/683316)
+- Added ID cards for persons and groups 
+- Tab hiding (https://launchpad.net/bugs/938810)
+- Sections need locations (https://launchpad.net/bugs/932920)
+- Update jQuery to 1.7.1
+- Add more options from paster to start-schooltool-instance.
+- Updated translations, added Occitan (oc).
+
+
+Bugfixes
+++++++++
+
+- Server tab not highlighted, no breadcrumbs (https://launchpad.net/bugs/868435)
+- Make (weekly) schedules only contain schooldays (https://launchpad.net/bugs/930312)
+- Prevented duplicated demographics field IDs (https://launchpad.net/bugs/783887)
+- Gradebook popup fixes (https://launchpad.net/bugs/886257)
+
+Development tools
++++++++++++++++++
+
+- Selenium testing improvements
+- Selenium browser extensions
+
+
+2.0.2 (2012-02-14)
+------------------
+
+- Added integer demographic fields.
+
+Bugfixes
+++++++++
+
+- Fixed the password edit view (https://launchpad.net/bugs/868411)
+- Allow optional Selection List demographics fields to remain unset (https://launchpad.net/bugs/898219)
+- Fixed person edit view to show limited demographics fields (https://launchpad.net/bugs/914609)
+- Sorted section list in person accordion (https://launchpad.net/bugs/921373)
+- Move 'School name' to the bottom of Customize menu (https://launchpad.net/bugs/876797)
+- Restore fill down in gradebook contextual menu (https://launchpad.net/bugs/907907)
+- Updated translations.
+
+
+2.0.1 (2011-12-22)
+------------------
+
+- Cannot add resources (https://launchpad.net/bugs/894632)
+- Email view needs formatting (https://launchpad.net/bugs/886304)
+- Batches missing in several views (https://launchpad.net/bugs/882060)
+- Show usernames in every persons table (https://launchpad.net/bugs/897260)
+- Many CSS fixes (https://launchpad.net/bugs/885807)
+- Many wording and i18n fixes by Douglas Cerna.
+- Hide demographics fieldset if it is empty in person add views (https://launchpad.net/bugs/752051)
+- Fix test failing when translations are compiled.
+- Sorted course titles in section add form (https://launchpad.net/bugs/905386)
+- Fixed required demographics description fields (https://launchpad.net/bugs/896390)
+- Styled the fckeditor widget (https://launchpad.net/bugs/891348)
+- Updated README.txt (https://launchpad.net/bugs/590781)
+- Document running on port 80 (https://launchpad.net/bugs/259415)
+- Updated translations.
+
+
+2.0.0 (2011-11-23)
+------------------
+
+Bugfixes
+++++++++
+
+- Deal with the 's in the sidebar (https://launchpad.net/bugs/873045)
+- Terms index still has inconsistent style (https://launchpad.net/bugs/892923)
+- Move pack database action to server page (https://launchpad.net/bugs/886310)
+- Done's to get back to /school (https://launchpad.net/bugs/892926)
+- Credits hint still asks for integer (https://launchpad.net/bugs/892946)
+- Courses import should have cancel (https://launchpad.net/bugs/892952)
+- Courses import instructions doesn't reflect new field names (https://launchpad.net/bugs/892949)
+- Translate default demographics fields.
+
+Cleanup
++++++++
+
+- Remove ancient demographics implementation.
+- Remove obsolete images and docs.
+- Remove duplicate jQuery(ui).
+
+
+1.9.3 (2011-11-18)
+------------------
+
+- Improved style of date pickers, buttons, calendars, errors, gradebook etc.
+- Fixed all tests.
+- Updated translations.
+
+Calendar
+++++++++
+
+- More informative calendar titles.
+- Multi term sections should show only once in calendar view. (https://launchpad.net/bugs/872289)
+- Classes show up twice in student/teacher calendars (https://launchpad.net/bugs/882285)
+- Name order reversed in calendar (https://launchpad.net/bugs/891341)
+- Calendar showing wrong day (https://launchpad.net/bugs/877815)
+- Only restore last visited calendar days if date user last looked at it is today.
+- In calendar overlay legend, display only sections that are in terms that are visible in the view.
+
+Export
+++++++
+
+- XLS importer crashes on reimport in timetable code (https://launchpad.net/bugs/878209)
+- Import of Contact Relationships fails with DuplicateRelationship error (https://launchpad.net/bugs/882482)
+- Reimporting sections using CSV does not work anymore (https://launchpad.net/bugs/251866)
+- XLS importer needs to handle integer data (https://launchpad.net/bugs/362014)
+- Allow import of Equipment resources
+- Ensure XLS import works with existing objects in database (https://launchpad.net/bugs/585119)
+
+Other bugfixes
+++++++++++++++
+
+- Server error when opening demographic container (https://launchpad.net/bugs/887662)
+- Need to sort groups in filter widget (https://launchpad.net/bugs/884230)
+
+Devmode
++++++++
+
+- Instead of redirecting to log-in page, show security check log (https://launchpad.net/bugs/716340)
+
+
+1.9.2 (2011-11-04)
+------------------
+
+- Make sandbox with virtualenv. Fixes bootstrap with Python 2.7.
+- Group sections by term in calendar (https://launchpad.net/bugs/872289)
+- Terms are listed upside down (https://launchpad.net/bugs/872240)
+- Moved Demographics into General Information accordion (https://launchpad.net/bugs/882073)
+- Added two "Other" contact fields (https://launchpad.net/bugs/874568)
+- User information doesn't show username (https://launchpad.net/bugs/545767)
+- Username in login bar should go to user home (https://launchpad.net/bugs/868394)
+- No language selector in flourish (https://launchpad.net/bugs/868397)
+- Many calendaring fixes
+- Updated translations.
+
+Export
+++++++
+
+- XLS import of boolean or required demo fields (https://launchpad.net/bugs/859424)
+
+
+1.9.1 (2011-10-07)
+------------------
+
+- Fully translatable.
+- Experimental implementation of Selenium testing API.
+- Fixed or disabled some tests.
+- Page title.
+- Updated translations.
+
+Export
+++++++
+
+- Added small sample data xls.
+- Added boolean and date demo field support to xls import.
+- Fixed export of booleans bug (https://launchpad.net/bugs/796791)
+
+
+1.9.0 (2011-09-21)
+------------------
+
+This is a first release from "flourish" branch that was being worked on
+tirelessly since June. 
+
+It features a new, much improved look and navigation, a total redesign.
+
+There are too many changes to list.
+
+Export
+++++++
+
+- XLS import/export of contacts (https://launchpad.net/bugs/608873)
+
+API changes
++++++++++++
+
+- Timetables rewrite
+- Pluggable traverser refactoring, traversers lost redundant request parameter
+- New `flourish` content, viewlet, page, breadcrumbs, resourceLibrary and
+  ZCML directives for them.
+- Requires Python >= 2.6
+
+
+1.7.0 (2011-09-15)
+------------------
+
+New features
+++++++++++++
+
+- Linked sections view for a section, allowing to extend a section to another term
+  or link an existing section (https://launchpad.net/bugs/424498)
+- XLS importer now automatically links sections with same ID that are marked to link
+
+Cleanup
++++++++
+
+- Removed help (https://launchpad.net/bugs/789157)
+- Removed school setup data framework (https://launchpad.net/bugs/307237)
+- Made ``zope.app.apidoc`` dependency optional, it is only useful for
+  developers. Add ``schooltool [apidoc]`` to package:eggs in buildout.cfg
+  if you want API Docs.
+- Remove dependency on ``zope.app.zcmlfiles`` and many others implied by it.
+
+
+1.6.1 (2011-09-14)
+------------------
+
+- Add paste.ini_tmpl to .tar.gz to fix start-schooltool-instance not creating
+  the required paste.ini file.
+
+  NOTE: run ``make-schooltool-instance instance`` to fix `instance` if it does
+  not start.
+
+- Allowed non-integer values for course credits (https://launchpad.net/bugs/488376)
+- Add School Year copies all course attributes (https://launchpad.net/bugs/785994)
+- Fixed XLS import crashes:
+
+  + Username is a number (https://launchpad.net/bugs/801870)
+  + No file selected for import
+  + Section timetables without resources (https://launchpad.net/bugs/839031)
+  + Empty sections or groups (https://launchpad.net/bugs/382566)
+
+- Update translations.
+
+
+1.6.0 (2011-04-25)
+------------------
+
+- Move schooltool.commendation example plugin into its own project
+  https://launchpad.net/schooltool.commendation
+- Workaround tests failing if translations have been compiled (https://launchpad.net/bugs/79761).
+- Fixed crashes when term title is "First" or "Last" (https://launchpad.net/bugs/485639).
+
+
+1.6.0b1 (2011-04-18)
+--------------------
+
+New features
+++++++++++++
+
+- Added report package (https://launchpad.net/bugs/429588)
+
+  + New Manage->Reports page listing all available reports.
+  + New reportLink directive for registering reports.
+  + Copied translations from gradebook.
+
+- Removed 'Report a bug on Launchpad' link from the footer
+- Include meta.zcml of plugins first to allow them have optional dependencies.
+- Updated translations.
+
+
+1.6.0a1 (2011-02-23)
+--------------------
+
+New features
+++++++++++++
+
+- Added boolean demographic fields.
+- Added customizable fields for resources.
+- Added limit keys property to demographic fields.
+- Created group-aware (teacher, student, administrator) person add views.
+- Use Liberation fonts instead of non-free Microsoft fonts (https://launchpad.net/bugs/371655).
+  You have to edit schooltool.conf and change msttcorefonts to ttf-liberation to
+  re-enable PDF generation.
+- Update included jQuery to 1.5 (https://launchpad.net/bugs/588645).
+- Developer documentation can be generated from source.
+
+Cleanup
++++++++
+
+- Removed obsolete dependencies, support upgrading from schooltool >= 1.0 only.
+- Removed obsolete config keys.
+- Renamed the default schooltool application to schooltool.standard.
+
+
+1.5.3 (2010-11-24)
+------------------
+
+- Fixed Section meeting time misalignment in calendar (https://launchpad.net/bugs/611797)
+- Added Bengali and Faroese translations, updated many others
+
+
+1.5.2 (2010-10-04)
+------------------
+
+- Activation of selected school year (https://launchpad.net/bugs/635160)
+- Added "Add Multiple Persons" to Manage->Persons and "New Person" (for
+  administration) to all other person views (https://launchpad.net/bugs/268127)
+- Empty usernames no longer crash when adding a person (https://launchpad.net/bugs/644296)
+- Replace access setting checkboxes with radio buttons (https://launchpad.net/bugs/638651)
+- Fix security checks to let teachers edit learners and other section info
+  if they have access rights.
+- Add "View Person" action button in contact views (https://launchpad.net/bugs/635207)
+- Update translations.
+
+
+1.5.1 (2010-09-09)
+------------------
+
+- Tweaked WYSIWYG CK editor (https://launchpad.net/bugs/485446)
+- Make CK editor work with servers under mod-rewrite (https://launchpad.net/bugs/258951)
+- Update to work with latest ZTK (1.0a3)
+- Renamed some classes and interfaces from Source to Vocabulary.
+  This change is not backwards compatible, plugins may need updating.
+- Added error checking on demographics edit form (https://launchpad.net/bugs/610870)
+- Update translations.
+
+
+1.5.0 (2010-07-13)
+------------------
+
+New features
+++++++++++++
+
+- Introduce minimalistic learning levels.
+- Introduce versioned catalogs.
+- Allow applying timetable for a part of the term only (https://launchpad.net/bugs/532428)
+- TimeTable object now has consecutive_periods_as_one flag for use by journal
+
+Bug fixes
++++++++++
+
+- Speed up editing of section learners and instructors (https://launchpad.net/bugs/599258)
+- XLS Importer catches errors before trying to create objects. (https://launchpad.net/bugs/306339)
+- Removed SchoolTool logo from PDF footers (https://launchpad.net/bugs/561558)
+- Update translations (ca, en_AU, eu, ne, pl, tr)
+
+
+1.4.1 (2010-06-15)
+------------------
+
+- Copy data from previous school year (https://launchpad.net/bugs/541673)
+- Update translations (ca, es, es_SV, sk, te, vi, zh_CN)
+
+
+1.4.0 (2010-05-21)
+------------------
+
+This is a final release for Lucid.
+
+- Fix Timetable Schemas page for non-manager users (https://launchpad.net/bugs/545780)
+- Fix timetable display when first day of the week is empty (https://launchpad.net/bugs/545763)
+- Fix timetable plugin for sampledata (https://launchpad.net/bugs/306107)
+- Translate "Confirm" button in delete forms correctly.
+- Update translations
+
+
+1.3.2 (2010-04-29)
+------------------
+
+- Added course names to section links in the person view, sorting Sections and
+  Groups links by school year (https://launchpad.net/bugs/545793)
+- Made edit links on person, section and group views available only to managers (https://launchpad.net/bugs/361436)
+- Display resources of calendar events on weekly view (https://launchpad.net/bugs/540099)
+- Changed old Zonki in pdf footers (https://launchpad.net/bugs/561558)
+- Use semicolon to separate instructors in section's label (https://launchpad.net/bugs/558911)
+- Prevent the user to enter non-ascii usernames (https://launchpad.net/bugs/397610)
+- Update translations
+
+
+1.3.1 (2010-04-07)
+------------------
+
+- Reduce dependency on ``zope.app.*`` packages
+- Allow advisors to view person info (https://launchpad.net/bugs/513064)
+- Flag to disable mail server (https://launchpad.net/bugs/513026)
+- Added action to send emails to student contacts (https://launchpad.net/bugs/496255)
+- Formatted email form notifications (https://launchpad.net/bugs/497492)
+- Fixed broken FCK Editor in some views (https://launchpad.net/bugs/556478)
+- Added a "neutral" submit button style (https://launchpad.net/bugs/424510)
+- Added security descriptions tutorial
+- Update translations
+
+
+1.3.0 (2010-01-06)
+------------------
+
+- Port to zope versions available in karmic https://launchpad.net/bugs/498803
+- Update translations
+
+
+1.2.1 (2009-12-29)
+------------------
+
+- Automatic plugin inclusion using z3c.autoinclude
+- Many build improvements by Justas and Gediminas
+- Code cleanup
+
+Bug fixes
++++++++++
+
+- Traceback trying to view student's contacts
+  https://launchpad.net/bugs/475586
+- Section scheduling view now returns to section on save
+  https://launchpad.net/bugs/485616
+- Removed Timetables link from section context, https://launchpad.net/bugs/485617
+
+Translations
+++++++++++++
+
+- Many i18n fixes by Douglas and Gediminas
+- Update translations
+
+
+1.2.0 (2009-11-04)
+------------------
+
+New features
+++++++++++++
+
+- A way to enter contact information of users themselves (as opposed to
+  external contacts) https://launchpad.net/bugs/381158
+
+- Outgoing email support for interventions (sent either via specified
+  SMTP server or your Gmail account).
+  https://launchpad.net/bugs/417029,
+  https://launchpad.net/bugs/417101,
+  https://launchpad.net/bugs/425759
+
+SchoolTool security
++++++++++++++++++++
+
+- An overview page of user permissions (access rights) in SchoolTool.
+  https://launchpad.net/bugs/381698
+  (Only SchoolTool core permissions listed - Gradebook, Attendance/Journal
+  and Interventions are soon to follow)
+
+- Refined some of the rougher access permission corners, tightened
+  permissions where needed.
+
+Bug fixes
++++++++++
+
+- Much better SchoolTool translatability coverage.
+
+- Failed to create sections that span multiple terms.
+  https://launchpad.net/bugs/427321
+
+- Crufty section name display for section.
+  https://launchpad.net/bugs/394388
+
+
+1.0.3 (2009-07-07)
+------------------
+
+New features
+++++++++++++
+
+- New section adding view.
+
+  - Multiple-term (linked) sections can now be created.
+
+  - "New Section" button replaced with a link in action menu in course view.
+
+  - Sections now can also be added from term's "sections" view.
+
+  - See https://launchpad.net/bugs/389283
+
+- You can specify the relationship between a person and a contact from a
+  standard set (parent, guardian, step-parent, etc). See
+  https://launchpad.net/bugs/381412
+
+- Removed ability to delete calendar events that come from (section) timetables.
+  See https://launchpad.net/bugs/271391
+
+Douglas Cerna:
+
+- Added missing attributes to the course adding form and the csv import.  See
+  https://launchpad.net/bugs/384945 and
+  https://launchpad.net/bugs/384957
+
+Tweaks and fixes
+++++++++++++++++
+
+- Active year is no longer highlighted in red.  See
+  https://launchpad.net/bugs/317651
+
+- Fixed contact deletion crash. See
+  https://launchpad.net/bugs/382239
+
+- Section and course descriptions are displayed properly now.  See
+  https://launchpad.net/bugs/370581
+
+- Fixed a typo in default ethnicity demographics field.  See
+  https://launchpad.net/bugs/376116
+
+- Fixed glitches (events not displayed or displayed in wrong day) in weekly
+  calendar views. See https://launchpad.net/bugs/285514 and
+  https://launchpad.net/bugs/389626  Thanks go to Daniel Höger
+  for the report and part of the fix.
+
+Unicode fixes
++++++++++++++
+
+Douglas Cerna:
+
+- Contacts views.  See https://launchpad.net/bugs/382251
+
+- Course CSV import.  See https://launchpad.net/bugs/375792
+
+
+1.0.2 (2009-06-02)
+------------------
+
+Justas Sadzevičius:
+
+- SchoolTool no longer supports groups as members of a section.  To add all
+  members of a group, please use the filter in section's "edit individuals"
+  page.  See https://launchpad.net/bugs/370629
+
+- Optional "Course ID", "Goverment ID" and "Credits" fields added to a Course.
+  See  https://launchpad.net/bugs/381031
+
+Gediminas Paulauskas:
+
+- Fixed broken packages.  See https://launchpad.net/bugs/352096
+
+- Server properly starts after installation or upgrade.  See
+  https://launchpad.net/bugs/334365
+
+
+1.0.1 (2009-05-11)
+------------------
+
+Major
++++++
+
+Translations are back in SchoolTool.
+
+As usual, please set a preferred language in your browser or follow instructions
+in the SchoolTool book:
+http://book.schooltool.org/htmlhelp/translations.html#selecting-schooltool-s-language
+
+Tweaks and fixes
+++++++++++++++++
+
+Douglas Cerna:
+
+- Made CSV importer support blank lines.  See https://launchpad.net/bugs/253663
+
+Justas Sadzevičius:
+
+- Added section linking to the edit section view.
+
+
+1.0.0 (2009-04-30)
+------------------
+
+Person and Demographics
++++++++++++++++++++++++
+
+Filip Sufitchi <fsufitch@charon>:
+
+- Initial implementation of demographics field management views.
+
+Ignas Mikalajūnas <ignas@pov.lt>:
+
+- Added custom demographics field storage and fields themselves.
+- Added contacts to schooltool with list/add/edit/display views.
+- Added contact managemenet view and made it possbile to add+assign contact
+  in one go.
+
+Alan Elkner <aelkner@gmail.com>:
+
+- added group to person add form
+- added advisor to person add form
+- added advisor and advisee functionality to BasicPerson
+- basicperson has new fields and some old ones were removed
+
+PDF Reporting improvements
+++++++++++++++++++++++++++
+
+Justas Sadzevičius <justas@pov.lt>:
+
+- Rewrite calendar PDF views to use RML.
+- Added headers and footers to PDF views.
+
+XLS import/export
++++++++++++++++++
+
+Tom Hoffman <tom.hoffman@gmail.com>:
+
+- Creaded empty annotated XLS import template.
+- Updated texts in XLS import view
+
+Ignas Mikalajūnas <ignas@pov.lt>:
+
+- Added ability to import user passwords.
+
+- Importer now will not complain about missing spreadsheets in the XLS
+  file being imported.
+
+- Added Export to XLS functionality.
+
+- Split terms into 2 school years in sample data.
+
+- Fixed a crash in export when no resources are assigned to a timetable
+  event.
+
+- Separated section import/export into separate spreadsheets.
+
+- Made most if not all the objects in xls import reimportable.
+
+- Added demographics information to the sample data file.
+
+- Changed "Excel import" action to "XLS import".
+
+Tweaks and fixes
+++++++++++++++++
+
+Tom Hoffman <tom.hoffman@gmail.com>:
+
+- Updated section import csv file documentation.
+
+Alan Elkner <aelkner@gmail.com>:
+
+- Removed unused identifier field from add forms.
+
+Filip Sufitchi:
+
+- Made Delete buttons look consistently (Red) all over the system.
+
+Chris Carey:
+
+- Unify color color scheme in schooltool.gradebook and schooltool.lyceum.journal
+  ajax status indicators.
+
+- Added School Timetable id display to the School Timetable view page
+
+Ignas Mikalajūnas <ignas@pov.lt>:
+
+- Added headers to some Section views.
+- Do not allow people without schooltool.edit permission on SchoolYears delete
+  terms.
+- Made field descriptions in most of the forms visible.
+- Switched to ISO dates everyehere.
+- Added date picker to all the forms in schooltool.
+- Started using ISO date format (yyyy-mm-dd) in the short date formatter.
+
+- Removed resource booking link from the section view.
+
+Justas Sadzevičius <justas@pov.lt>:
+
+- Added simple section cross-term copying and linking interface.
+
+- Fixed a small bug in weekly calendar title - week date range was
+  one day too long.
+
+Douglas Cerna:
+
+- Group and section member CSV import views.

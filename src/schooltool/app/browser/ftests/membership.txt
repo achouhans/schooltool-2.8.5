@@ -1,0 +1,136 @@
+Functional doctest for group membership
+=======================================
+
+Setup
+-----
+
+We need an application with a few groups and persons.
+
+    >>> manager = Browser('manager', 'schooltool')
+
+Set up the basic school:
+
+    >>> from schooltool.app.browser.ftests.setup import setUpBasicSchool
+    >>> setUpBasicSchool()
+
+A bunch of persons:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('Import Persons').click()
+
+    >>> manager.getControl('CSV Data').value = '''\
+    ... person001, Q. Bert, Q. Bert
+    ... person002, W. Bert, W. Bert
+    ... person003, E. Bert, E. Bert
+    ... person004, R. Bert, R. Bert
+    ... person005, T. Bert, T. Bert
+    ... person006, Y. Bert, Y. Bert
+    ... person007, U. Bert, U. Bert
+    ... person008, I. Bert, I. Bert
+    ... person009, O. Bert, O. Bert
+    ... person010, P. Bert, P. Bert
+    ... person011, A. Bert, A. Bert
+    ... person012, S. Bert, S. Bert
+    ... person013, D. Bert, D. Bert
+    ... person014, F. Bert, F. Bert
+    ... person015, G. Bert, G. Bert
+    ... '''
+    >>> manager.getControl('Submit').click()
+
+    >>> '<p>CSV text imported successfully.</p>' in manager.contents
+    True
+
+A bunch of groups:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Year').click()
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('Import Groups').click()
+
+    >>> manager.getControl('CSV Data').value = '''\
+    ... group001, Z Team
+    ... group002, X Team
+    ... group003, C Team
+    ... group004, V Team
+    ... group005, B Team
+    ... group006, N Team
+    ... group007, M Team
+    ... group008, L Team
+    ... group009, K Team
+    ... group010, J Team
+    ... group011, H Team
+    ... group012, G Team
+    ... group013, F Team
+    ... group014, D Team
+    ... group015, S Team
+    ... '''
+    >>> manager.getControl('Submit').click()
+
+    >>> '<p>CSV text imported successfully.</p>' in manager.contents
+    True
+
+
+Group member view
+-----------------
+
+Let's go to a group, and look at its members.
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Year').click()
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('group001').click()
+    >>> manager.getLink('edit members').click()
+
+    >>> '<title>group001</title>' in manager.contents
+    True
+
+    # Only shows first ten persons
+    >>> checkbox = '<input type="checkbox" name="%s" id="%s" />'
+    >>> for i in [1, 3, 4, 8, 9, 10, 11, 13, 14, 15]:
+    ...     id = "add_item.person%.3i" % i
+    ...     ith_checkbox = checkbox % (id, id)
+    ...     if ith_checkbox not in manager.contents:
+    ...        print ith_checkbox
+
+Let's add a few members.
+
+    >>> manager.getControl('Q. Bert').click()
+    >>> manager.getControl('A. Bert').click()
+
+    >>> manager.getControl('Add').click()
+
+    >>> # quick css check for the neutral buttons
+    >>> manager.printQuery('//input[@value="Invert Selection" or @value="OK"]/@class')
+    button-neutral
+    button-neutral
+    button-neutral
+
+    >>> body = manager.contents
+    >>> 'name="remove_item.person001"' in body
+    True
+    >>> 'name="remove_item.person011"' in body
+    True
+
+We can perform a search and limit the list in the 'Add Members' box. This
+particular bit also serves as a regression test for issue 341.
+
+    >>> manager.getControl(name='SEARCH_TITLE').value = 'D.'
+    >>> manager.getControl('Find Now').click()
+
+    >>> 'name="add_item.person013"' in manager.contents
+    True
+    >>> 'name="add_item.person005"' in manager.contents
+    False
+
+But the search does not affect the already existing member list:
+
+    >>> 'name="remove_item.person001"' in manager.contents
+    True
+    >>> 'name="remove_item.person011"' in manager.contents
+    True
+
+
+TODO: make this test more extensive -- test that removal works, etc, etc.

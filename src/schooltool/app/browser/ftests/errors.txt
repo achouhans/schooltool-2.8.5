@@ -1,0 +1,47 @@
+Error handling in browser views
+===============================
+
+
+NotFound
+--------
+
+When you go to a location that doesn't exist, you get a pretty standard
+404 error page
+
+    >>> print http("""
+    ... GET /nosuchthing HTTP/1.1
+    ... """)
+    HTTP/1.1 404 Not Found
+    Content-Length: ...
+    Content-Type: text/html;charset=utf-8
+    <BLANKLINE>
+    ...
+    <title>Not Found</title>
+    ...
+    <h1>Not Found</h1>
+    ...
+    The page that you are trying to access is not available
+    ...
+
+Internal server errors
+----------------------
+
+When an internal server error happens, we show a nice view pointing to our
+issue tracker. For testing purposes a view that causes a runtime error has
+been registered. Now, let's trigger it:
+
+    >>> print http("""
+    ... GET /breakit.html HTTP/1.1
+    ... """)
+    HTTP/1.1 500 Internal Server Error
+    Content-Length: ...
+    Content-Type: text/html;charset=utf-8
+    <BLANKLINE>
+    ...
+    <title>Server Error</title>
+    ...
+    <h1>Server Error</h1>
+    ...
+    ...Houston, we've got a problem...
+    ...
+

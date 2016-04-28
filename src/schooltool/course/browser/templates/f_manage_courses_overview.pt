@@ -1,0 +1,43 @@
+<div class="manage-view" i18n:domain="schooltool"
+     tal:condition="view/has_schoolyear"
+     tal:define="courses view/courses;
+                 sections view/sections;">
+  <h3>
+    <a title="Manage courses"
+       tal:attributes="href view/courses_url"
+       i18n:attributes="title"
+       i18n:translate="">
+      Courses
+    </a>
+  </h3>
+  <p i18n:translate="" tal:condition="courses">
+    There are
+    <metal:block tal:replace="python:len(view.courses)" i18n:name="count"/>
+    courses defined for
+    <metal:block tal:replace="view/schoolyear/title" i18n:name="schoolyear"/>.
+  </p>
+  <p i18n:translate="" tal:condition="not:courses">
+    There are no courses defined for
+    <metal:block tal:replace="view/schoolyear/title" i18n:name="schoolyear"/>.
+  </p>
+  <metal:block tal:condition="view/render_sections_link">
+    <h3>
+      <a title="Manage sections"
+         tal:attributes="href view/sections_url"
+         i18n:attributes="title"
+         i18n:translate="">
+        Sections
+      </a>
+    </h3>
+    <p i18n:translate="" tal:condition="sections">
+      There are
+      <metal:block tal:replace="python:len(view.sections)" i18n:name="count"/>
+      sections defined for
+      <metal:block tal:replace="view/schoolyear/title" i18n:name="schoolyear"/>.
+    </p>
+    <p i18n:translate="" tal:condition="not:sections">
+      There are no sections defined for
+      <metal:block tal:replace="view/schoolyear/title" i18n:name="schoolyear"/>.
+    </p>
+  </metal:block>
+</div>

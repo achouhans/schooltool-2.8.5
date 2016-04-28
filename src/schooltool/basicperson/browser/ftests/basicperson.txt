@@ -1,0 +1,323 @@
+Basic Person
+============
+
+A manager logs in
+
+    >>> manager = Browser('manager', 'schooltool')
+
+    >>> from schooltool.app.browser.ftests import setup
+    >>> setup.setUpBasicSchool()
+
+Create a Basic Person, a teacher.
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('New Person').click()
+    >>> manager.getControl('First name').value = "John"
+    >>> manager.getControl('Last name').value = "Petterson"
+    >>> manager.getControl('Gender').value = ['male']
+    >>> manager.getControl('Birth date').value = '1980-01-01'
+    >>> manager.getControl('Username').value = "john"
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pwd"
+    >>> manager.getControl('Add').click()
+
+    >>> manager.getLink('edit groups').click()
+    >>> manager.getControl('Teachers').click()
+    >>> manager.getControl('Add').click()
+
+Go to the person list:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+
+Both of our users are in there:
+
+    >>> manager.getLink('John')
+    <Link text='John' url='http://localhost/persons/john'>
+
+    >>> manager.getLink('Manager', index=1)
+    <Link text='Manager' url='http://localhost/persons/manager'>
+
+You can filter the list:
+
+    >>> manager.getControl(name='SEARCH_TITLE').value = "John"
+    >>> manager.getControl('Find Now').click()
+
+And now we only have John in there:
+
+    >>> manager.getLink('John')
+    <Link text='John' url='http://localhost/persons/john'>
+
+    >>> manager.getLink('Manager', index=1)
+    Traceback (most recent call last):
+    ...
+    LinkNotFoundError
+
+We can click on John and edit his record (we'll change it back as well):
+
+    >>> manager.getLink('John').click()
+    >>> manager.getLink('Edit').click()
+    >>> manager.getControl('First name').value = 'Johnny'
+    >>> manager.getControl('Apply').click()
+    >>> manager.getControl('First name').value = 'John'
+    >>> manager.getControl('Apply').click()
+
+Now let's create another teacher, Bob.
+
+    >>> manager.open('http://localhost/')
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('New Person').click()
+    >>> manager.getControl('First name').value = "Bob"
+    >>> manager.getControl('Last name').value = "Roberts"
+    >>> manager.getControl('Gender').value = ['male']
+    >>> manager.getControl('Birth date').value = '1980-01-01'
+
+    >>> manager.getControl('Username').value = "bob"
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pwd"
+    >>> manager.getControl('Add').click()
+    >>> manager.getLink('edit groups').click()
+    >>> manager.getControl('Teachers').click()
+    >>> manager.getControl('Add').click()
+    >>> # quick css check for the neutral buttons
+    >>> manager.printQuery('//input[@value="Invert Selection" or @value="OK"]/@class')
+    button-neutral
+    button-neutral
+    button-neutral
+
+Now, create a student.
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('New Person').click()
+    >>> manager.getControl('First name').value = "Student"
+    >>> manager.getControl('Last name').value = "One"
+    >>> manager.getControl('Gender').value = ['male']
+    >>> manager.getControl('Birth date').value = '1980-01-01'
+
+Username cannot be empty:
+
+    >>> manager.getControl('Add').click()
+    >>> analyze.printQuery("//ul[@class='errors']", manager.contents)
+    <ul class="errors"><li>
+      Username:
+      <div class="error">Required input is missing.</div>
+      </li>
+    </ul>
+
+Username cannot contain weird characters:
+
+    >>> manager.getControl('Username').value = "@student"
+    >>> manager.getControl('Add').click()
+    >>> analyze.printQuery("//ul[@class='errors']", manager.contents)
+    <ul class="errors"><li>
+      Username:
+      <div class="error">Names cannot begin with '+' or '@' or contain '/'</div>
+      </li>
+    </ul>
+
+    >>> manager.getControl('Username').value = "student"
+
+And passwords have to match:
+
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pow"
+    >>> manager.getControl('Add').click()
+    >>> analyze.printQuery("//div[@class='error']", manager.contents)
+    <div class="error">Passwords do not match</div>
+
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pwd"
+    >>> manager.getControl('Add').click()
+    >>> analyze.printQuery("//div[@class='error']", manager.contents)
+
+By the way - CVS import views should still be working even when we are
+using this kind of person:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('Import Persons').click()
+    >>> csvtext = "jjones, Jimmy, Jones\njbjones, Jim Bob, Jones, r2m45J\n,Howard,Jobs"
+    >>> manager.getControl(name='csvtext').value = csvtext
+    >>> manager.getControl(name='charset').value = ['UTF-8']
+    >>> manager.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery("//div[@class='error']", manager.contents)
+    <div class="error">Failed to import CSV text</div>
+    <div class="error">username may not be empty</div>
+    >>> analyze.printQuery("id('csvtext')", manager.contents)
+    <textarea name="csvtext" id="csvtext" cols="50" rows="10">jjones, Jimmy, Jones
+      jbjones, Jim Bob, Jones, r2m45J
+      ,Howard,Jobs</textarea>
+    >>> csvtext = "@@index.html, Steve, Smith, secret\npete, Pete, Marley\nchowa, Chowa, Doña\n\n\n"
+    >>> manager.getControl(name='csvtext').value = csvtext
+    >>> manager.getControl(name='charset').value = ['UTF-8']
+    >>> manager.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery("//div[@class='error']", manager.contents)
+    <div class="error">Failed to import CSV text</div>
+    <div class="error">Names cannot begin with '+' or '@' or contain '/'</div>
+    >>> analyze.printQuery("id('csvtext')", manager.contents)
+    <textarea name="csvtext" id="csvtext" cols="50" rows="10">@@index.html, Steve, Smith, secret
+    pete, Pete, Marley
+    chowa, Chowa, Do...a</textarea>
+    >>> csvtext = "steve, Steve, Smith, secret\npete/marley, Pete, Marley\nchowa, Chowa, Doña\n\n\n"
+    >>> manager.getControl(name='csvtext').value = csvtext
+    >>> manager.getControl(name='charset').value = ['UTF-8']
+    >>> manager.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery("//div[@class='error']", manager.contents)
+    <div class="error">Failed to import CSV text</div>
+    <div class="error">Names cannot begin with '+' or '@' or contain '/'</div>
+    >>> analyze.printQuery("id('csvtext')", manager.contents)
+    <textarea name="csvtext" id="csvtext" cols="50" rows="10">steve, Steve, Smith, secret
+    pete/marley, Pete, Marley
+    chowa, Chowa, Do...a</textarea>
+    >>> # XXX: this has to be fixed
+    >>> # XXX: SchoolTool should handle UTF-8
+    >>> csvtext = "steve, Steve, Smith, secret\npete, Pete, Marley\nconcepción, Concepción, Doña\n\n\n"
+    >>> manager.getControl(name='csvtext').value = csvtext
+    >>> manager.getControl(name='charset').value = ['UTF-8']
+    >>> manager.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery("//div[@class='error']", manager.contents)
+    <div class="error">Failed to import CSV text</div>
+    <div class="error">Usernames cannot contain non-ascii characters</div>
+    >>> analyze.printQuery("id('csvtext')", manager.contents)
+    <textarea name="csvtext" id="csvtext" cols="50" rows="10">steve, Steve, Smith, secret
+    pete, Pete, Marley
+    concepci...n, Concepci...n, Do...a</textarea>
+    >>> csvtext = "steve, Steve, Smith, secret\npete, Pete, Marley\nchowa, Chowa, Doña\n\n\n"
+    >>> manager.getControl(name='csvtext').value = csvtext
+    >>> manager.getControl(name='charset').value = ['UTF-8']
+    >>> manager.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery('//div[@class="info"]', manager.contents)
+    <div class="info">
+      <p>CSV text imported successfully.</p>
+    </div>
+
+Let's add another person, this time setting the group and the advisor in the
+add form.
+
+    >>> manager.open('http://localhost')
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('New Person').click()
+    >>> manager.getControl('First name').value = "Student"
+    >>> manager.getControl('Last name').value = "Two"
+    >>> manager.getControl('Gender').value = ['male']
+    >>> manager.getControl('Birth date').value = '1980-01-01'
+    >>> manager.getControl('Group').value = ['students']
+    >>> manager.getControl('Advisor').value = ['bob']
+    >>> manager.getControl('Username').value = "student2"
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pwd"
+    >>> manager.getControl('Add').click()
+
+We can check that the group appears in the new person's groups view.
+
+    >>> manager.getLink('Groups').click()
+    >>> analyze.printQuery("id('content-body')/form/fieldset[1]//tbody//label", manager.contents)
+    <label for="remove_item.students">Students</label>
+
+We can check that the advisor appears in the new person's advisors view.
+
+    >>> manager.getLink('Advisors').click()
+    >>> analyze.printQuery("id('content-body')/form/fieldset[1]//tbody//label", manager.contents)
+    <label for="remove_item.bob">Bob</label>
+
+We can fill the New Person form with Unicode text:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('New Person').click()
+    >>> manager.getControl('First name').value = "Pedro José"
+    >>> manager.getControl('Last name').value = "Martínez Pérez"
+    >>> manager.getControl('Gender').value = ['male']
+    >>> manager.getControl('Birth date').value = '1970-05-01'
+
+    >>> manager.getControl('Username').value = "pedro"
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pwd"
+    >>> manager.getControl('Add').click()
+
+    >>> analyze.printQuery("//h3", manager.contents)
+    <h3>Pedro Jos... Mart...nez P...rez</h3>
+
+But we cannot assign non-ascii usernames:
+
+    >>> # XXX: this has to be fixed
+    >>> # XXX: SchoolTool should handle UTF-8
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('New Person').click()
+    >>> manager.getControl('First name').value = "Concepción"
+    >>> manager.getControl('Last name').value = "Contreras"
+    >>> manager.getControl('Gender').value = ['female']
+    >>> manager.getControl('Username').value = "concepción"
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pwd"
+    >>> manager.getControl('Add').click()
+    >>> manager.printQuery('//div[@class="status"]')
+    <div class="status">
+      <div class="summary">Please correct the marked fields below.</div>
+        <ul class="errors"><li>
+            Username:
+            <div class="error">Usernames cannot contain non-ascii characters</div>
+          </li>
+        </ul></div>
+
+We can also add a batch of persons.
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('Add Multiple Persons').click()
+    >>> manager.getControl('First name').value = "Juan"
+    >>> manager.getControl('Last name').value = "Perez"
+    >>> manager.getControl('Username').value = "juan"
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pwd"
+    >>> manager.getControl('Add').click()
+
+    >>> manager.getControl('First name').value = "Emanuel"
+    >>> manager.getControl('Last name').value = "Perez"
+    >>> manager.getControl('Username').value = "emanuel"
+    >>> manager.getControl('Password').value = "pwd"
+    >>> manager.getControl('Confirm').value = "pwd"
+    >>> manager.getControl('Add').click()
+
+    >>> analyze.printQuery("//form//fieldset[1]",
+    ...                    manager.contents)
+    <fieldset><legend>Added persons</legend>
+      <p>
+        <span>juan</span>
+        <a href="http://localhost/persons/juan">Juan Perez</a>
+      </p>
+      <p>
+        <span>emanuel</span>
+        <a href="http://localhost/persons/emanuel">Emanuel Perez</a>
+      </p>
+    </fieldset>
+
+There's a know flaw though - if the user reloads the form, he will
+get an error that the person he just entered is already in the
+database.  As modern browsers give warnings before reloading the page
+this flaw is somewhat acceptable.
+
+    >>> manager.reload()
+    >>> analyze.printQuery("//form//fieldset[1]",
+    ...                    manager.contents)
+    <fieldset><legend>Added persons</legend>
+      <p>
+        <span>juan</span>
+        <a href="http://localhost/persons/juan">Juan Perez</a>
+      </p>
+    </fieldset>
+
+    >>> manager.reload()
+    >>> analyze.printQuery('//form//div[@class="status"]', manager.contents)
+    <div class="status">
+      <div class="summary">Please correct the marked fields below.</div>
+        <ul class="errors"><li>
+          Username:
+          <div class="error">This username is already in use</div>
+        </li>
+    </ul></div>

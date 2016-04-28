@@ -1,0 +1,36 @@
+<div class="manage-view" i18n:domain="schooltool"
+     tal:condition="view/has_schoolyear">
+  <h3>
+    <a tal:attributes="href view/persons_url"
+       title="Manage people" i18n:attributes="title"
+       i18n:translate="">
+      People
+    </a>
+  </h3>
+  <p i18n:translate="">
+    There are
+    <metal:block tal:replace="python:len(view.persons)" i18n:name="count"/>
+    people defined in
+    <metal:block tal:replace="view/school_name" i18n:name="school" />.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th i18n:translate="">Group</th>
+        <th i18n:translate="">Members</th>
+      </tr>
+    </thead>
+    <tbody tal:define="groups view/groups">
+      <tr tal:repeat="key view/built_in_groups">
+        <tal:block define="group groups/?key">
+          <td tal:content="structure group/@@link">
+            [link]
+          </td>
+          <td tal:content="python:view.group_members(group)">
+            [number]
+          </td>
+        </tal:block>
+      </tr>
+    </tbody>
+  </table>
+</div>

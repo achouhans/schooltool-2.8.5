@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:flourish="http://schooltool.org/flourish"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <flourish:page
+      name="terms"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".term.FlourishTermsView"
+      content_template="templates/f_terms.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      view=".term.FlourishTermsView"
+      />
+
+  <flourish:viewletManager
+      name="tertiary_navigation"
+      provides="schooltool.skin.flourish.page.ITertiaryNavigationManager"
+      class=".term.TermsTertiaryNavigationManager"
+      view=".term.FlourishTermsView"
+      permission="zope.Public"
+      />
+
+  <flourish:page
+      name="add.html"
+      for="..interfaces.ITermContainer"
+      class=".term.FlourishTermAddView"
+      subtitle="Add Term"
+      content_template="templates/f_term_add.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:breadcrumb
+      for="schooltool.term.interfaces.ITerm"
+      follow_crumb=".term.TermContainerBreadcrumb"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      for="schooltool.term.interfaces.ITerm"
+      view=".term.FlourishTermView"
+      follow_crumb=".term.TermContainerBreadcrumb"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="..interfaces.ITerm"
+      class=".term.FlourishTermView"
+      content_template="templates/f_term.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="edit.html"
+      for="..interfaces.ITerm"
+      class=".term.FlourishTermEditView"
+      subtitle="Edit"
+      content_template="templates/f_term_add.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="terms_add_links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".term.FlourishTermsAddLinks"
+      title="Add"
+      permission="schooltool.edit"
+      view=".term.FlourishTermsView"
+      />
+
+  <flourish:viewlet
+      name="term-add"
+      title="Term"
+      class=".term.TermAddLinkViewlet"
+      manager=".term.FlourishTermsAddLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="term_actions"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".term.FlourishTermActionLinks"
+      for="schooltool.term.interfaces.ITerm"
+      title="Actions"
+      permission="schooltool.edit"
+      view=".term.FlourishTermView"
+      />
+
+  <flourish:viewlet
+      name="delete.html"
+      for="..interfaces.ITerm"
+      title="Delete"
+      class=".term.FlourishTermDeleteLink"
+      manager=".term.FlourishTermActionLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_terms_related.pt"
+      view=".term.FlourishTermsView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="delete.html"
+      for="..interfaces.ITerm"
+      class=".term.FlourishTermDeleteView"
+      template="templates/f_confirm_delete_term.pt"
+      permission="schooltool.edit"
+      />
+
+  <configure package="schooltool.skin.flourish">
+  <flourish:page
+    name="delete.html"
+    for="schooltool.term.interfaces.ITermContainer"
+    class="schooltool.term.browser.term.FlourishTermContainerDeleteView"
+    content_template="templates/container_delete.pt"
+    permission="schooltool.edit"
+    />
+  </configure>
+
+  <zope:adapter factory=".term.FlourishOverlapAddValidator" />
+
+  <zope:adapter factory=".term.FlourishOverlapEditValidator" />
+
+  <flourish:viewlet
+      name="manage-years-overview"
+      after="manage-courses-overview"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.view"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".term.FlourishManageYearsOverview"
+      />
+
+  <security:allow
+     interface=".term.FlourishManageYearsOverview"
+     crowds="managers administrators clerks"
+     permission="schooltool.view" />
+
+  <flourish:viewlet
+      name="terms_table"
+      class=".term.SchoolYearTermsTable"
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      class="schooltool.table.table.DoNotFilter"
+      manager=".term.SchoolYearTermsTable"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="done"
+      after="*"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      view=".term.FlourishTermsView"
+      class="schooltool.app.browser.app.ManageItemDoneLink"
+      render="template"
+      permission="schooltool.view"
+      />
+
+</configure>

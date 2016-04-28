@@ -1,0 +1,469 @@
+Timetabling in SchoolTool
+=========================
+
+This functional doctest demonstrates and tests SchoolTool's timetables.
+
+
+Overview
+--------
+
+1. Definition of terms
+2. Definition of timetable schemas
+3. Import of timetables
+4. Usage of timetables
+
+
+Prologue
+--------
+
+    >>> manager = Browser('manager', 'schooltool')
+
+Let's create a person for use in tests:
+
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> addPerson('The', 'Frog', 'frog', 'pwd')
+
+Add a schoolyear:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Years').click()
+    >>> '<p>There are none.</p>' in manager.contents
+    True
+
+    >>> manager.getLink('New School Year').click()
+    >>> manager.getControl('Title').value = '2005'
+    >>> manager.getControl('First day').value = '2005-09-01'
+    >>> manager.getControl('Last day').value = '2006-07-31'
+    >>> manager.getControl('Add').click()
+
+And a group:
+
+    >>> manager.getLink('2005').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('New Group').click()
+
+    >>> manager.getControl('Title').value = 'Animals'
+    >>> manager.getControl('Add').click()
+
+And a resource:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Resources').click()
+    >>> manager.getLink('Add Resource').click()
+
+    >>> manager.getControl('Title').value = 'Mud'
+    >>> manager.getControl('Add').click()
+
+
+Terms
+-----
+
+Terms are periods of time (such as semesters or trimesters) that also say which
+days are holidays and which are not.  You can define any number of terms -- and
+you have to have at least one if you want to use timetables.
+
+    >>> manager.getLink('2005').click()
+    >>> analyze.queryHTML('//div[@class="term"]', manager.contents)
+    []
+
+The manager can add one.
+
+    >>> manager.getLink('Add a new term').click()
+
+First you have to specify the title and date.
+
+    >>> manager.getControl('Title').value = '2005 Fall'
+    >>> manager.getControl('Start date').value = '2005-09-01'
+    >>> manager.getControl('End date').value = '2005-12-31'
+    >>> manager.getControl('Next').click()
+
+Then you can click on a couple of the toggle buttons to mark all Saturdays and
+Sundays as holidays.
+
+    >>> manager.getControl('Saturday').click()
+    >>> manager.getControl('Sunday').click()
+
+Now, for example, September 10th is checked, but the 9th is not:
+
+    >>> print analyze.queryHTML('//input[@id="c9"]', manager.contents)[0]
+    <input type="checkbox" name="holiday" class="chk"
+           onchange="javascript:update(9)" id="c9" value="2005-09-09" />
+
+    >>> print analyze.queryHTML('//input[@id="c10"]', manager.contents)[0]
+    <input type="checkbox" name="holiday" class="chk"
+           onchange="javascript:update(10)" checked="checked" id="c10"
+           value="2005-09-10" />
+
+Finally, you click on the 'Add term' button.
+
+    >>> manager.getControl('Add term').click()
+
+    >>> manager.url
+    'http://localhost/schoolyears/2005'
+    >>> '2005 Fall' in manager.contents
+    True
+
+You can look at it
+
+    >>> manager.getLink('2005 Fall').click()
+
+    >>> print analyze.queryHTML('//td[@class="schoolday"]', manager.contents)[1]
+    <td class="schoolday">
+      <label> 1 </label>
+    </td>
+
+    >>> print analyze.queryHTML('//td[@class="holiday"]', manager.contents)[1]
+    <td class="holiday">
+      <label> 3 </label>
+    </td>
+
+You can edit it
+
+    >>> manager.getLink('Edit').click()
+
+    >>> manager.getControl('Title').value
+    '2005 Fall'
+    >>> manager.getControl('Start date').value
+    '2005-09-01'
+    >>> manager.getControl('End date').value
+    '2005-12-31'
+
+    >>> manager.getControl('Title').value = '2005 Fall'
+    >>> manager.getControl('Start date').value = '2005-09-01'
+    >>> manager.getControl('End date').value = '2005-11-30'
+    >>> manager.getControl('Save changes').click()
+
+    >>> print analyze.queryHTML('//div[@class="summary"]', manager.contents)[0]
+    <div class="summary">Data successfully updated.</div>
+
+    >>> manager.getControl('Title').value
+    '2005 Fall'
+    >>> manager.getControl('Start date').value
+    '2005-09-01'
+    >>> manager.getControl('End date').value
+    '2005-11-30'
+
+Frog should be able to see the term in his yearly calendar view now.
+Let's make him a login so he can check.
+
+    >>> frog = Browser()
+    >>> frog.addHeader('Authorization', 'Basic frog:pwd')
+    >>> frog.handleErrors = False
+    >>> frog.open("http://localhost/persons/frog/calendar/2005")
+
+There should be a legend that includes the term.
+
+    >>> print frog.contents
+    <BLANKLINE>
+    ...
+    ...Displayed Terms...
+    ...class="legend-item term1"...2005 Fall...
+
+The CSS class "term1" indicates Fall 2005 is colored in the "term1" style.
+The actual calendar days should also be styled "term1" where appropriate.
+The days not part of a term should be styled "term0".
+First we'll check if the terms start off coloured properly.
+
+    >>> print frog.contents
+    <BLANKLINE>
+    ...<table class="month"...
+    ...July...
+    ...<a...class="term0"...>30</a>...
+    ...<a...class="term0"...>31</a>...
+    ...</table>...
+    ...<table class="month"...
+    ...August...
+    ...<a...class="term1"...>1</a>...
+    ...<a...class="term1"...>2</a>...
+    ...</table>...
+
+Then let's check if it stops being styled at the end of the term.
+
+    >>> print frog.contents
+    <BLANKLINE>
+    ...<table class="month"...
+    ...November...
+    ...<a...class="term1"...>29</a>...
+    ...<a...class="term1"...>30</a>...
+    ...</table>...
+    ...<table class="month"...
+    ...December...
+    ...<a...class="term0"...>1</a>...
+    ...<a...class="term0"...>2</a>...
+    ...</table>...
+
+TODO: verify that you can delete terms <-- DONE AT THE END
+TODO: check that there's an error message when end date < start date
+MAYBE TODO: add an 'Identifier (optional)' field to the term addition form,
+            just like in group/resource addition form
+
+
+Definition of timetable schemas
+-------------------------------
+
+We will create a timetable schema using the simple schema definition form:
+
+    >>> manager.getLink('2005').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getLink('New Timetable').click()
+    >>> manager.getLink('simple weekly timetable schema').click()
+
+    >>> manager.getControl(name='field.period_name_1').value = 'A'
+    >>> manager.getControl(name='field.period_start_1').value = '9:00'
+    >>> manager.getControl(name='field.period_finish_1').value = '10:00'
+
+    >>> manager.getControl(name='field.period_name_2').value = 'B'
+    >>> manager.getControl(name='field.period_start_2').value = '10:30'
+    >>> manager.getControl(name='field.period_finish_2').value = '11:30'
+
+    >>> manager.getControl('Create').click()
+
+Let's look at the new timetable:
+
+    >>> manager.getLink('default').click()
+
+    >>> len(analyze.queryHTML('//th[text()="A"]', manager.contents))
+    5
+    >>> len(analyze.queryHTML('//th[text()="B"]', manager.contents))
+    5
+
+(The more complex timetable schema definition pages are tested in
+`ttschema.txt` and `ttschema-wizard.txt`).
+
+
+Importing timetables
+--------------------
+
+We will need to define a person who will be a learner.
+
+    >>> addPerson('A', 'Tadpole', 'tadpole', 'pwd')
+
+We will also need a course.
+
+    >>> manager.getLink('2005').click()
+    >>> manager.getLink('Courses').click()
+    >>> manager.getLink('Add Course').click()
+
+    >>> manager.getControl('Title').value = 'Swimming'
+    >>> manager.getControl('Add').click()
+
+We can import timetables using the CSV timetable import page.
+
+    >>> manager.getLink('2005').click()
+    >>> manager.getLink('2005 Fall').click()
+    >>> manager.getLink('Sections').click()
+    >>> manager.getLink('Import Sections').click()
+
+    >>> manager.getControl('CSV File')
+    <Control name='csvfile' type='file'>
+    >>> manager.getControl('CSV Data')
+    <Control name='csvtext' type='textarea'>
+
+As you can see, the form allows to submit the CSV data either by sending the
+file or typing/pasting it into a text area field.
+
+    >>> manager.getControl('CSV Data').value = """\
+    ... "default"
+    ... ""
+    ... "swimming","frog"
+    ... "Monday","A"
+    ... "Tuesday","B"
+    ... "***"
+    ... "tadpole"
+    ... """
+    >>> manager.getControl('Submit').click()
+    >>> print analyze.queryHTML('//div[@class="info"]', manager.contents)[0]
+    <div class="info">
+      <p>CSV text imported successfully.</p>
+    </div>
+
+A new section should have been created:
+
+    >>> manager.getLink('2005').click()
+    >>> manager.getLink('2005 Fall').click()
+    >>> manager.getLink('Sections').click()
+
+    >>> print analyze.queryHTML('//table/tr[2]', manager.contents)[0]
+    <tr><td>
+              <input type="checkbox" name="delete.1" /></td>
+            <td>
+              <a href="http://localhost/schoolyears/2005/courses/swimming">Swimming</a>
+            </td>
+            <td>
+              <a href="http://localhost/schoolyears/2005/2005-fall/sections/1">Swimming - Frog</a>
+            </td>
+            <td>
+    <BLANKLINE>
+    <BLANKLINE>
+                <a href="http://localhost/persons/frog">Frog</a>
+    <BLANKLINE>
+            </td>
+            <td>
+                <a href="http://localhost/schoolyears/2005/2005-fall/sections/1/timetables/1">2005-fall.default</a>
+            </td>
+            <td>
+              <span class="hint">
+                (1
+                <span>Students</span>)
+              </span>
+            </td>
+          </tr>
+
+We should see a timetable in the section's timetable list:
+
+    >>> manager.getLink('Swimming - Frog').click()
+    >>> manager.open(manager.url + '/timetables')
+
+    >>> manager.getLink('edit periods')
+    <Link text='(edit periods)'
+          url='.../sections/1/timetables/1'>
+
+We can have a look at the timetable too, and see a few timetable activities:
+
+    >>> manager.getLink('edit periods').click()
+
+    >>> print analyze.queryHTML('//table/tr[2]', manager.contents)[0]
+    <tr><td>
+              <ul><li>
+                    <input class="activity" type="checkbox" checked="checked" id="Monday.A" value="Monday.A" name="Monday.A" /><label class="period" for="Monday.A">A</label>
+                  </li>
+    <BLANKLINE>
+    <BLANKLINE>
+                  <li>
+                    <input class="activity" type="checkbox" id="Monday.B" value="Monday.B" name="Monday.B" /><label class="period" for="Monday.B">B</label>
+                  </li>
+    <BLANKLINE>
+          </ul></td>
+    <BLANKLINE>
+    <BLANKLINE>
+            <td>
+              <ul><li>
+                    <input class="activity" type="checkbox" id="Tuesday.A" value="Tuesday.A" name="Tuesday.A" /><label class="period" for="Tuesday.A">A</label>
+                  </li>
+    <BLANKLINE>
+    <BLANKLINE>
+                  <li>
+                    <input class="activity" type="checkbox" checked="checked" id="Tuesday.B" value="Tuesday.B" name="Tuesday.B" /><label class="period" for="Tuesday.B">B</label>
+                  </li>
+    <BLANKLINE>
+              </ul></td>
+    <BLANKLINE>
+    <BLANKLINE>
+            <td>
+              <ul><li>
+                    <input class="activity" type="checkbox" id="Wednesday.A" value="Wednesday.A" name="Wednesday.A" /><label class="period" for="Wednesday.A">A</label>
+                  </li>
+    <BLANKLINE>
+    <BLANKLINE>
+                  <li>
+                    <input class="activity" type="checkbox" id="Wednesday.B" value="Wednesday.B" name="Wednesday.B" /><label class="period" for="Wednesday.B">B</label>
+                  </li>
+    <BLANKLINE>
+              </ul></td>
+    <BLANKLINE>
+    <BLANKLINE>
+            <td>
+              <ul><li>
+                    <input class="activity" type="checkbox" id="Thursday.A" value="Thursday.A" name="Thursday.A" /><label class="period" for="Thursday.A">A</label>
+                  </li>
+    <BLANKLINE>
+    <BLANKLINE>
+                  <li>
+                    <input class="activity" type="checkbox" id="Thursday.B" value="Thursday.B" name="Thursday.B" /><label class="period" for="Thursday.B">B</label>
+                  </li>
+    <BLANKLINE>
+              </ul></td>
+    <BLANKLINE>
+    <BLANKLINE>
+            <td>
+              <ul><li>
+                    <input class="activity" type="checkbox" id="Friday.A" value="Friday.A" name="Friday.A" /><label class="period" for="Friday.A">A</label>
+                  </li>
+    <BLANKLINE>
+    <BLANKLINE>
+                  <li>
+                    <input class="activity" type="checkbox" id="Friday.B" value="Friday.B" name="Friday.B" /><label class="period" for="Friday.B">B</label>
+                  </li>
+    <BLANKLINE>
+              </ul></td>
+    <BLANKLINE>
+        </tr>
+
+We can also edit the timetable from the time table
+
+    >>> manager.getControl(name="Wednesday.A").value = True
+    >>> manager.getControl(name="Monday.A").value = False
+    >>> manager.getControl(name="Thursday.B").value = True
+    >>> manager.getControl(name="Tuesday.B").value = False
+    >>> manager.getControl("Save").click()
+
+We can add another timetable schema and then add another timetable for
+this section based on the new schema.
+
+    >>> manager.open('http://localhost/schoolyears/2005/school_timetables')
+    >>> manager.getLink('New Timetable').click()
+
+    >>> manager.getControl('Title').value = 'single-period'
+    >>> manager.getControl('Next').click()
+    >>> manager.getControl('Days of the week').click()
+    >>> manager.getControl('Same time each day').click()
+    >>> manager.getControl(name='field.times').value = """
+    ... 9:30-21:30
+    ... 21:35-21:45
+    ... """
+    >>> manager.getControl('Next').click()
+    >>> manager.getControl('Have names').click()
+    >>> manager.getControl(name='field.periods').value = """
+    ... A
+    ... B
+    ... """
+    >>> manager.getControl('Next').click()
+    >>> manager.getControl('Same').click()
+    >>> manager.getControl('Next').click()
+    >>> manager.getControl('No').click()
+
+    >>> manager.open('http://localhost/schoolyears/2005/2005-fall/sections/1/timetables/addTimetable.html')
+    >>> manager.getControl(name='form.widgets.schooltt:list').value = ['singleperiod-']
+    >>> manager.getControl('Add').click()
+    >>> manager.getControl('Save').click()
+
+The activities should show up in the calendar of the users that are in
+this section too:
+
+    >>> manager.open('http://localhost/'
+    ...              'persons/frog/calendar/2005-09-07')
+
+    >>> print analyze.queryHTML('//h6[a[@title="Swimming"]]',
+    ...                         manager.contents)[0]
+    <h6 style="background: #7590ae">
+      <a href="http://localhost/schoolyears/2005/2005-fall/sections/1/calendar/..." title="Swimming">
+        Swimming
+        <span class="start-end">
+          (<span>09:00</span>
+             -
+           <span>10:00</span>)
+        </span>
+      </a>
+    </h6>
+
+
+Deleting Timetable Schemas
+--------------------------
+
+You can also delete timetable schemas and see that all the timetables related to
+that schema are also deleted.
+
+    >>> manager.getLink('2005').click()
+    >>> manager.getLink('School Timetables').click()
+    >>> manager.getControl(name='delete.default').value = True
+    >>> manager.getControl('Delete').click()
+    >>> manager.getControl('Confirm').click()
+
+    >>> manager.open('http://localhost/schoolyears/2005/2005-fall/sections/1/timetables')
+    >>> 'default' not in manager.contents
+    True
+
+Epilogue
+--------
+
+ vim: ft=rest

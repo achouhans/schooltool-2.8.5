@@ -1,0 +1,110 @@
+Functional test for instructor access to students' data
+=======================================================
+
+    >>> manager = Browser('manager', 'schooltool')
+
+Set up the basic school:
+
+    >>> from schooltool.app.browser.ftests.setup import setUpBasicSchool
+    >>> setUpBasicSchool()
+
+Let's create a coupe of persons who will be students and teachers:
+
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> addPerson('The', 'Frog', 'frog', 'pwd')
+    >>> addPerson('A', 'Toad', 'toad', 'doat')
+
+Also, let's create a group:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Year').click()
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Groups').click()
+    >>> manager.getLink('New Group').click()
+
+    >>> manager.getControl('Title').value = 'Animals'
+    >>> manager.getControl('Add').click()
+
+    >>> 'Animals' in manager.contents
+    True
+
+Add a school year
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Years').click()
+    >>> manager.getLink('New School Year').click()
+    >>> manager.getControl('Title').value = '2007'
+    >>> manager.getControl('First day').value = '2007-01-01'
+    >>> manager.getControl('Last day').value = '2007-12-15'
+    >>> manager.getControl('Add').click()
+
+and a term
+
+    >>> manager.getLink('Add a new term').click()
+    >>> manager.getControl('Title').value = 'Term 1'
+    >>> manager.getControl('Start date').value = '2007-07-01'
+    >>> manager.getControl('End date').value = '2007-12-15'
+    >>> manager.getControl('Next').click()
+    >>> manager.getControl('Saturday').click()
+    >>> manager.getControl('Sunday').click()
+    >>> manager.getControl('Add term').click()
+
+a course
+
+    >>> manager.getLink('2007').click()
+    >>> manager.getLink('Courses').click()
+    >>> manager.getLink('Add Course').click()
+    >>> manager.getControl('Title').value = 'History'
+    >>> manager.getControl('Add').click()
+
+    >>> 'History' in manager.contents
+    True
+
+and a section
+
+    >>> from schooltool.app.browser.ftests import setup
+    >>> setup.addSection('History', '2007', 'Term 1')
+
+Let's make the frog a teacher:
+
+    >>> manager.open('http://localhost/schoolyears/2007/term-1/sections/1')
+    >>> manager.getLink('edit instructors').click()
+    >>> manager.getControl(name='add_item.frog').value = True
+    >>> manager.getControl('Add').click()
+    >>> manager.getControl('OK').click()
+    >>> print manager.contents
+    <!DOCTYPE ...>
+    ...
+          <h3>Instructors</h3>
+          <ul>
+            <li>
+              <a href="http://localhost/persons/frog">The Frog</a>
+            </li>
+          </ul>
+    ...
+
+The frog cannot see the toad's personal info:
+
+    >>> frog = Browser('frog', 'pwd')
+    >>> frog.handleErrors = True
+    >>> frog.open('http://localhost/persons/toad')
+    >>> print frog.url
+    http://localhost/auth/@@login.html?forbidden=yes&nexturl=...
+
+Let's make toad join the section:
+
+    >>> manager.getLink('edit individuals').click()
+    >>> manager.getControl(name='add_item.toad').value = True
+    >>> manager.getControl('Add').click()
+    >>> manager.getControl('OK').click()
+
+Now frog can see the demographics of toad alright:
+
+    >>> frog.open('http://localhost/persons/toad')
+    >>> print frog.url
+    http://localhost/persons/toad
+    >>> print frog.contents
+    <BLANKLINE>
+    ...
+        <title>Person info: A Toad</title>
+    ...

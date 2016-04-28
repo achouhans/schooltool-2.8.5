@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <zope:class class=".importer.ImportTask">
+    <require permission="schooltool.view"
+             interface="schooltool.export.interfaces.IImporterTask" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.export.interfaces.IImporterTask" />
+  </zope:class>
+
+  <zope:class class=".importer.ImportProgressMessage">
+    <require permission="schooltool.view"
+             interface="schooltool.report.interfaces.IReportProgressMessage" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.report.interfaces.IReportProgressMessage" />
+  </zope:class>
+
+  <zope:class class=".importer.ImportFinishedMessage">
+    <require permission="schooltool.view"
+             interface="schooltool.report.interfaces.IReportMessage" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.report.interfaces.IReportMessage" />
+  </zope:class>
+
+  <zope:adapter
+      name="schooltool.report.report.OnReportArchiveScheduled"
+      for="schooltool.task.interfaces.IRemoteTask
+           *
+           schooltool.export.importer.RemoteMegaImporter"
+      provides="schooltool.task.interfaces.ITaskScheduledNotification"
+      factory=".importer.OnImportScheduled"
+      />
+
+  <page
+     name="import.html"
+     for="schooltool.app.interfaces.ISchoolToolApplication"
+     template="templates/import.pt"
+     class=".importer.MegaImporter"
+     permission="schooltool.edit" />
+
+  <page
+     name="export.xls"
+     for="schooltool.app.interfaces.ISchoolToolApplication"
+     class=".export.MegaExporter"
+     permission="schooltool.edit" />
+
+  <zope:configure package="schooltool.skin">
+    <navigationViewlet
+        name="import"
+        for="schooltool.app.interfaces.ISchoolToolApplication"
+        manager="schooltool.skin.IActionMenuManager"
+        template="templates/actionsViewlet.pt"
+        permission="schooltool.edit"
+        link="import.html"
+        title="XLS Import"
+        order="60" />
+
+    <navigationViewlet
+        name="export"
+        for="schooltool.app.interfaces.ISchoolToolApplication"
+        manager="schooltool.skin.IActionMenuManager"
+        template="templates/actionsViewlet.pt"
+        permission="schooltool.edit"
+        link="export.xls"
+        title="XLS Export"
+        order="61" />
+  </zope:configure>
+
+  <resource
+      name="large_sample_data.xls" file="sample_data.xls"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      />
+
+  <resource
+      name="empty_data.xls" file="empty_data.xls"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      />
+
+  <resource
+      name="sample_data.xls" file="sample_data_small.xls"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      />
+
+  <zope:class class=".importer.ImporterTask">
+    <require permission="schooltool.view"
+             interface="schooltool.export.interfaces.IImporterTask" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.export.interfaces.IImporterTask" />
+  </zope:class>
+
+  <zope:class class=".export.XLSReportTask">
+    <require permission="schooltool.view"
+             interface="schooltool.report.interfaces.IReportTask" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.report.interfaces.IReportTask" />
+  </zope:class>
+
+  <zope:adapter
+      name="schooltool.export.export.OnXLSReportScheduled"
+      for="schooltool.task.interfaces.IRemoteTask
+           *
+           schooltool.export.interfaces.IXLSExportView"
+      provides="schooltool.task.interfaces.ITaskScheduledNotification"
+      factory="schooltool.export.export.OnXLSReportScheduled"
+      />
+
+  <view
+     name="import.xls"
+     for="schooltool.export.interfaces.IImporterTask"
+     layer="zope.publisher.interfaces.http.IHTTPRequest"
+     class=".importer.DownloadImportXLS"
+     permission="schooltool.view" />
+
+  <zope:class class=".importer.ImportFile">
+    <require
+        permission="zope.View"
+        interface="zope.mimetype.interfaces.IContentTypeAware"
+        attributes="size openDetached"
+        />
+    <require
+        permission="zope.ManageContent"
+        set_attributes="mimeType parameters"
+        />
+    <require
+        permission="zope.ManageContent"
+        attributes="open"
+        />
+    <allow
+        attributes="errors"
+        />
+    <implements
+        interface="
+          zope.annotation.interfaces.IAttributeAnnotatable
+          "
+        />
+  </zope:class>
+
+</configure>

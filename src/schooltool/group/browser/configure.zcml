@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <!-- Group Traverser -->
+  <zope:view
+      for="..interfaces.IBaseGroup"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="schooltool.traverser.browser.PluggableBrowserTraverser"
+      permission="zope.Public"
+      />
+
+  <configure package="schooltool.skin">
+    <page
+        name="index.html"
+        for="schooltool.group.interfaces.IGroupContainer"
+        class="schooltool.group.browser.group.GroupContainerView"
+        permission="schooltool.view"
+        />
+
+    <addform
+        label="Add Group"
+        name="addSchoolToolGroup.html"
+        schema="schooltool.group.interfaces.IGroup"
+        fields="title description"
+        set_before_add="title description"
+        content_factory="schooltool.group.group.Group"
+        permission="schooltool.edit"
+        template="templates/simple_add.pt"
+        class="schooltool.group.browser.group.GroupAddView">
+      <widget field="description" height="5" />
+    </addform>
+
+    <editform
+        for="schooltool.group.interfaces.IGroup"
+        name="edit.html"
+        label="Edit Group Information"
+        schema="schooltool.group.interfaces.IGroup"
+        fields="title description"
+        permission="schooltool.edit"
+        template="templates/simple_edit.pt"
+        class="schooltool.group.browser.group.GroupEditView"
+        menu="schooltool_actions"
+        title="Edit Info"
+        />
+
+  </configure>
+
+  <viewlet
+      name="groupsinfo"
+      for="*"
+      manager="schooltool.person.browser.person.IPersonInfoManager"
+      template="templates/groupsviewlet.pt"
+      class="schooltool.group.browser.group.GroupsViewlet"
+      permission="schooltool.view"
+      order="30"
+      />
+
+  <page
+      name="groups.html"
+      for="..interfaces.IGroupMember"
+      class=".group.GroupListView"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Groups"
+      />
+
+  <containerViews
+      for="..interfaces.IGroupContainer"
+      contents="schooltool.view"
+      add="schooltool.edit"
+      />
+
+  <menuItem
+      menu="schooltool_actions"
+      title="New Group"
+      for="..interfaces.IGroupContainer"
+      action="+/addSchoolToolGroup.html"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.IGroup"
+      class=".group.GroupView"
+      template="templates/group.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="members_persons.html"
+      for="..interfaces.IBaseGroup"
+      class=".group.MemberViewPersons"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Add/Remove Members"
+      />
+
+  <page
+      name="group-csvimport.html"
+      for="..interfaces.IGroupContainer"
+      class=".csvimport.GroupCSVImportView"
+      template="templates/group-csvimport.pt"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Import Groups"
+      />
+
+  <page
+      name="member-csvimport.html"
+      for="schooltool.group.interfaces.IGroup"
+      class=".csvimport.GroupMemberCSVImportView"
+      template="templates/group-member-csvimport.pt"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Import Members CSV"
+      />
+
+  <zope:adapter
+      for="schooltool.group.interfaces.IGroupContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory="schooltool.table.table.FilterWidget" />
+
+  <zope:adapter
+      for="schooltool.group.interfaces.IGroupContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory="schooltool.table.table.SchoolToolTableFormatter " />
+
+  <navigationViewlet
+      name="groups"
+      for="*"
+      manager="schooltool.schoolyear.browser.interfaces.ISchoolYearViewMenuViewletManager"
+      template="templates/link_to_groups.pt"
+      permission="schooltool.view"
+      order="30"
+      />
+
+  <zope:adapter
+      factory=".group.GroupContainerAbsoluteURLAdapter"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL" />
+
+  <zope:adapter
+      factory=".group.GroupContainerAbsoluteURLAdapter"
+      provides="zope.interface.Interface"
+      name="absolute_url"/>
+
+  <zope:adapterTraverserPlugin
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      name="groups"
+      adapter="schooltool.group.interfaces.IGroupContainer"
+      />
+
+</configure>

@@ -1,0 +1,13 @@
+<div tal:define="batch view/table/batch" i18n:domain="schooltool">
+  <form method="post"
+        tal:attributes="action request/URL">
+    <tal:block tal:condition="view/table/filter_widget">
+      <tal:block replace="structure view/table/render" tal:condition="batch" />
+    </tal:block>
+  </form>
+  <h3 tal:condition="not:batch" i18n:translate="">There are none.</h3>
+  <h3 class="done-link">
+    <a tal:attributes="href string:${context/schooltool:app/@@absolute_url}/manage"
+       i18n:translate="">Done</a>
+  </h3>
+</div>

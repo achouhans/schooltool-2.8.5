@@ -1,0 +1,383 @@
+/*
+
+  Base CSS:
+
+  - body
+  - fonts, font sizes
+  - header, page and footer layout
+
+*/
+
+@media all {
+
+/* General elements */
+
+body, textarea, select, input {
+    font-family: 'Ubuntubeta', 'Ubuntu', 'Bitstream Vera Sans',
+                 'DejaVu Sans', Tahoma, sans-serif;
+}
+
+body {
+ background-image: url(hexes.svg);
+ background-repeat: no-repeat;
+ background-position: right bottom;
+ background-attachment: fixed;
+}
+
+h1 {
+    font-size: 36px;
+    line-height: 40px;
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 28px;
+    margin-bottom: 8px;
+    margin-top: 16px;
+}
+
+h3 {
+    font-size: 16px;
+    line-height: 20px;
+    margin-bottom: 8px;
+    margin-top: 16px;
+}
+
+select {
+    font-size: 12px;
+}
+
+a, a:link, a:visited, a:active {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.active a:hover {
+    text-decoration: none;
+}
+
+p {
+    font-size: 12px;
+    line-height: 16px;
+    margin-bottom: 8px;
+}
+
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
+li {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+p.small {
+    font-size: 10px;
+    line-height: 14px;
+}
+
+pre {
+    overflow: auto;
+}
+
+a.modify {
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+a.modify img {
+    border: none;
+}
+
+/* Layout */
+
+.schooltool > .header,
+.schooltool > .page,
+.schooltool > .footer {
+    margin: 0 auto;
+    position: relative;
+    width: 976px;
+}
+
+.schooltool > .header {
+}
+
+.schooltool > .page {
+    margin-top: -4px; /* Hack to close the  */
+    padding-top: 4px; /* gap in the shadows */
+
+    -moz-border-radius: 0px 0px 4px 4px;
+    border-radius: 0px 0px 4px 4px;
+}
+
+.schooltool > .header {
+    z-index: 2;
+}
+
+.schooltool > .page {
+    padding-bottom: 64px;
+    z-index: 1;
+}
+
+.schooltool > .footer {
+    clear: both;
+    z-index: 0;
+}
+
+.schooltool > .footer > p {
+    font-size: 10px;
+    line-height: 14px;
+    padding: 0px 16px 2px 16px;
+}
+
+.schooltool > .footer a {
+    font-size: 10px;
+    line-height: 14px;
+}
+
+.schooltool > .footer > p.server-info {
+    margin-bottom: 0px;
+    padding-top: 4px;
+}
+
+/* Header - main navigation, second navigation, headinfo, breadcrumbs*/
+
+.header > h1.brand img.small {
+    vertical-align: top;
+}
+
+.header > h1.brand {
+    font-size: 36px;
+    line-height: 40px;
+    margin-top: 0px;
+    position: absolute;
+    right: 16px;
+    top: 12px;
+    z-index: 1;
+}
+
+.header-rev > h1.brand {
+    left: 16px;
+}
+
+.header > h1.brand {
+    display:  block;
+}
+
+.header-rev > h1.brand {
+    display: none;
+}
+
+.header ul.navigation {
+    height: 64px;
+    padding-left: 15px;
+    position: relative;
+
+    -moz-border-radius: 0px 0px 4px 4px;
+    border-radius: 0px 0px 4px 4px;
+}
+
+.header ul.navigation li {
+    display: block;
+    float: left;
+    padding: 0 1px;
+}
+
+.header-rev ul.navigation {
+    padding-right: 15px;
+}
+.header-rev ul.navigation li {
+    float: right;
+}
+
+.header ul.navigation li a {
+    display: block;
+    font-size: 14px;
+    line-height: 16px;
+    padding: 24px 8px;
+}
+
+.header ul.navigation li a:hover {
+    text-decoration: none;
+}
+
+.header ul.second-nav {
+    height: 24px;
+    margin-left: 16px;
+    margin-right: 16px;
+    text-align: right;
+    position: relative;
+
+    -moz-border-radius: 0px 0px 4px 4px;
+    border-radius: 0px 0px 4px 4px;
+}
+
+.header ul.second-nav > li {
+    display: inline-block;
+    padding: 0px 2px;
+}
+
+.header ul.second-nav > li:first-child {
+    border-left: medium none;
+}
+
+.header ul.second-nav > li a,
+.header ul.second-nav > li span {
+    display: inline-block;
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: -1px;
+    padding: 4px 8px;
+}
+
+.header ul.second-nav > li a.new-messages {
+    padding: 4px 0px;
+}
+
+.header ul.second-nav > li a.new-messages:hover {
+    text-decoration: none;
+}
+
+.header ul.second-nav > li span {
+    font-weight: bold;
+}
+
+.header ul.second-nav #language-selector span,
+.header ul.second-nav #language-selector a {
+    padding: 4px 2px;
+}
+
+.header ul.breadcrumbs {
+    font-size: 12px;
+    height: 24px;
+    list-style-type: none;
+    margin-left: 32px;
+    position: absolute;
+    z-index: 1;
+}
+
+.header ul.breadcrumbs li {
+    display: inline-block;
+    padding: 0px 2px;
+}
+
+.header ul.breadcrumbs li:after {
+    content: "\0020 \00BB";
+}
+
+.header ul.breadcrumbs li.last:after {
+    content: "";
+}
+
+.header ul.breadcrumbs li.last {
+    font-weight: bold;
+}
+
+.header ul.breadcrumbs a,
+.header ul.breadcrumbs span {
+    display: inline-block;
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: -4px;
+    padding: 4px 2px;
+}
+
+/* XXX: temporary fix to display the zc.datetimewidget correctly
+        remove when we change to jquery-ui datepicker */
+
+body > .calendar {
+    z-index: 2;
+}
+
+/* XXX: make generic for all <p>s that need to align to
+        table contents in */
+
+.manage-view p {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* XXX: errors views related styles */
+
+.entry-traceback, .request-traceback {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+/* XXX: used in about.html */
+
+ul.contributors {
+    list-style-type: disc;
+    margin-left: 16px;
+}
+
+pre.traceback {
+    padding: 4px 0px;
+}
+
+/* XXX: used in person general information viewlet
+        and person edit form */
+
+.photo-display {
+    float: right;
+    height: 132px;
+    margin-top: 16px;
+    overflow: hidden;
+    width: 99px;
+    text-align: center;
+}
+
+.photo-display img {
+    width: 100%;
+    height: auto;
+}
+
+.photo-input div {
+    float: left;
+    margin-top: 0px;
+}
+
+.photo-input input, .photo-input span {
+    margin-top: 56px;
+}
+
+.photo-field {
+    clear: both;
+    display: block;
+}
+
+/* XXX: used in person sections viewlet */
+
+.tree_list li a.leaf_url:hover {
+    text-decoration: underline;
+}
+
+/* XXX: used in Done links */
+
+h3.done-link a {
+    -moz-border-radius: 4px 4px 4px 4px;
+    border-radius: 4px 4px 4px 4px;
+    border-style: solid;
+    border-width: 1px;
+    cursor: default;
+    display: inline-block;
+    font-size: 14px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 6px;
+    text-decoration: none;
+}
+
+.buttons h3.done-link {
+    display: inline;
+    margin: 0px;
+}
+
+}

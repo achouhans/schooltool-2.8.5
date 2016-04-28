@@ -1,0 +1,933 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           xmlns:flourish="http://schooltool.org/flourish"
+           xmlns:report="http://namespaces.schooltool.org/report"
+           i18n_domain="schooltool">
+
+  <!-- Container views -->
+
+  <flourish:breadcrumb
+      for="schooltool.person.interfaces.IPersonContainer"
+      title="People"
+      />
+
+  <flourish:content
+      class="schooltool.app.browser.app.ContentTitle"
+      permission="schooltool.view"
+      for="schooltool.person.interfaces.IPersonContainer"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      title="People"
+      name="title" />
+
+  <flourish:viewlet
+      name="demographics"
+      title="Demographics"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.CustomizeSchoolLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.person.interfaces.IPersonContainer"
+      class=".person.FlourishBasicPersonContainerView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      before="batch table"
+      class=".person.PersonContainerViewTableFilter"
+      view=".person.FlourishBasicPersonContainerView"
+      render="template"
+      manager=".person.BasicPersonTable"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="person_container"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.basicperson.browser.person.PersonContainerLinks"
+      view=".person.FlourishBasicPersonContainerView"
+      for="schooltool.person.interfaces.IPersonContainer"
+      title="Add"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="person-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.basicperson.browser.person.PersonLinks"
+      for="schooltool.person.interfaces.IPerson"
+      permission="schooltool.view"
+      view=".person.FlourishPersonView"
+      />
+
+  <flourish:viewlet
+      name="person-actions-links"
+      before="person-settings-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.basicperson.browser.person.PersonActionsLinks"
+      title="Actions"
+      for="schooltool.person.interfaces.IPerson"
+      permission="schooltool.edit"
+      view=".person.FlourishPersonView"
+      />
+
+  <flourish:viewlet
+      name="person-settings-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.basicperson.browser.person.PersonSettingsLinks"
+      title="Settings"
+      for="schooltool.person.interfaces.IPerson"
+      permission="schooltool.view"
+      view=".person.FlourishPersonView"
+      />
+
+  <flourish:viewletFactory
+      name="manage_school_links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      for="schooltool.person.interfaces.IPersonContainer"
+      factory="schooltool.app.browser.app.getAppViewlet"
+      />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.person.interfaces.IPersonContainer"
+      />
+
+  <!-- Add views -->
+
+  <flourish:page
+      name="add_multiple.html"
+      subtitle="Add new persons"
+      for="schooltool.person.interfaces.IPersonContainer"
+      class="schooltool.basicperson.browser.person.FlourishMultiplePersonAddView"
+      permission="schooltool.edit"
+      content_template="templates/f_person_add_multiple.pt"
+      />
+
+  <flourish:page
+     name="add.html"
+     subtitle="Add new person"
+     for="schooltool.person.interfaces.IPersonContainer"
+     class="schooltool.basicperson.browser.person.FlourishPersonAddView"
+     permission="schooltool.edit"
+     content_template="templates/f_person_form.pt"
+     />
+
+  <flourish:page
+     name="addTeacher.html"
+     subtitle="Add new teacher"
+     for="schooltool.person.interfaces.IPersonContainer"
+     class="schooltool.basicperson.browser.person.FlourishPersonAddView"
+     group_id="teachers"
+     permission="schooltool.edit"
+     content_template="templates/f_person_form.pt"
+     />
+
+  <flourish:page
+     name="addStudent.html"
+     subtitle="Add new student"
+     for="schooltool.person.interfaces.IPersonContainer"
+     class="schooltool.basicperson.browser.person.FlourishPersonAddView"
+     group_id="students"
+     permission="schooltool.edit"
+     content_template="templates/f_person_form.pt"
+     />
+
+  <flourish:page
+     name="addAdministrator.html"
+     subtitle="Add new administrator"
+     for="schooltool.person.interfaces.IPersonContainer"
+     class="schooltool.basicperson.browser.person.FlourishPersonAddView"
+     group_id="administrators"
+     permission="schooltool.edit"
+     content_template="templates/f_person_form.pt"
+     />
+
+
+  <configure package="schooltool.skin.flourish">
+    <flourish:viewlet
+        name="add.html"
+        title="Person"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.person.PersonContainerLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="add_person"
+        link="add.html"
+        title="Add Person"
+        view="schooltool.basicperson.browser.person.FlourishBasicPersonContainerView"
+        for="schooltool.person.interfaces.IPersonContainer"
+        manager="schooltool.skin.flourish.page.IContentActionsManager"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        permission="schooltool.edit"
+        html_class="create"
+        />
+
+    <flourish:viewlet
+        name="addTeacher.html"
+        title="Teacher"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.person.PersonContainerLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="addStudent.html"
+        title="Student"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.person.PersonContainerLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="addAdministrator.html"
+        title="Administrator"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.person.PersonContainerLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:activeViewlet
+        factory="schooltool.skin.flourish.page.getViewletViewName"
+        manager="schooltool.basicperson.browser.person.PersonContainerLinks"
+        />
+
+  </configure>
+
+  <!-- Person index page -->
+
+  <flourish:breadcrumb
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      view="schooltool.basicperson.browser.person.FlourishPersonView"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      class="schooltool.basicperson.browser.person.FlourishPersonView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="details"
+      view=".person.FlourishPersonView"
+      permission="schooltool.view"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".person.FlourishPersonInfo"
+      />
+
+  <flourish:viewlet
+      name="jstree-resources"
+      view=".person.FlourishPersonView"
+      permission="schooltool.view"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      template="templates/f_person_view_jstree.pt"
+      />
+
+  <!-- Edit person page -->
+
+  <flourish:page
+      name="edit.html"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      class="schooltool.basicperson.browser.person.FlourishPersonEditView"
+      content_template="templates/f_person_form.pt"
+      permission="schooltool.edit"
+      subtitle="Edit"
+      />
+
+  <flourish:viewlet
+      name="edit_person"
+      link="edit.html"
+      title="Edit"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      view="schooltool.basicperson.browser.person.FlourishPersonView"
+      manager="schooltool.skin.flourish.page.IContentActionsManager"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      permission="schooltool.edit"
+      html_class="modify"
+      />
+
+  <!-- DemographicsFields pages -->
+
+  <zope:adapter
+      factory=".demographics.getAddEditViewTitle" />
+
+  <zope:adapter
+      factory=".demographics.getLimitKeysLabel" />
+
+  <zope:adapter
+      factory=".demographics.getLimitKeysHint" />
+
+  <flourish:breadcrumb
+      for="schooltool.basicperson.interfaces.IDemographicsFields"
+      title=""
+      />
+
+  <flourish:page
+     name="index.html"
+     for="schooltool.basicperson.interfaces.IDemographicsFields"
+     class=".demographics.FlourishDemographicsView"
+     content_template="templates/f_demographics_view.pt"
+     permission="schooltool.edit"
+     title="Demographics and Personal Information"
+     />
+
+  <flourish:page
+     name="reorder.html"
+     for="schooltool.basicperson.interfaces.IDemographicsFields"
+     class=".demographics.FlourishReorderDemographicsView"
+     content_template="templates/f_demographics_reorder.pt"
+     permission="schooltool.edit"
+     title="Demographics and Personal Information"
+     subtitle="Reorder"
+     />
+
+  <flourish:viewlet
+      name="demographics_fields"
+      before="demographics_actions"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      view=".demographics.FlourishDemographicsView"
+      class=".demographics.FlourishDemographicsFieldsLinks"
+      for="schooltool.basicperson.interfaces.IDemographicsFields"
+      title="Add"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="demographics_actions"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      view=".demographics.FlourishDemographicsView"
+      class=".demographics.FlourishDemographicsFieldsActions"
+      for="schooltool.basicperson.interfaces.IDemographicsFields"
+      title="Actions"
+      permission="schooltool.view"
+      />
+
+  <configure package="schooltool.skin.flourish">
+    <flourish:viewlet
+        name="addText.html"
+        before="addDate.html"
+        title="Text Field"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.demographics.FlourishDemographicsFieldsLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="addDescription.html"
+        after="addText.html"
+        title="Description Field"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.demographics.FlourishDemographicsFieldsLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="addDate.html"
+        before="addBool.html"
+        title="Date Field"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.demographics.FlourishDemographicsFieldsLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="addBool.html"
+        before="addEnum.html"
+        title="Yes/No Field"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.demographics.FlourishDemographicsFieldsLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="addEnum.html"
+        title="Selection List Field"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.demographics.FlourishDemographicsFieldsLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="addInt.html"
+        after="addText.html"
+        before="addDescription.html"
+        title="Integer Field"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.demographics.FlourishDemographicsFieldsLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:viewlet
+        name="reorder.html"
+        title="Reorder or Delete Fields"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.basicperson.browser.demographics.FlourishDemographicsFieldsActions"
+        permission="schooltool.edit"
+        />
+
+    <flourish:page
+       name="addText.html"
+       for="schooltool.basicperson.interfaces.IDemographicsFields"
+       class="schooltool.basicperson.browser.demographics.FlourishTextFieldDescriptionAddView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       subtitle="New Text Field"
+       />
+
+    <flourish:page
+       name="addDescription.html"
+       for="schooltool.basicperson.interfaces.IDemographicsFields"
+       class="schooltool.basicperson.browser.demographics.FlourishDescriptionFieldDescriptionAddView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       subtitle="New Description Field"
+       />
+
+    <flourish:page
+       name="addDate.html"
+       for="schooltool.basicperson.interfaces.IDemographicsFields"
+       class="schooltool.basicperson.browser.demographics.FlourishDateFieldDescriptionAddView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       subtitle="New Date Field"
+       />
+
+    <flourish:page
+       name="addBool.html"
+       for="schooltool.basicperson.interfaces.IDemographicsFields"
+       class="schooltool.basicperson.browser.demographics.FlourishBoolFieldDescriptionAddView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       subtitle="New Yes/No Field"
+       />
+
+    <flourish:page
+       name="addEnum.html"
+       for="schooltool.basicperson.interfaces.IDemographicsFields"
+       class="schooltool.basicperson.browser.demographics.FlourishEnumFieldDescriptionAddView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       subtitle="New Selection List Field"
+       />
+
+    <flourish:page
+       name="addInt.html"
+       for="schooltool.basicperson.interfaces.IDemographicsFields"
+       class="schooltool.basicperson.browser.demographics.FlourishIntFieldDescriptionAddView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       subtitle="New Integer Field"
+       />
+
+    <flourish:breadcrumb
+        for="schooltool.basicperson.interfaces.IDemographicsFields"
+        view="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionEditView"
+        title="Demographics"
+        />
+
+    <flourish:breadcrumb
+        for="schooltool.basicperson.interfaces.IFieldDescription"
+        view="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionEditView"
+        title=""
+        />
+
+    <flourish:breadcrumb
+        for="schooltool.basicperson.interfaces.IDemographicsFields"
+        view="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionAddView"
+        title="Demographics"
+        />
+
+    <flourish:page
+       name="edit.html"
+       for="schooltool.basicperson.demographics.TextFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionEditView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       />
+
+    <flourish:page
+       name="edit.html"
+       for="schooltool.basicperson.demographics.DescriptionFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionEditView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       />
+
+    <flourish:page
+       name="edit.html"
+       for="schooltool.basicperson.demographics.DateFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionEditView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       />
+
+    <flourish:page
+       name="edit.html"
+       for="schooltool.basicperson.demographics.BoolFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionEditView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       />
+
+    <flourish:page
+       name="edit.html"
+       for="schooltool.basicperson.demographics.EnumFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishEnumFieldDescriptionEditView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       />
+
+    <flourish:page
+       name="edit.html"
+       for="schooltool.basicperson.demographics.IntFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishIntFieldDescriptionEditView"
+       content_template="templates/z3c_form_edit.pt"
+       permission="schooltool.edit"
+       />
+
+    <flourish:page
+       name="index.html"
+       for="schooltool.basicperson.demographics.TextFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishTextFieldDescriptionView"
+       content_template="templates/z3c_form_display.pt"
+       permission="schooltool.view"
+       title="View"
+       />
+
+    <flourish:page
+       name="index.html"
+       for="schooltool.basicperson.demographics.DescriptionFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishDescriptionFieldDescriptionView"
+       content_template="templates/z3c_form_display.pt"
+       permission="schooltool.view"
+       title="View"
+       />
+
+    <flourish:page
+       name="index.html"
+       for="schooltool.basicperson.demographics.DateFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishDateFieldDescriptionView"
+       content_template="templates/z3c_form_display.pt"
+       permission="schooltool.view"
+       title="View"
+       />
+
+    <flourish:page
+       name="index.html"
+       for="schooltool.basicperson.demographics.BoolFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishBoolFieldDescriptionView"
+       content_template="templates/z3c_form_display.pt"
+       permission="schooltool.view"
+       title="View"
+       />
+
+    <flourish:page
+       name="index.html"
+       for="schooltool.basicperson.demographics.EnumFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishEnumFieldDescriptionView"
+       content_template="templates/z3c_form_display.pt"
+       permission="schooltool.view"
+       title="View"
+       />
+
+    <flourish:page
+       name="index.html"
+       for="schooltool.basicperson.demographics.IntFieldDescription"
+       class="schooltool.basicperson.browser.demographics.FlourishIntFieldDescriptionView"
+       content_template="templates/z3c_form_display.pt"
+       permission="schooltool.view"
+       title="View"
+       />
+
+  </configure>
+
+  <!-- Viewlet Mangers -->
+
+  <flourish:viewletManager
+      name="schooltool.person.FlourishInfo"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      view="schooltool.basicperson.browser.person.FlourishPersonInfo"
+      provides="schooltool.basicperson.browser.person.IFlourishPersonInfoManager"
+      class="schooltool.basicperson.browser.person.FlourishPersonInfoManager"
+      permission="zope.Public"
+      />
+
+  <!-- viewlets -->
+
+  <flourish:viewlet
+      name="advisory"
+      after="contacts-accordion"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      manager="schooltool.basicperson.browser.person.IFlourishPersonInfoManager"
+      class="schooltool.basicperson.browser.person.FlourishAdvisoryViewlet"
+      render="template"
+      permission="schooltool.view"
+      />
+  <flourish:viewlet
+      name="general"
+      before="contacts-accordion"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      manager="schooltool.basicperson.browser.person.IFlourishPersonInfoManager"
+      class="schooltool.basicperson.browser.person.FlourishGeneralViewlet"
+      render="template"
+      permission="schooltool.view"
+      />
+
+  <!-- Other -->
+
+  <flourish:content
+      class="schooltool.basicperson.browser.person.PersonTitle"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      permission="schooltool.view"
+      name="title" />
+
+  <zope:adapter
+      for="schooltool.person.interfaces.IPersonContainer
+           schooltool.skin.flourish.IFlourishLayer"
+      factory=".person.BasicPersonTableFormatter" />
+
+  <flourish:viewlet
+      name="table"
+      for="schooltool.person.interfaces.IPersonContainer"
+      class=".person.BasicPersonTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="person_table"
+      for="*"
+      class=".person.PersonListTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      before="batch table"
+      class="schooltool.table.table.DoNotFilter"
+      manager=".person.PersonListTable"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="done"
+      after="*"
+      manager=".person.BasicPersonTable"
+      view=".person.FlourishBasicPersonContainerView"
+      class="schooltool.app.browser.app.ManageItemDoneLink"
+      render="template"
+      permission="schooltool.view"
+      />
+
+  <!-- Reports -->
+
+  <report:reportLink
+      name="person_id_card_pdf"
+      for="schooltool.person.interfaces.IPerson"
+      permission="schooltool.edit"
+      group="Person"
+      description="Includes student name, ID number, birth date, contact name and contact phone number."
+      title="ID Card"
+      file_type="pdf"
+      link="request_person_id_card_pdf.html"
+      />
+
+  <report:reportLink
+      name="person_profile_pdf"
+      for="schooltool.person.interfaces.IPerson"
+      permission="schooltool.view"
+      group="Person"
+      description="Person profile, contacts, groups, etc."
+      title="Profile"
+      file_type="pdf"
+      link="request_person_profile_pdf.html"
+      />
+
+   <flourish:page
+      name="person_id_card.pdf"
+      for="schooltool.person.interfaces.IPerson"
+      class=".person.FlourishPersonIDCardView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:pdf
+      name="person_profile.pdf"
+      for="schooltool.person.interfaces.IPerson"
+      class=".person.PersonProfilePDF"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="general_info"
+      for="schooltool.person.interfaces.IPerson"
+      manager="schooltool.skin.flourish.report.PDFStory"
+      view=".person.PersonProfilePDF"
+      class=".person.ProfileGeneralPart"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="request_person_id_card_pdf.html"
+      for="schooltool.person.interfaces.IPerson"
+      class=".person.FlourishRequestPersonIDCardView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="request_person_profile_pdf.html"
+      for="schooltool.person.interfaces.IPerson"
+      class=".person.FlourishRequestPersonProfileView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="advisors.html"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      class=".person.FlourishPersonAdvisorView"
+      permission="schooltool.edit"
+      subtitle="Advisors"
+      />
+
+  <flourish:page
+      name="advisees.html"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      class=".person.FlourishPersonAdviseeView"
+      permission="schooltool.edit"
+      subtitle="Advisees"
+      />
+
+  <flourish:viewlet
+      name="manage-people-overview"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.view"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".person.FlourishManagePeopleOverview"
+      />
+
+  <security:allow
+     interface=".person.FlourishManagePeopleOverview"
+     crowds="managers administrators clerks"
+     permission="schooltool.view" />
+
+  <!-- Import -->
+
+  <flourish:viewlet
+      after="person_container"
+      name="person-import-links"
+      for="schooltool.person.interfaces.IPersonContainer"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.basicperson.browser.person.PersonImportLinks"
+      view=".person.FlourishBasicPersonContainerView"
+      title="Import"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="csvimport.html"
+      title="Import CSV"
+      manager="schooltool.basicperson.browser.person.PersonImportLinks"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+     name="csvimport.html"
+     subtitle="Import"
+     for="schooltool.person.interfaces.IPersonContainer"
+     class=".csvimport.FlourishBasicPersonCSVImportView"
+     permission="schooltool.edit"
+     />
+
+  <flourish:content
+      name="import-description"
+      view=".csvimport.FlourishBasicPersonCSVImportView"
+      template="templates/f_csvimport_description.pt"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletFactory
+      name="home"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="*"
+      factory="schooltool.basicperson.browser.person.getUserViewlet"
+      />
+
+  <flourish:viewlet
+      name="home"
+      before="*"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      class=".person.UserLinkViewlet"
+      title="Home"
+      link="index.html"
+      permission="schooltool.view"
+      />
+
+  <flourish:activeViewlet
+      factory=".person.getPersonActiveViewlet"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      />
+
+  <flourish:viewletFactory
+      name="calendar"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="*"
+      factory="schooltool.basicperson.browser.person.getUserViewlet"
+      />
+
+  <flourish:viewlet
+      name="calendar"
+      after="home"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      class=".person.UserLinkViewlet"
+      title="Calendar"
+      link="calendar"
+      permission="schooltool.view"
+      />
+
+  <flourish:activeViewlet
+      name="calendar"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      />
+
+  <zope:adapter factory=".person.PasswordValidator" />
+
+  <zope:adapter factory=".demographics.DemographicsFieldIDValidator" />
+
+  <zope:adapter factory=".person.PhotoFieldFormAdapter" />
+
+  <page
+      name="photo"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      class="schooltool.basicperson.browser.person.PhotoView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="available_table"
+      class="schooltool.basicperson.browser.person.BasicPersonAddRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".person.EditPersonRelationships"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="current_table"
+      class="schooltool.basicperson.browser.person.BasicPersonRemoveRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".person.EditPersonRelationships"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="available_table"
+      class="schooltool.basicperson.browser.person.BasicPersonAddTemporalRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".person.EditPersonTemporalRelationships"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="current_table"
+      class="schooltool.basicperson.browser.person.BasicPersonRemoveTemporalRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".person.EditPersonTemporalRelationships"
+      permission="schooltool.view"
+      />
+
+  <zope:adapter
+      for="*
+           schooltool.skin.flourish.IFlourishLayer
+           .person.FlourishPersonIDCardsViewBase"
+      provides="schooltool.app.browser.interfaces.IReportPageTemplate"
+      name="cards"
+      factory=".person.IDCardsPageTemplate"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      before="batch table"
+      class=".person.PersonMessageFilter"
+      manager=".person.MessageTable"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="messages_table"
+      for="*"
+      class=".person.MessageTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="new_messages"
+      after="logged-in-name"
+      before="login language_selector"
+      for="*"
+      manager="schooltool.skin.flourish.page.ISecondaryNavigationManager"
+      permission="schooltool.view"
+      class=".person.NewMessageIndicatorViewlet"
+      />
+
+  <flourish:viewlet
+      name="leave.html"
+      before="delete.html"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      title="Un-enroll"
+      class=".person.LeaveSchoolLinkViewlet"
+      manager="schooltool.basicperson.browser.person.PersonActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <configure package="schooltool.skin.flourish">
+
+    <flourish:page
+        name="leave.html"
+        for="schooltool.basicperson.interfaces.IBasicPerson"
+        class="schooltool.basicperson.browser.person.LeaveSchoolView"
+        content_template="templates/z3c_form_edit.pt"
+        subtitle="Un-enroll"
+        permission="schooltool.edit"
+        />
+
+    <flourish:page
+        name="edit_level.html"
+        for="schooltool.basicperson.interfaces.IBasicPerson"
+        class="schooltool.basicperson.browser.person.PersonEditLevelView"
+        content_template="templates/z3c_form_edit.pt"
+        permission="schooltool.edit"
+        subtitle="Edit"
+        />
+
+  </configure>
+
+  <flourish:viewlet
+      name="person_level"
+      after="*"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      manager="schooltool.basicperson.browser.person.IFlourishPersonInfoManager"
+      class=".person.LevelAccordionViewlet"
+      permission="schooltool.view"
+      />
+
+</configure>

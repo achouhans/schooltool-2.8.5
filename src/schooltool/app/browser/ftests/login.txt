@@ -1,0 +1,94 @@
+Login and Logout views
+----------------------
+
+We have an app instance:
+
+    >>> from zope.testbrowser.testing import Browser
+    >>> manager = Browser()
+    >>> manager.handleErrors = False
+    >>> manager.addHeader('Authorization', 'Basic manager:schooltool')
+    >>> manager.open('http://localhost/')
+    >>> 'SchoolTool' in manager.contents
+    True
+
+We add a person
+
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> addPerson('Some', 'User', 'user', 'secret')
+
+We have the views ``@@login.html`` and ``@@logout.html`` on the main
+application object. Those views log in or log out the user of the session.
+
+    >>> anonymous = Browser()
+    >>> anonymous.open('http://localhost/')
+    >>> anonymous.getLink('Log In').click()
+    >>> anonymous.headers['status']
+    '200 Ok'
+
+Make sure the current version number is somewhere on the page:
+
+    >>> import schooltool.common
+    >>> schooltool.common.get_version() in anonymous.contents
+    True
+
+Incorrect password:
+
+    >>> anonymous.getControl('Username').value = 'user'
+    >>> anonymous.getControl('Password').value = 'bad'
+    >>> anonymous.getControl('Log in').click()
+    >>> 'Username or password is incorrect' in anonymous.contents
+    True
+
+Another attempt:
+
+    >>> anonymous.getControl('Username').value = 'user'
+    >>> anonymous.getControl('Password').value = 'secret'
+    >>> anonymous.getControl('Log in').click()
+
+Now we are authenticated:
+
+    >>> 'Some User' in anonymous.contents
+    True
+
+Let's check whether our POST data preservation facilities work:
+
+    >>> anonymous.open("http://localhost/persons/user/preferences")
+    >>> anonymous.getControl('public').selected
+    False
+
+.. With mechanize 0.2, goBack reloads the page unless we read the full response
+
+    >>> workaround = anonymous.contents
+
+    >>> anonymous.getLink('Log Out').click()
+    >>> anonymous.goBack()
+
+Now let's enter some data:
+
+    >>> anonymous.getControl('public').click()
+    >>> anonymous.getControl('Apply').click()
+
+We get a log in form:
+
+    >>> anonymous.getControl('Username').value = 'user'
+    >>> anonymous.getControl('Password').value = 'secret'
+    >>> anonymous.getControl('Log in').click()
+
+We visit the user's preferences again:
+
+    >>> anonymous.open("http://localhost/persons/user/preferences")
+
+And the option we have clicked on is set:
+
+    >>> anonymous.getControl('public').selected
+    True
+
+Now we can log out:
+
+    >>> anonymous.getLink('Log Out').click()
+
+We are logged out:
+
+    >>> anonymous.getLink('Log In')
+    <Link text='Log In' url='http://localhost/auth/@@login.html'>
+

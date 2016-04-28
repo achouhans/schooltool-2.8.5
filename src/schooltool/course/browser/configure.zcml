@@ -1,0 +1,311 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <configure
+      package="schooltool.skin"
+      i18n_domain="schooltool">
+
+    <addform
+        label="Add Course"
+        name="addSchoolToolCourse.html"
+        schema="schooltool.course.interfaces.ICourse"
+        fields="title description course_id government_id credits"
+        set_before_add="title"
+        content_factory="schooltool.course.course.Course"
+        permission="schooltool.edit"
+        template="templates/simple_add.pt"
+        class="schooltool.course.browser.course.CourseAddView">
+        <widget field="description" height="5" />
+    </addform>
+
+  </configure>
+
+  <editform
+      label="Edit Course Information"
+      name="edit.html"
+      schema="..interfaces.ICourse"
+      for="..interfaces.ICourse"
+      fields="title description course_id government_id credits"
+      template="templates/course_edit.pt"
+      permission="schooltool.edit"
+      class="schooltool.app.browser.app.BaseEditView"
+      menu="schooltool_actions"
+      title="Edit Info">
+    <widget field="description" height="5" />
+  </editform>
+
+  <navigationViewlet
+      name="courses"
+      for="*"
+      manager="schooltool.schoolyear.browser.interfaces.ISchoolYearViewMenuViewletManager"
+      template="templates/link_to_courses.pt"
+      permission="schooltool.view"
+      order="40"
+      />
+
+  <viewlet
+      name="coursesinfo"
+      for="*"
+      manager="schooltool.person.browser.person.IPersonInfoManager"
+      template="templates/coursesviewlet.pt"
+      class="schooltool.course.browser.course.CoursesViewlet"
+      permission="zope.View"
+      order="10"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.ICourse"
+      class=".course.CourseView"
+      template="templates/course.pt"
+      permission="zope.View"
+      menu="schooltool_actions"
+      title="View"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.ICourseContainer"
+      class=".course.CourseContainerView"
+      template="templates/course_container.pt"
+      permission="zope.View"
+      menu="schooltool_actions"
+      title="View"
+      />
+
+  <containerViews
+      for="..interfaces.ICourseContainer"
+      contents="schooltool.view"
+      add="schooltool.edit"
+      />
+
+  <page
+      name="course-csvimport.html"
+      for="..interfaces.ICourseContainer"
+      class=".csvimport.CourseCSVImportView"
+      template="templates/course-csvimport.pt"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Import Courses"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <menuItem
+      menu="schooltool_actions"
+      title="Add Course"
+      for="..interfaces.ICourseContainer"
+      action="+/addSchoolToolCourse.html"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.ISectionContainer"
+      class=".section.SectionContainerView"
+      template="templates/section_container.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="copy_sections.html"
+      for="..interfaces.ISectionContainer"
+      class=".section.SectionCopyingView"
+      template="templates/copy_sections.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="link_next.html"
+      for="..interfaces.ISection"
+      class=".section.SectionLinkNextView"
+      template="templates/link_section.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="link_previous.html"
+      for="..interfaces.ISection"
+      class=".section.SectionLinkPreviousView"
+      template="templates/link_section.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.ISection"
+      class=".section.SectionView"
+      template="templates/section.pt"
+      permission="zope.View"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="section_linkage.html"
+      for="..interfaces.ISection"
+      class=".section.SectionLinkageView"
+      template="templates/section_linkage.pt"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="extend_term.html"
+      for="..interfaces.ISection"
+      class=".section.ExtendTermView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="link_existing.html"
+      for="..interfaces.ISection"
+      class=".section.LinkExistingView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="unlink_section.html"
+      for="..interfaces.ISection"
+      class=".section.UnlinkSectionView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <containerViews
+      for="..interfaces.ISectionContainer"
+      contents="schooltool.view"
+      add="schooltool.edit"
+      />
+
+  <page
+      name="addSection.html"
+      for="..interfaces.ICourse"
+      class=".section.AddSectionForCourse"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Add Section"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="addSection.html"
+      for="..interfaces.ISectionContainer"
+      class=".section.AddSectionForTerm"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Add Section"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <editform
+      label="Edit Section Information"
+      name="edit.html"
+      schema="..interfaces.ISection"
+      for="..interfaces.ISection"
+      fields="title description"
+      template="templates/section_edit.pt"
+      permission="schooltool.edit"
+      class=".section.SectionEditView"
+      menu="schooltool_actions"
+      title="Edit Info">
+    <widget field="description" height="5" />
+  </editform>
+
+  <page
+      name="member-csvimport.html"
+      for="schooltool.course.interfaces.ISection"
+      class=".csvimport.SectionMemberCSVImportView"
+      template="section-member-csvimport.pt"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Import Section Members"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="instructors.html"
+      for="..interfaces.ISection"
+      class=".section.SectionInstructorView"
+      template="templates/edit_relationships.pt"
+      permission="schooltool.edit"
+      />
+
+  <page
+      name="learners.html"
+      for="..interfaces.ISection"
+      class=".section.SectionLearnerView"
+      template="templates/edit_relationships.pt"
+      permission="schooltool.edit"
+      />
+
+  <zope:adapter
+      for="schooltool.course.interfaces.ICourseContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory="schooltool.table.table.FilterWidget" />
+
+  <zope:adapter
+      for="schooltool.course.interfaces.ICourseContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory="schooltool.table.table.SchoolToolTableFormatter " />
+
+  <zope:adapterTraverserPlugin
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      name="courses"
+      adapter="schooltool.course.interfaces.ICourseContainer"
+      />
+
+  <zope:adapter
+      factory=".course.CourseContainerAbsoluteURLAdapter"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL" />
+
+  <zope:adapter
+      factory=".course.CourseContainerAbsoluteURLAdapter"
+      provides="zope.interface.Interface"
+      name="absolute_url"/>
+
+  <zope:adapterTraverserPlugin
+      for="schooltool.term.interfaces.ITerm"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      name="sections"
+      adapter="schooltool.course.interfaces.ISectionContainer"
+      />
+
+  <zope:adapter
+      factory=".section.SectionContainerAbsoluteURLAdapter"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL" />
+
+  <zope:adapter
+      factory=".section.SectionContainerAbsoluteURLAdapter"
+      provides="zope.interface.Interface"
+      name="absolute_url"/>
+
+
+  <configure package="schooltool.skin">
+    <navigationViewlet
+      name="sections"
+      for="schooltool.term.interfaces.ITerm"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.view"
+      link="sections"
+      title="Sections"
+      order="10"
+      />
+
+    <navigationViewlet
+      name="sections-copy"
+      for="schooltool.course.interfaces.ISectionContainer"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.edit"
+      link="@@copy_sections.html"
+      title="Copy from prev. term"
+      order="50"
+      />
+    </configure>
+
+</configure>

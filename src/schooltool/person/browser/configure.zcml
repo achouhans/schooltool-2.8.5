@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <!-- Person Traverser -->
+  <zope:view
+      for="..interfaces.IPerson"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="schooltool.traverser.browser.PluggableBrowserTraverser"
+      permission="zope.Public"
+      />
+
+  <!-- Viewlet Mangers -->
+
+  <viewletManager
+      name="schooltool.person.Info"
+      permission="zope.Public"
+      provides="schooltool.person.browser.person.IPersonInfoManager"
+      class="schooltool.skin.OrderedViewletManager"
+      />
+
+  <configure package="schooltool.skin">
+
+    <navigationViewlet
+      name="persons"
+      for="*"
+      manager="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      template="templates/navigationViewlet.pt"
+      class="schooltool.skin.TopLevelContainerNavigationViewlet"
+      permission="schooltool.view"
+      link="persons"
+      title="Persons"
+      order="10"
+      />
+
+  </configure>
+
+  <configure package="schooltool.app.browser">
+    <page
+        for="schooltool.person.interfaces.IPerson"
+        name="calendar_selection.html"
+        class=".overlay.CalendarSelectionView"
+        template="templates/calendar_selection.pt"
+        layer="schooltool.skin.ISchoolToolLayer"
+        permission="schooltool.editCalendarOverlays"
+        />
+  </configure>
+
+  <containerViews
+      for="..interfaces.IPersonContainer"
+      contents="schooltool.view"
+      add="schooltool.edit"
+      />
+
+  <zope:adapter for=".person.IGroupsSource
+                     zope.publisher.interfaces.browser.IBrowserRequest"
+                factory=".person.GroupsTerms"/>
+
+  <navigationViewlet
+      name="Home"
+      for="*"
+      manager="schooltool.skin.skin.INavigationManager"
+      template="home_tab_viewlet.pt"
+      permission="schooltool.view"
+      order="10"
+      />
+
+  <configure package="schooltool.skin">
+
+    <navigationViewlet
+      name="person-csvimport"
+      for="schooltool.person.interfaces.IPersonContainer"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.edit"
+      link="@@person-csvimport.html"
+      title="Import Persons"
+      order="10"
+      />
+
+    <navigationViewlet
+      name="change-person-preferences"
+      for="schooltool.person.interfaces.IHavePreferences"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      class="schooltool.person.browser.person.PreferencesActionMenuViewlet"
+      permission="schooltool.view"
+      link="preferences"
+      title="Edit Preferences"
+      order="20"
+      />
+
+    <navigationViewlet
+      name="edit-person-password"
+      for="schooltool.person.interfaces.IPerson"
+      manager="schooltool.skin.IActionMenuManager"
+      class="schooltool.person.browser.person.PasswordEditMenuItem"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.view"
+      link="@@password_edit.html"
+      title="Change Password"
+      order="30"
+      />
+
+  </configure>
+
+  <page
+      name="index.html"
+      for="..interfaces.IPersonPreferences"
+      class=".person.PersonPreferencesView"
+      layer="schooltool.skin.ISchoolToolLayer"
+      permission="schooltool.edit" />
+
+  <page
+     name="password_edit.html"
+     for="..interfaces.IPerson"
+     class=".person.PersonPasswordEditView"
+     layer="schooltool.skin.ISchoolToolLayer"
+     permission="schooltool.view"
+     />
+
+  <page
+      name="photo.jpg"
+      for="..interfaces.IPerson"
+      class=".person.PersonPhotoView"
+      layer="schooltool.skin.ISchoolToolLayer"
+      permission="schooltool.view" />
+
+  <zope:adapterTraverserPlugin
+      for="..interfaces.IHavePreferences"
+      layer="zope.publisher.interfaces.http.IHTTPRequest"
+      name="preferences"
+      adapter="schooltool.person.interfaces.IPersonPreferences"
+      permission="zope.Public"
+      />
+
+  <zope:adapter
+      for="schooltool.person.interfaces.IPersonContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory=".person.PersonFilterWidget" />
+
+  <zope:adapter
+      for="schooltool.person.interfaces.IPersonContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory=".person.PersonTableFormatter" />
+
+  <page
+      name="home.html"
+      for="..interfaces.IPerson"
+      class=".person.HomeView"
+      template="home.pt"
+      layer="schooltool.skin.ISchoolToolLayer"
+      permission="schooltool.view"
+      />
+
+  <zope:adapter
+      factory=".person.PreferencesMenuViewletCrowd"
+      name="schooltool.view" />
+
+  <zope:adapter factory=".person.PasswordsMatchValidator" />
+
+  <zope:adapter factory=".person.CurrentPasswordValidator" />
+
+</configure>

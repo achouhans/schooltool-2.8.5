@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           i18n_domain="schooltool">
+
+  <include file="security.zcml" />
+
+  <include file="schedule.zcml" />
+  <include file="daytemplates.zcml" />
+  <include file="timetable.zcml" />
+  <include file="calendar.zcml" />
+  <include file="integration.zcml" />
+
+  <include package=".browser" />
+
+</configure>

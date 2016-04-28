@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      i18n:domain="schooltool">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="icon" type="image/png" href="favicon.ico"
+          tal:attributes="href context/++resource++schooltool.skin.flourish/favicon.ico"/>
+    <!-- zc.resourcelibrary -->
+    <tal:block replace="resource_library:schooltool.skin.flourish" />
+
+    <script>ST.state.push()</script>
+    <tal:script replace="structure scriptlocal: base_url context/schooltool:app/@@absolute_url" />
+    <script>ST.base_url = ST.local.base_url+'/'</script>
+    <script>ST.resource_url = ST.base_url+'@@/schooltool.skin.flourish/'</script>
+    <script>ST.state.pop()</script>
+
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin" />
+    <tal:block content="structure view/providers/html_head|nothing" />
+    <title>
+      <tal:block content="view/title"
+                 condition="view/title">
+        Title
+      </tal:block>
+      <tal:block content="context/schooltool:content/title"
+                 condition="not:view/title">
+        Alternative Title
+      </tal:block>
+      <tal:block condition="view/subtitle">
+        »
+        <span tal:replace="view/subtitle">
+          Subtitle
+        </span>
+      </tal:block>
+    </title>
+  </head>
+  <body>
+    <div class="schooltool">
+      <div class="header">
+        <h1 class="brand">
+          <span class="school">school</span><span class="tool">tool</span>
+          <img class="small" tal:attributes="src context/++resource++schooltool.skin.flourish/logo-small.png" />
+        </h1>
+        <tal:block replace="structure view/providers/header_navigation">
+          [ | Header | Navigation | Bar | Here | ]
+        </tal:block>
+        <tal:block replace="structure view/providers/breadcrumbs|nothing">
+          [ Breadcrumbs » go » here ]
+        </tal:block>
+        <tal:block replace="structure view/providers/secondary_navigation|nothing">
+          [ | Secondary | Navigation | Bar | Here | ]
+        </tal:block>
+      </div>
+      <div tal:attributes="class view/page_class">
+        <div class="header"
+             tal:condition="view/has_header"
+             tal:define="navigation view/providers/page_navigation|nothing">
+          <h1 tal:condition="view/title"
+              tal:content="view/title">
+            Title
+          </h1>
+          <h1 tal:condition="not:view/title"
+              tal:content="structure context/schooltool:content/title">
+            Alternative title
+          </h1>
+          <div tal:condition="navigation"
+            tal:replace="structure navigation">
+            [Context] [navigation] [links]
+          </div>
+          <tal:block condition="not:navigation">
+            <h2 tal:condition="view/subtitle"
+                tal:content="view/subtitle">
+              Subtitle
+            </h2>
+          </tal:block>
+        </div>
+        <tal:block content="structure view/providers/tertiary_navigation|nothing">
+          [ | Tertiary | Navigation | Bar | Here | ]
+        </tal:block>
+        <tal:block content="structure view/page_template|nothing">
+          [ The page ]
+        </tal:block>
+      </div>
+      <div class="footer">
+        <p class="server-info">
+          <strong tal:replace="context/schooltool:preferences/title"/>
+          -
+          <span i18n:translate="">server running</span>
+          <span>SchoolTool</span> <span tal:content="modules/schooltool/common/get_version" />
+        </p>
+        <p class="copyright">
+          <span i18n:translate=""><a target="_blank" tal:attributes="href
+          string:${context/schooltool:app/@@absolute_url}/about.html" i18n:name="schooltool">SchoolTool</a>
+          is free and open source software maintained by <a i18n:name="sielibre"
+          href="http://sielibre.com" target="_blank">SIELibre, LLC</a></span>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

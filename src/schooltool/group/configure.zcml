@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <include file="security.zcml" />
+
+  <class class=".group.GroupContainerContainer">
+    <allow interface="zope.container.interfaces.ISimpleReadContainer" />
+    <require permission="schooltool.view"
+             attributes="keys values items __iter__ __len__" />
+    <require permission="schooltool.edit"
+             interface="zope.container.interfaces.IWriteContainer" />
+  </class>
+
+  <class class=".group.GroupContainer">
+    <allow interface="zope.container.interfaces.ISimpleReadContainer" />
+    <require permission="schooltool.view"
+             attributes="keys values items __iter__ __len__" />
+    <require permission="schooltool.edit"
+             interface="zope.container.interfaces.IWriteContainer" />
+  </class>
+
+  <class class=".group.Group">
+    <implements interface="schooltool.app.interfaces.IHaveCalendar" />
+
+    <allow attributes="__cmp__" />
+    <require permission="schooltool.view"
+             attributes="title description groups members leaders" />
+    <require permission="schooltool.edit"
+             set_schema=".interfaces.IGroup" />
+  </class>
+
+  <adapter
+      for=".interfaces.IGroupContainer"
+      factory="schooltool.app.app.SimpleNameChooser"
+      provides="zope.container.interfaces.INameChooser" />
+
+  <!-- Application hook -->
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".group.GroupInit"
+      name="schooltool.group" />
+
+  <adapter factory=".group.InitGroupsForNewSchoolYear"
+           name="groups" />
+  <adapter factory=".group.RemoveGroupsWhenSchoolYearIsDeleted"
+           name="groups" />
+  <adapter factory=".group.getGroupContainer" />
+  <adapter factory=".group.getGroupContainerForApp" />
+  <adapter factory=".group.getSchoolYearForGroupContainer" />
+  <adapter factory=".group.getGroupContainerForSection" />
+
+  <include package=".browser" />
+
+</configure>

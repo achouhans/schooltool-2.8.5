@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           i18n_domain="schooltool">
+
+  <include file="security.zcml" />
+
+  <class class=".person.BasicPerson">
+    <implements interface="schooltool.app.interfaces.IHaveCalendar" />
+    <implements interface="schooltool.note.interfaces.IHaveNotes" />
+    <implements interface="schooltool.person.interfaces.IHavePreferences" />
+    <implements interface="schooltool.person.interfaces.IPerson" />
+    <require
+        permission="schooltool.view"
+        interface="schooltool.person.interfaces.IReadPerson"
+        attributes="__cmp__" />
+    <require
+        permission="schooltool.edit"
+        interface="schooltool.person.interfaces.IWritePerson"
+        set_schema="schooltool.person.interfaces.IPerson" />
+    <require
+        permission="schooltool.edit"
+        set_schema="schooltool.basicperson.interfaces.IBasicPerson" />
+    <require
+        permission="schooltool.view"
+        interface="schooltool.basicperson.interfaces.IBasicPerson" />
+    <require
+        permission="schooltool.edit"
+        set_attributes="modified" />
+  </class>
+
+  <class class=".demographics.DemographicsFields">
+    <implements interface="schooltool.basicperson.interfaces.IDemographicsFields" />
+    <require
+       permission="schooltool.edit"
+       interface="schooltool.basicperson.interfaces.IDemographicsFields"
+       set_schema="schooltool.basicperson.interfaces.IDemographicsFields" />
+  </class>
+
+  <class class=".demographics.TextFieldDescription">
+    <allow interface="zope.location.interfaces.ILocation" />
+    <allow interface="schooltool.basicperson.interfaces.IFieldDescription" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.basicperson.interfaces.IFieldDescription" />
+  </class>
+
+  <class class=".demographics.DescriptionFieldDescription">
+    <allow interface="zope.location.interfaces.ILocation" />
+    <allow interface="schooltool.basicperson.interfaces.IFieldDescription" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.basicperson.interfaces.IFieldDescription" />
+  </class>
+
+  <class class=".demographics.DateFieldDescription">
+    <allow interface="zope.location.interfaces.ILocation" />
+    <allow interface="schooltool.basicperson.interfaces.IFieldDescription" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.basicperson.interfaces.IFieldDescription" />
+  </class>
+
+  <class class=".demographics.BoolFieldDescription">
+    <allow interface="zope.location.interfaces.ILocation" />
+    <allow interface="schooltool.basicperson.interfaces.IFieldDescription" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.basicperson.interfaces.IFieldDescription" />
+  </class>
+
+  <class class=".demographics.EnumFieldDescription">
+    <allow interface="zope.location.interfaces.ILocation" />
+    <allow interface="schooltool.basicperson.interfaces.IEnumFieldDescription" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.basicperson.interfaces.IEnumFieldDescription" />
+  </class>
+
+  <class class=".demographics.IntFieldDescription">
+    <allow interface="zope.location.interfaces.ILocation" />
+    <allow interface="schooltool.basicperson.interfaces.IIntFieldDescription" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.basicperson.interfaces.IIntFieldDescription" />
+  </class>
+
+  <adapter
+     factory=".person.BasicPersonCalendarCrowd"
+     provides="schooltool.app.interfaces.ICalendarParentCrowd"
+     name="schooltool.view" />
+
+  <utility
+     factory=".vocabularies.groupVocabularyFactory"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     name="schooltool.basicperson.group_vocabulary" />
+
+  <utility
+     factory=".vocabularies.advisorVocabularyFactory"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     name="schooltool.basicperson.advisor_vocabulary" />
+
+  <utility
+     factory=".vocabularies.LimitKeyVocabFactory"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     name="schooltool.basicperson.limit_keys_vocabulary" />
+
+  <adapter factory=".vocabularies.getLimitKeyVocabularyForFieldDescription" />
+  <adapter factory=".vocabularies.getLimitKeyVocabularyForPersonFields" />
+
+  <include package="schooltool.basicperson.browser" />
+
+  <adapter factory=".demographics.getPersonDemographics" />
+  <subscriber handler=".demographics.removePersonDemographicsSubscriber" />
+  <adapter factory=".demographics.DemographicsFormAdapter" />
+  <adapter factory=".demographics.getDemographicsFields" />
+  <adapter
+      factory=".demographics.DemographicsInit"
+      name="schooltool.basicperson.demographics" />
+  <adapter
+      factory=".demographics.DemographicsAppStartup"
+      name="schooltool.basicperson.demographics" />
+
+  <adapter factory=".person.SearchableTextPerson" />
+
+  <!-- Previously in overrides.zcml -->
+
+  <utility factory=".person.PersonFactoryUtility" />
+
+  <adapter factory=".person.PersonCatalog"
+           name="schooltool.person.person.PersonCatalog" />
+
+  <adapter
+      for="schooltool.person.interfaces.IPersonContainer"
+      factory=".person.getPersonCatalog"
+      provides="zope.catalog.interfaces.ICatalog" />
+
+  <configure
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have devmode">
+
+    <utility
+        factory=".sampledata.SampleStudents"
+        provides="schooltool.sampledata.interfaces.ISampleDataPlugin"
+        name="students"
+        />
+
+    <utility
+        factory=".sampledata.SampleTeachers"
+        provides="schooltool.sampledata.interfaces.ISampleDataPlugin"
+        name="teachers"
+        />
+
+    <utility
+        factory=".sampledata.SamplePersonalEvents"
+        provides="schooltool.sampledata.interfaces.ISampleDataPlugin"
+        name="personal_events"
+        />
+
+  </configure>
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".advisor.AdvisorStatesStartUp"
+      provides="schooltool.app.interfaces.IPluginInit"
+      name="schooltool.basicperson.advisor-states" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".advisor.AdvisorStatesStartUp"
+      provides="schooltool.app.interfaces.IPluginStartUp"
+      name="schooltool.basicperson.advisor-states" />
+
+</configure>

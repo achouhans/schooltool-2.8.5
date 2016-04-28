@@ -1,0 +1,494 @@
+/*
+
+  Calendar CSS.
+
+*/
+
+@media all {
+
+#calendar-view-year,
+#calendar-view-year td {
+    text-align: center;
+    margin: auto;
+}
+
+#calendar-view-year th {
+    text-align: left;
+}
+
+#calendar-view-year TD.month {
+    padding: 1em;
+}
+
+#calendar-view-week TABLE TR,
+#calendar-view-month TABLE TR,
+#calendar-view-year TABLE TR {
+    border-bottom: 0 none;
+}
+
+.page .refine .calendar-month TABLE.month {
+    border-collapse: separate;
+    width: 140px;
+    margin-top: 0px;
+}
+
+.page .refine .calendar-month TABLE.month tbody,
+.page .refine .calendar-month TABLE.month thead {
+    border-collapse: collapse;
+}
+
+.page .refine .calendar-month table th {
+    text-align: left;
+    font-weight: normal;
+}
+
+.page .refine .calendar-month table th a {
+    padding-left: 4px;
+}
+
+.page .refine .calendar-month table td {
+    text-align: center;
+}
+
+#calendar-view-month {
+    width: 99%;
+    min-width: 100%;
+}
+
+#calendar-view-month TD,
+#calendar-view-month TH {
+    padding: 0;
+}
+
+.page .refine .calendar-month TABLE.month TH,
+#calendar-view-month TH,
+#calendar-view-month TD.weekno {
+    padding: 0;
+}
+
+#calendar-view-year TABLE.month TH month-weekday{
+    padding: 0;
+}
+
+.page .refine .calendar-month TABLE.month TH A {
+    text-decoration: none;
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+
+#calendar-view-month TD.weekno {
+    font-family: Ubuntu, serif;
+    font-weight: bold;
+}
+
+#calendar-view-year TABLE.month TH.month-weekday {
+    font-weight: normal;
+    padding: 2px;
+}
+
+#calendar-view-month TH.weekday {
+    font-weight: normal;
+    padding: 8px;
+}
+
+#calendar-view-year TABLE.month TH.month-title A {
+    display: block;
+    height: 100%;
+    font-weight: normal;
+    text-decoration: none;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 4px;
+}
+
+#calendar-view-year TABLE.month TH,
+#calendar-view-year TABLE.month TD {
+    padding: 0;
+}
+
+#calendar-view-year TABLE.month TD A,
+#calendar-view-month TD A  {
+    text-decoration: none;
+    display: block;
+    padding: 1px;
+}
+
+#calendar-view-year table.month td a.cal_yearly_day_busy {
+    font-weight: bold;
+}
+
+.page .refine .calendar-month TABLE.month TD A {
+    text-decoration: none;
+    display: block;
+    font-weight: normal;
+    padding: 1px;
+}
+
+.page .refine .calendar-month TABLE.month TD a.cal_yearly_day_busy {
+    font-weight: bold;
+}
+
+#calendar-view-month TD.day,
+.page .refine .calendar-month TABLE.month TD {
+    padding: 0;
+}
+
+#calendar-view-month TD.day A,
+#calendar-view-month TD.day-other A,
+#calendar-view-month TD.weekno A {
+    margin: auto;
+    display: block;
+    height: 100%;
+    width: 100%;
+    min-height: 80px;
+}
+
+#calendar-view-month TD.weekno A {
+    height: 100%;
+    width: 100%;
+    padding-left: 0.125em;
+    padding-right: 0.125em;
+}
+
+#calendar-view-month .event,
+#calendar-view-month .comp_event {
+    font-weight: normal;
+    font-size: xx-small;
+    display: block;
+    padding: 1px;
+}
+
+#calendar-view-week TD {
+    padding: 0;
+    width: 20em;
+    font-size: smaller;
+}
+#calendar-view-week TH {
+    padding: 0;
+    margin: 0px;
+}
+
+#calendar-view-week TH A {
+    display: block;
+    padding: 8px;
+    font-weight: normal;
+    height: 100%;
+    text-align: center;
+    text-decoration: none;
+}
+
+#calendar-view-week TD A {
+    display: block;
+    margin: 2px;
+    padding: 0.5em;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+#calendar-view-week TD A .time {
+    font-size: smaller;
+}
+
+#calendar-view-week TD A.first {
+}
+
+#calendar-view-week TD A:hover {
+}
+
+/* Day View
+* The height attribute is defined inline depending on the length of the visible
+* day
+*/
+#calendar-view-day {
+    border-top: 0 none;
+    position: relative;
+    padding-top: 2px;
+}
+
+#events-allday {
+    margin-bottom: 1px;
+}
+
+#events-allday .event-allday {
+    position: relative;
+    margin-top: 1px;
+}
+
+#events-allday .event-allday H6 {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+    padding: 8px;
+}
+#events-allday .event-allday H6 A {
+    text-decoration: none;
+    display: block;
+}
+
+#events-allday .event-allday A.delete {
+    position: absolute;
+    top: 0px;
+    right: 2px;
+    display: block;
+    text-decoration: none;
+    overflow: hidden;
+    padding: 0;
+    cursor: pointer;
+}
+
+#events-allday .event-allday P {
+    font-size: smaller;
+    margin: 0 1em;
+    text-align: center;
+}
+
+#calendar-view-day .hour {
+    width: 100%;
+    position: absolute;
+    height: 4em;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#calendar-view-day .hour .title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+    margin-left: 0.5em;
+}
+
+#calendar-view-day .events {
+    position: absolute;
+    margin-left: 5.5em;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
+#calendar-view-day .event {
+    position: absolute;
+    margin-left: 5em;
+    width: 20em;
+    min-width: 20em;
+}
+
+#calendar-view-day .expanded {
+    overflow: visible;
+    display: block;
+    z-index: 9;
+    height: auto !important;
+}
+
+#calendar-view-day .contracted {
+    z-index: 1;
+    overflow: hidden;
+    display: block;
+}
+
+#calendar-view-day .event H6 {
+    font-size: small;
+    margin: 0;
+    padding: 2px;
+    font-weight: bold;
+    line-height: 1em;
+}
+
+#calendar-view-day .event H6 A {
+    text-decoration: none;
+    display: block;
+}
+
+#calendar-view-day .event H6 .start-end {
+    display: inline-block;
+    float: right;
+    font-weight: bold;
+}
+
+#calendar-view-day .event A.delete {
+    position: absolute;
+    top: 0px;
+    right: 2px;
+    display: block;
+    text-decoration: none;
+    overflow: hidden;
+    padding: 0;
+    cursor: pointer;
+}
+
+#calendar-view-day .event .body {
+    margin: 0.5ex;
+    padding: 0.5ex;
+}
+
+#calendar-view-day .event .booked-resources {
+    padding: 0.5ex;
+    font-size: 80%;
+}
+
+#calendar-view-day .event .booked-resources-header A {
+    text-decoration: none;
+    display: block;
+}
+
+#calendar-view-day .event .booked-resources a {
+    display: block;
+}
+
+#calendar-view-day .event .body .title {
+    font-style: italic;
+}
+
+#calendar-view-day .hour A.event-new {
+    padding: 0.5ex;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#calendar-view-day .hour SPAN.event-new {
+    font-weight: bold;
+    padding: 0.5ex;
+}
+
+#calendar-view-day .event h6 {
+    padding: 2px 16px;
+}
+
+#calendar-view-day .event .event-body {
+    padding: 0 8px;
+}
+
+#calendar-view-day .event .event-body > a {
+    font-size: 12px;
+}
+
+.page .refine .calendar-overlay table {
+    margin: 0;
+    width: 140px;
+}
+
+.page .refine .calendar-overlay table td {
+    padding: 2px 0;
+}
+
+.page .refine .calendar-overlay FORM {
+    margin: 2px;
+}
+
+.page .refine .calendar-overlay FORM .buttons {
+    margin-top: 0px;
+}
+
+.page .refine .calendar-overlay FORM .buttons {
+    margin-top: 4px;
+}
+
+.page .refine .calendar-overlay table.overlays {
+    max-width: 140px;
+}
+
+.page .refine .calendar-overlay table.overlays INPUT {
+    margin-left: 0.5em;
+}
+
+.page .refine .calendar-overlay td.overlay-title {
+    overflow: hidden;
+    word-break: break-all;
+    max-width: 100px;
+}
+
+.page .refine .calendar-overlay td.overlay-go A {
+    float: right;
+    margin-right: 4px;
+    font-size: 12px;
+    width: 1em;
+    height: 1em;
+    text-decoration: none;
+}
+
+.page .refine .calendar-jump-to FORM {
+    padding: 4px;
+    margin: auto;
+}
+
+.page .refine .calendar-jump-to form select {
+    width: 136px;
+}
+
+.page .refine .calendar-tomorrow-events ul.events {
+    width: 140px;
+}
+
+.page > .third-nav li.calendar-nav a {
+    background: #ffffff;
+    border: none;
+}
+
+.page > .third-nav li.calendar-current {
+    text-align: center;
+}
+
+.page > .third-nav li.calendar-nav a:hover {
+    background: #ffffff;
+}
+
+.page > .third-nav li.calendar-current span {
+    font-weight: bold;
+    background: #ffffff;
+    border: none;
+}
+
+.page > .third-nav li.calendar-type {
+    float: right;
+    margin-left: -1px;
+}
+
+.page > .third-nav li.calendar-nav + li.calendar-type a {
+    margin-right: 16px;
+}
+
+.page .main .content .calendar-event form #recurrence_box .buttons {
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
+.calendar-overlay .overlays-dropdown table.expanded {
+}
+
+.calendar-overlay .overlays-dropdown table.overlays thead {
+    background-color: transparent;
+    overflow: hidden;
+}
+
+.calendar-overlay .overlays-dropdown table.overlays thead a.title:before {
+    content: "\25B6 \0020";
+}
+
+.calendar-overlay .overlays-dropdown table.overlays thead td {
+    width: 100%;
+}
+
+.calendar-overlay .overlays-dropdown table.overlays thead a.title:hover {
+    text-decoration: none;
+}
+
+.calendar-overlay .overlays-dropdown table.overlays thead a.title {
+    cursor: pointer;
+    display: block;
+    width: 140px;
+}
+
+.calendar-overlay .overlays-dropdown table.overlays tbody {
+    display: none;
+}
+
+.calendar-overlay .overlays-dropdown table.expanded thead a.title:before {
+    content: "\25BC \0020";
+}
+
+.calendar-overlay .overlays-dropdown table.expanded tbody {
+    display: table-row-group;
+}
+
+}

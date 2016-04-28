@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:report="http://namespaces.schooltool.org/report"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <zope:resourceLibrary
+      name="schooltool.export"
+      require=""
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+        source="resources"
+        include="importer.js"
+        />
+  </zope:resourceLibrary>
+
+  <flourish:page
+     name="export.xls"
+     for="schooltool.app.interfaces.ISchoolToolApplication"
+     class=".export.MegaExporter"
+     permission="schooltool.edit" />
+
+  <security:allow
+      interface=".export.MegaExporter"
+      crowds="clerks managers"
+      permission="schooltool.edit" />
+
+  <flourish:page
+     name="export.xls"
+     for="schooltool.app.interfaces.ISchoolToolApplication"
+     layer="schooltool.report.interfaces.IRemoteReportLayer"
+     class=".export.RemoteMegaExporter"
+     permission="schooltool.edit" />
+
+  <security:allow
+      interface=".export.RemoteMegaExporter"
+      crowds="clerks managers"
+      permission="schooltool.edit" />
+
+  <flourish:viewlet
+      name="import.html"
+      title="Import XLS"
+      class=".export.ImportLinkViewlet"
+      manager="schooltool.app.browser.app.SchoolActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <security:allow
+      interface=".export.ImportLinkViewlet"
+      crowds="managers clerks"
+      permission="schooltool.edit" />
+
+  <security:allow
+      interface=".export.RemoteImportLinkViewlet"
+      crowds="managers clerks"
+      permission="schooltool.edit" />
+
+  <flourish:page
+     name="import.html"
+     subtitle="Import Data"
+     for="schooltool.app.interfaces.ISchoolToolApplication"
+     content_template="templates/f_import_remote.pt"
+     class=".importer.FlourishRemoteMegaImporter"
+     permission="schooltool.edit" />
+
+  <flourish:page
+     name="request_import.html"
+     subtitle="Import Data"
+     for="schooltool.app.interfaces.ISchoolToolApplication"
+     template="templates/f_import_remote.pt"
+     class=".importer.RequestImportDialog"
+     permission="schooltool.edit" />
+
+  <security:allow
+      interface=".importer.FlourishMegaImporter"
+      crowds="managers clerks"
+      permission="schooltool.edit" />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view=".importer.FlourishMegaImporter"
+      />
+
+  <flourish:content
+      name="progress"
+      for=".importer.ImporterTask"
+      class=".importer.ImportProgressContent"
+      template="templates/f_import_progress.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      name="long"
+      for=".importer.ImportTask"
+      class=".importer.ImportProgressContent"
+      template="templates/f_import_progress.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="long"
+      for="schooltool.export.importer.ImportProgressMessage"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class=".importer.ImportFinishedLong"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="dialog"
+      for="schooltool.export.importer.ImportProgressMessage"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class="schooltool.task.browser.task.TaskProgressDialog"
+      template="templates/f_import_task_progress.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      name="short"
+      for="schooltool.export.importer.ImportProgressMessage"
+      view="zope.interface.Interface"
+      template="templates/f_import_generating_short.pt"
+      class=".importer.ImportMessageShort"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="request_export_xls.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class="schooltool.export.app.FlourishRequestXLSExportView"
+      permission="schooltool.edit"
+      />
+
+  <security:allow
+      interface=".app.FlourishRequestXLSExportView"
+      crowds="clerks managers"
+      permission="schooltool.edit" />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_import_related.pt"
+      view=".importer.FlourishRemoteMegaImporter"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.view"
+      />
+
+  <!-- Reports -->
+
+  <report:reportLink
+       name="export.xls"
+       for="schooltool.app.interfaces.ISchoolToolApplication"
+       view="schooltool.app.browser.app.ManageSchool"
+       class=".export.ExportLinkVielwet"
+       permission="schooltool.edit"
+       group="School"
+       description="A single .xls spreadsheet containing the basic structure of the school, including students, contacts, years, terms, courses, groups and timetables.  Can be modified and re-imported."
+       title="School Export"
+       file_type="xls"
+       link="request_export_xls.html"
+       />
+
+  <security:allow
+      interface=".export.ExportLinkVielwet"
+      crowds="managers clerks"
+      permission="schooltool.edit" />
+
+  <zope:class class=".export.XLSProgressMessage">
+    <require permission="schooltool.view"
+             interface="schooltool.export.interfaces.IXLSProgressMessage" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.export.interfaces.IXLSProgressMessage" />
+  </zope:class>
+
+  <page
+      name="long"
+      for="schooltool.export.importer.ImportFinishedMessage"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class=".importer.ImportFinishedLong"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      name="short"
+      for="schooltool.export.importer.ImportFinishedMessage"
+      view="zope.interface.Interface"
+      template="templates/f_import_finished_short.pt"
+      class=".importer.ImportMessageShort"
+      permission="schooltool.view"
+      />
+
+  <zope:adapter
+      name="schooltool.export.importer.OnImportFinished"
+      for="schooltool.export.interfaces.IImporterTask
+           *
+           *"
+      provides="schooltool.task.interfaces.ITaskCompletedNotification"
+      factory="schooltool.export.importer.OnImportFinished"
+      />
+
+</configure>

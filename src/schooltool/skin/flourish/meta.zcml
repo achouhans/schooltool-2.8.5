@@ -1,0 +1,85 @@
+<configure xmlns="http://namespaces.zope.org/meta">
+
+  <directives namespace="http://schooltool.org/flourish">
+
+    <complexDirective
+        name="resourceLibrary"
+        schema="zc.resourcelibrary.zcml.IResourceLibraryDirective"
+        handler=".zcml_resource.ResourceLibrary"
+        >
+
+      <subdirective
+          name="directory"
+          schema="zc.resourcelibrary.zcml.IDirectoryDirective"
+          />
+
+      <subdirective
+          name="library"
+          schema=".zcml_resource.IDynamicLibraryDirective"
+          />
+
+    </complexDirective>
+
+    <directive
+        name="content"
+        schema=".zcml_content.IContentDirective"
+        handler=".zcml_content.contentDirective"
+        />
+
+    <directive
+        name="contentFactory"
+        schema=".zcml_content.IContentFactoryDirective"
+        handler=".zcml_content.contentFactory"
+        />
+
+    <directive
+        name="viewlet"
+        schema=".zcml.IViewletDirective"
+        handler=".zcml.viewlet"
+        />
+
+    <directive
+        name="viewletFactory"
+        schema=".zcml.IViewletFactoryDirective"
+        handler=".zcml.viewletFactory"
+        />
+
+    <directive
+        name="viewletManager"
+        schema=".zcml.IManagerDirective"
+        handler=".zcml.viewletManager"
+        />
+
+    <directive
+        name="activeViewlet"
+        schema=".zcml.IActiveViewletDirective"
+        handler=".zcml.activeViewlet"
+        />
+
+    <directive
+        name="page"
+        schema=".zcml.IPageDirective"
+        handler=".zcml.page"
+        />
+
+    <directive
+        name="pdf"
+        schema=".zcml_report.IPDFPageDirective"
+        handler=".zcml_report.pdf"
+        />
+
+    <directive
+        name="breadcrumb"
+        schema=".zcml_breadcrumb.IBreadcrumbDirective"
+        handler=".zcml_breadcrumb.breadcrumbDirective"
+        />
+
+    <directive
+        name="page_breadcrumbs"
+        schema=".zcml_breadcrumb.IPageBreadcrumbsDirective"
+        handler=".zcml_breadcrumb.pageBreadcrumbsDirective"
+        />
+
+  </directives>
+
+</configure>

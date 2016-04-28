@@ -1,0 +1,103 @@
+<html metal:use-macro="view/@@standard_macros/page" i18n:domain="schooltool">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">
+    Section of
+    <tal:loop tal:repeat="course context/courses" i18n:name="course">
+      <a tal:replace="structure course/@@title" />
+    </tal:loop>
+    -- <span i18n:name="section_title" tal:replace="structure context/@@title" />
+    for
+    <tal:block i18n:name="term" tal:replace="structure view/term/@@title"/> of
+    <tal:block i18n:name="schoolyear" tal:replace="structure view/school_year/@@title" />
+  </title>
+</head>
+<body>
+
+  <h1 metal:fill-slot="content-header" i18n:translate="">
+    Section of
+    <tal:loop tal:repeat="course context/courses" i18n:name="course">
+      <a tal:replace="structure course/@@link" />
+    </tal:loop>
+    -- <span i18n:name="section_title" tal:replace="structure context/@@title" />
+    for
+    <tal:block i18n:name="term" tal:replace="structure view/term/@@link"/> of
+    <tal:block i18n:name="schoolyear" tal:replace="structure view/school_year/@@link" />
+  </h1>
+
+<metal:block metal:fill-slot="body">
+
+  <tal:block replace="structure context/@@notes|nothing"/>
+
+  <div id="section-view">
+
+    <p class="description" tal:content="context/description"/>
+
+    <a class="modify" href=""
+       title="Change the name or description of this section."
+       tal:attributes="href string:${context/@@absolute_url}/edit.html"
+       i18n:attributes="title"
+       i18n:translate=""
+       tal:condition="context/schooltool:can_edit">
+       Edit Info
+    </a>
+
+    <div class="info-block">
+      <a tal:attributes="href string:${context/@@absolute_url}/section_linkage.html">
+        <h3 i18n:translate="">Linked sections</h3>
+      </a>
+      <ul>
+        <li tal:repeat="section view/linked_terms" i18n:translate="">
+          <a i18n:name="section_title" tal:replace="structure section/section/@@link" />
+          for
+          <a i18n:name="term" tal:replace="structure section/term/@@link"/>
+        </li>
+      </ul>
+    </div>
+
+    <div class="info-block" tal:define="instructors context/instructors">
+      <h3 i18n:translate="">Instructors</h3>
+      <ul>
+        <li tal:repeat="obj instructors/sorted_filter_accessible:title">
+          <a tal:attributes="href obj/@@absolute_url"
+             tal:content="obj/title" />
+        </li>
+      </ul>
+      <a class="modify" href=""
+         title="Change the instructors for this section."
+         tal:attributes="href string:${context/@@absolute_url}/instructors.html"
+         i18n:attributes="title"
+         i18n:translate=""
+         tal:condition="context/schooltool:can_edit">
+         edit instructors
+      </a>
+    </div>
+
+    <div class="info-block">
+      <h3 i18n:translate="">Students</h3>
+      <ul>
+        <tal:block tal:replace="structure view/renderPersonTable" />
+      </ul>
+      <a class="modify" href=""
+         title="Change the students in this section individually"
+         tal:attributes="href string:${context/@@absolute_url}/learners.html"
+         i18n:attributes="title"
+         i18n:translate=""
+         tal:condition="context/schooltool:can_edit">
+         edit individuals
+      </a>
+    </div>
+
+    <div class="info-block" tal:define="resources context/resources" tal:condition="resources">
+      <h3 i18n:translate="">Resources</h3>
+      <ul>
+        <li tal:repeat="obj resources/sorted_filter_accessible:title">
+          <a tal:attributes="href obj/@@absolute_url"
+             tal:content="obj/title" />
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</metal:block>
+</body>
+</html>

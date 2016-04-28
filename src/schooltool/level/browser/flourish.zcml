@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.level.interfaces.ILevelContainer"
+      />
+
+  <flourish:contentFactory
+      factory=".level.appTitleContentFactory"
+      for="schooltool.level.interfaces.ILevelContainer"
+      name="title" />
+
+  <flourish:breadcrumb
+      for="schooltool.level.interfaces.ILevelContainer"
+      title="Grade Levels"
+      />
+
+  <flourish:breadcrumb
+      for="schooltool.level.interfaces.ILevel"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      title="Grade Levels"
+      view=".level.FlourishLevelsView"
+      />
+
+  <flourish:page
+     name="index.html"
+     for="schooltool.level.interfaces.ILevelContainer"
+     class=".level.FlourishLevelsView"
+     content_template="templates/f_levels_view.pt"
+     permission="schooltool.edit"
+     title="Grade Levels"
+     />
+
+  <flourish:viewlet
+      name="levels-add-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".level.LevelsAddLinks"
+      title="Add"
+      permission="schooltool.edit"
+      view=".level.FlourishLevelsView"
+      />
+
+  <flourish:viewlet
+      name="levels-actions-links"
+      after="levels-add-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".level.LevelsActionsLinks"
+      title="Actions"
+      permission="schooltool.edit"
+      view=".level.FlourishLevelsView"
+      />
+
+  <flourish:viewlet
+      name="level-add"
+      link="add.html"
+      title="Level"
+      view=".level.FlourishLevelsView"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager=".level.LevelsAddLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_levels_related.pt"
+      view=".level.FlourishLevelsView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <configure package="schooltool.skin.flourish">
+    <flourish:page
+        name="add.html"
+        title="Grade Levels"
+        subtitle="Add new level"
+        for="schooltool.level.interfaces.ILevelContainer"
+        class="schooltool.level.browser.level.FlourishLevelAddView"
+        permission="schooltool.edit"
+        content_template="templates/z3c-schooltool-form.pt"
+        />
+
+    <flourish:page
+        name="edit.html"
+        title="Grade Levels"
+        subtitle="Edit level"
+        for="schooltool.level.interfaces.ILevel"
+        class="schooltool.level.browser.level.FlourishLevelEditView"
+        permission="schooltool.edit"
+        content_template="templates/z3c-schooltool-form.pt"
+        />
+
+  </configure>
+
+  <flourish:breadcrumb
+      for="schooltool.level.interfaces.ILevel"
+      view="schooltool.level.browser.level.FlourishLevelEditView"
+      title=""
+      />
+
+  <flourish:page
+      name="reorder.html"
+      title="Grade Levels"
+      subtitle="Reorder"
+      for="schooltool.level.interfaces.ILevelContainer"
+      class="schooltool.level.browser.level.FlourishReorderLevelsView"
+      permission="schooltool.edit"
+      content_template="templates/f_levels_reorder.pt"
+      />
+
+  <flourish:viewlet
+      name="levels-reorder"
+      link="reorder.html"
+      title="Reorder or Delete Levels"
+      view=".level.FlourishLevelsView"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager=".level.LevelsActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="levels"
+      after="resource_demographics"
+      title="Grade Levels"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.CustomizeSchoolLinks"
+      permission="schooltool.edit"
+      />
+
+</configure>

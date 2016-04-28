@@ -1,0 +1,107 @@
+<html metal:use-macro="view/@@standard_macros/page" i18n:domain="schooltool">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">
+    Sample Data Generation
+  </title>
+</head>
+<body>
+
+<h1 metal:fill-slot="content-header"
+    i18n:translate="">Sample Data Generation</h1>
+
+<metal:block metal:fill-slot="body">
+<tal:block condition="not: view/work_done">
+<p i18n:translate="" class="error">
+Warning: proceeding will populate
+the database with randomly generated data.  Do not do this if you have
+any valuable data in your SchoolTool instance.
+</p>
+
+<p i18n:translate="">
+This creates a school of 1,000 students and data for 4 terms.  If you select 
+all options, it can take a <strong>long</strong> time.  Just let it run.
+</p>
+
+<p i18n:translate="">
+Setting a random seed allows you to to reproduce
+the same set of sample data by generating it again with the same value
+of the random seed.
+</p>
+
+<form tal:attributes="action request/URL" method="POST"
+      class="standalone">
+  <div class="row">
+    <div class="label">
+       <label>Random seed</label>
+    </div>
+    <div class="field">
+       <input name="seed" tal:attributes="value view/seed"/>
+    </div>
+  </div>
+  <fieldset>
+    <legend i18n:translate="">Plugins</legend>
+    <div class="item_list">
+    <div tal:repeat="plugin view/getPlugins">
+      <label tal:condition="python: not plugin.get('selected') 
+                                 or not plugin.get('view')">
+        <input tal:attributes="name string:plugin.${plugin/name};"
+               tal:condition="not: plugin/selected|nothing"
+               type="checkbox" />
+          <input tal:attributes="name string:plugin.${plugin/name};"
+                 tal:condition="plugin/selected|nothing"
+                 checked="yes"
+                 type="checkbox" />
+        <span tal:replace="plugin/name" />
+      </label>
+      <fieldset tal:condition="python: plugin.get('selected')
+                                   and plugin.get('view')">
+        <legend>
+          <label>
+          <input tal:attributes="name string:plugin.${plugin/name};"
+                 tal:condition="plugin/selected|nothing"
+                 checked="yes"
+                 type="checkbox" />
+          <span tal:replace="plugin/name" />
+          </label>
+        </legend>
+          <div tal:replace="structure python:plugin.get('view')()"/>
+      </fieldset>
+    </div>
+    <div class="controls">
+      <input type="submit" class="button-ok" name="DEPENDENCIES"
+             value="View Dependencies"
+             i18n:attributes="value" />
+      <input type="submit" class="button-ok" name="CLEAR"
+             value="Clear"
+             i18n:attributes="value" />
+    </div>
+  </fieldset>
+  <div class="controls">
+    <input type="submit" class="button-ok" name="SUBMIT"
+           value="Generate" i18n:attributes="value" />
+    <input type="submit" class="button-cancel" name="CANCEL" value="Cancel"
+           i18n:attributes="value cancel-button" />
+  </div>
+</form>
+</tal:block>
+
+<tal:block condition="view/work_done">
+
+<p>Sample data generated.  Below is the list of plugins executed along
+with the CPU time it took to run them</p>
+
+<table>
+  <tr>
+    <th>Plugin Name</th>
+    <th>CPU time used (seconds)</th>
+  </tr>
+  <tr tal:repeat="name view/times">
+    <td tal:content="name"></td>
+    <td tal:content="python: view.times[name]"></td>
+  </tr>
+</table>
+</tal:block>
+
+</metal:block>
+</body>
+</html>

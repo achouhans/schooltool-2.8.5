@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           i18n_domain="schooltool">
+
+  <includeOverrides file="selenium-overrides.zcml" />
+
+</configure>

@@ -1,0 +1,11 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           i18n_domain="zope">
+
+    <include package="schooltool.common" />
+    <include package="schooltool.timetable" />
+    <include package="schooltool.basicperson" />
+
+    <browser:defaultSkin name="SchoolTool" />
+
+</configure>

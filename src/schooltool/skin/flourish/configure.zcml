@@ -1,0 +1,391 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:meta="http://namespaces.zope.org/meta"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <meta:provides feature="schooltool.skin.flourish" />
+
+  <!-- Common resources -->
+
+  <zope:resourceLibrary
+      name="schooltool.skin.flourish-jquery-theme"
+      require=""
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+        source="resources/jquery/css/schooltool"
+        include="jquery-ui.css
+                 jquery-ui-overrides.css
+                 "
+        />
+  </zope:resourceLibrary>
+
+  <configure package="schooltool.skin">
+    <zope:resourceLibrary
+        name="jquery"
+        layer="schooltool.skin.flourish.IFlourishLayer">
+      <directory
+          source="resources"
+          include="jquery.min.js"
+          />
+    </zope:resourceLibrary>
+    <zope:resourceLibrary
+        name="jstree"
+        require="jquery"
+        layer="schooltool.skin.flourish.IFlourishLayer">
+      <directory
+          source="resources/jstree"
+          include="jquery.tree.js"
+          />
+    </zope:resourceLibrary>
+  </configure>
+
+  <zope:resourceLibrary
+      name="schooltool.skin.flourish-jquery"
+      require="jquery
+               schooltool.skin.flourish-jquery-theme"
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+        source="resources/jquery/js"
+        include="jquery-ui.min.js"
+        />
+  </zope:resourceLibrary>
+
+  <flourish:resourceLibrary
+      name="schooltool.skin.flourish-jquery-i18n"
+      require=""
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+        source="resources/jquery/development-bundle/ui/i18n"
+        />
+    <library
+        class=".widgets.JQueryI18nLibrary"
+        source="resources/jquery/development-bundle/ui/i18n"
+        />
+  </flourish:resourceLibrary>
+
+  <zope:resourceLibrary
+      name="schooltool.skin.flourish-scripts"
+      require="schooltool.skin.flourish-jquery
+               schooltool.skin.flourish-jquery-i18n"
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+      source="resources"
+      include="flourish.js"
+      />
+  </zope:resourceLibrary>
+
+  <zope:resourceLibrary
+      name="schooltool.skin.flourish"
+      require="schooltool.skin.flourish-scripts
+               schooltool.task"
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+      source="resources"
+      include="reset.css
+               flourish.css
+               page.css
+               form.css
+               table.css
+               batch.css
+               colors.css
+               "
+      />
+  </zope:resourceLibrary>
+
+  <zope:resourceLibrary
+      name="schooltool.skin.flourish-gradebook"
+      require=""
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+      source="resources"
+      include="gradebook.css
+               jquery.scrollto.min.js
+               gradebook.js"
+      />
+  </zope:resourceLibrary>
+
+  <zope:resourceLibrary
+      name="schooltool.skin.flourish-jstree"
+      require="jstree"
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+      source="resources"
+      include="jstree.js"
+      />
+  </zope:resourceLibrary>
+
+  <zope:resourceLibrary
+      name="schooltool.skin.flourish-report"
+      require="schooltool.skin.flourish"
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+      source="resources"
+      include="d3.min.js
+               report.js
+               report.css"
+      />
+  </zope:resourceLibrary>
+
+  <zope:resourceLibrary
+      name="schooltool.flourish.custom"
+      require=""
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+        source="custom"
+        />
+  </zope:resourceLibrary>
+
+  <flourish:viewletManager
+      name="html_head"
+      for="*"
+      class=".page.HTMLHeadViewletManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="custom_css"
+      manager=".page.HTMLHeadViewletManager"
+      class=".page.CustomCSSViewlet"
+      permission="zope.Public"
+      />
+
+  <!-- Content provider machinery -->
+
+  <zope:adapter
+      for="*
+           schooltool.skin.flourish.IFlourishLayer
+           *"
+      provides="schooltool.skin.flourish.interfaces.IContentProviders"
+      factory="schooltool.skin.flourish.content.TALESAwareContentProviders" />
+
+  <zope:adapter
+      factory="schooltool.skin.flourish.content.ContentProviderProxy"
+      permission="zope.Public"
+      />
+
+  <!-- Page viewlet managers and other conent -->
+
+  <zope:adapter
+      for="schooltool.skin.flourish.interfaces.IPage
+           schooltool.skin.flourish.IFlourishLayer"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+      factory="schooltool.skin.flourish.page.PageAbsoluteURL" />
+
+  <zope:adapter
+      factory="schooltool.skin.flourish.viewlet.ViewletProxy"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="header_navigation"
+      provides=".page.IHeaderNavigationManager"
+      class=".page.HeaderNavigationManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="secondary_navigation"
+      provides=".page.ISecondaryNavigationManager"
+      class=".page.SecondaryNavigationManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="tertiary_navigation"
+      provides=".page.ITertiaryNavigationManager"
+      class=".page.TertiaryNavigationManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="page_navigation"
+      class=".page.PageNavigationManager"
+      provides=".page.IPageNavigationManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="page_refine"
+      provides=".page.IPageRefineManager"
+      class=".page.ContentViewletManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="page_content"
+      provides=".page.IPageContentManager"
+      class=".page.ContentViewletManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="actions"
+      view=".page.Content"
+      class=".page.ListNavigationContent"
+      list_class="actions"
+      active_viewlet=""
+      provides=".page.IContentActionsManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="actions"
+      view=".interfaces.IPage"
+      class=".page.ListNavigationContent"
+      list_class="actions"
+      active_viewlet=""
+      provides=".page.IContentActionsManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="page_related"
+      provides=".page.IPageRelatedManager"
+      class=".page.ContentViewletManager"
+      permission="zope.Public"
+      />
+
+  <flourish:activeViewlet
+      factory="schooltool.skin.flourish.page.getParentActiveViewletName"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      />
+
+  <flourish:page_breadcrumbs
+      view=".interfaces.IPage"
+      />
+
+  <zope:adapter
+      for=".ajax.AJAXParts"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".ajax.AJAXPartsTraversable"
+      permission="zope.Public"
+      />
+
+  <zope:traverserPlugin
+      for=".interfaces.IPage"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      name="ajax"
+      plugin=".page.PageContentTraverser"
+      permission="zope.Public"
+      />
+
+  <flourish:viewletManager
+      name="ajax"
+      class=".ajax.AJAXParts"
+      provides=".interfaces.IAJAXParts"
+      permission="zope.Public"
+      />
+
+  <zope:adapter
+      for=".ajax.SubContextParts"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".ajax.ContextTraversable"
+      permission="zope.Public"
+      />
+
+  <zope:class class=".ajax.SubContextParts">
+    <require permission="zope.Public"
+             interface="schooltool.skin.flourish.interfaces.IFromPublication" />
+  </zope:class>
+
+  <flourish:viewlet
+      name="view"
+      class=".ajax.ViewContextParts"
+      manager=".ajax.AJAXParts"
+      permission="zope.Public"
+      />
+
+  <include file="tal.zcml" />
+  <include file="containers.zcml" />
+  <include file="widgets.zcml" />
+  <include file="report.zcml" />
+
+  <configure package="schooltool.skin">
+  <zope:view
+      for="datetime.date"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      name="fullDate"
+      factory=".dateformatter.DateFormatterFullView"
+      permission="zope.Public"
+      />
+
+  <zope:view
+      for="datetime.date"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      name="longDate"
+      factory=".dateformatter.DateFormatterLongView"
+      permission="zope.Public"
+      />
+
+  <zope:view
+      for="datetime.date"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      name="mediumDate"
+      factory=".dateformatter.DateFormatterMediumView"
+      permission="zope.Public"
+      />
+
+  <zope:view
+      for="datetime.date"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      name="shortDate"
+      factory=".dateformatter.DateFormatterShortView"
+      permission="zope.Public"
+      />
+  </configure>
+
+  <configure package="schooltool.app.browser">
+  <page
+      name="title"
+      for="*"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class=".app.TitleView"
+      permission="zope.Public" />
+
+  <page
+      name="link"
+      for="*"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      template="templates/link.pt"
+      permission="zope.Public"/>
+  </configure>
+
+  <zope:adapter
+      factory=".content.providerViewCrowd"
+      name="schooltool.view"
+      permission="zope.Public"
+      trusted="true"
+      />
+
+  <zope:adapter
+      factory=".content.providerEditCrowd"
+      name="schooltool.edit"
+      permission="zope.Public"
+      trusted="true"
+      />
+
+  <zope:adapter
+      factory=".content.providerManageAppCrowd"
+      name="zope.ManageApplication"
+      permission="zope.Public"
+      trusted="true"
+      />
+
+  <zope:adapter
+      factory=".widgets.FileDataURI"
+      for="zope.file.interfaces.IFile
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.interface.Interface"
+      name="data_uri"/>
+
+  <page
+      name="index.html"
+      for="zope.file.interfaces.IFile"
+      permission="zope.Public"
+      class=".widgets.DownloadFile"
+      />
+
+</configure>

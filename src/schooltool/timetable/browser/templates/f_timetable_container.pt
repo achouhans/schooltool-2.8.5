@@ -1,0 +1,19 @@
+<div tal:define="objects context/values;
+     canModify view/canModify"
+     i18n:domain="schooltool">
+
+  <h3 tal:condition="not:objects" i18n:translate="">There are none.</h3>
+  <tal:block tal:condition="objects"
+             tal:define="default context/default">
+
+  <form method="post" tal:attributes="action request/getURL">
+
+    <tal:block define="batch view/table/batch">
+      <tal:block replace="structure batch/render" />
+      <tal:block replace="structure view/table/render" tal:condition="batch" />
+    </tal:block>
+
+  </form>
+
+  </tal:block>
+</div>

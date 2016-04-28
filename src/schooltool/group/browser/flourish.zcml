@@ -1,0 +1,624 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           xmlns:flourish="http://schooltool.org/flourish"
+           xmlns:report="http://namespaces.schooltool.org/report"
+           i18n_domain="schooltool">
+
+  <!-- content -->
+
+  <flourish:content
+      name="title"
+      for="schooltool.group.interfaces.IGroupContainer"
+      class="schooltool.group.browser.group.GroupContainerTitle"
+      permission="schooltool.view"
+      />
+
+  <!-- adapters -->
+
+  <zope:adapter
+      for="schooltool.group.interfaces.IGroupContainer
+           schooltool.skin.flourish.interfaces.IFlourishLayer"
+      factory=".group.FlourishGroupFilterWidget" />
+
+  <zope:adapter
+      for="schooltool.group.interfaces.IGroupContainer
+           schooltool.skin.flourish.interfaces.IFlourishLayer"
+      factory=".group.FlourishGroupTableFormatter " />
+
+  <!-- viewlet managers -->
+
+  <flourish:viewlet
+      name="groups-add-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".group.GroupsAddLinks"
+      title="Add"
+      permission="schooltool.edit"
+      view=".group.FlourishGroupsView"
+      />
+
+  <security:allow
+     interface=".group.GroupsAddLinks"
+     crowds="clerks managers"
+     permission="schooltool.edit" />
+
+  <flourish:viewlet
+      name="group-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".group.GroupLinks"
+      permission="schooltool.view"
+      view=".group.FlourishGroupView"
+      />
+
+  <flourish:viewlet
+      name="group-add-links"
+      after="group-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".group.GroupAddLinks"
+      title="Add"
+      permission="schooltool.view"
+      view=".group.FlourishGroupView"
+      />
+
+  <flourish:viewlet
+      name="group-manage-action-links"
+      after="group-add-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".group.GroupManageActionsLinks"
+      title="Actions"
+      permission="schooltool.edit"
+      view=".group.FlourishGroupView"
+      />
+
+  <security:allow
+     interface=".group.GroupManageActionsLinks"
+     crowds="clerks managers"
+     permission="schooltool.edit" />
+
+  <!-- viewlets -->
+
+  <flourish:viewlet
+      name="group-add"
+      title="Group"
+      view=".group.FlourishGroupsView"
+      class=".group.GroupAddLinkViewlet"
+      manager=".group.GroupsAddLinks"
+      permission="schooltool.edit"
+      />
+
+  <security:allow
+     interface=".group.GroupAddLinkViewlet"
+     crowds="clerks managers"
+     permission="schooltool.edit" />
+
+  <flourish:viewlet
+      name="group-add"
+      title="Group"
+      view=".group.FlourishGroupView"
+      class=".group.GroupAddLinkFromGroupViewlet"
+      manager=".group.GroupAddLinks"
+      permission="schooltool.edit"
+      />
+
+  <security:allow
+     interface=".group.GroupAddLinkFromGroupViewlet"
+     crowds="clerks managers"
+     permission="schooltool.edit" />
+
+  <flourish:viewlet
+      name="delete.html"
+      view=".group.FlourishGroupView"
+      title="Delete"
+      class=".group.GroupDeleteLink"
+      manager=".group.GroupManageActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="groupsinfo"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      manager="schooltool.basicperson.browser.person.IFlourishPersonInfoManager"
+      class="schooltool.group.browser.group.FlourishGroupsViewlet"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewletManager
+      name="tertiary_navigation"
+      provides="schooltool.skin.flourish.page.ITertiaryNavigationManager"
+      class=".group.GroupsTertiaryNavigationManager"
+      view=".group.FlourishGroupsView"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="manage-groups-overview"
+      after="manage-people-overview manage-contacts-overview"
+      before="manage-courses-overview"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.edit"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".group.FlourishManageGroupsOverview"
+      />
+
+  <security:allow
+     interface=".group.FlourishManageGroupsOverview"
+     crowds="administrators clerks managers superuser"
+     permission="schooltool.edit" />
+
+  <!-- views -->
+
+  <flourish:page
+      name="groups.html"
+      for="schooltool.group.interfaces.IGroupMember"
+      class=".group.FlourishGroupListView"
+      permission="schooltool.edit"
+      subtitle="Groups"
+      />
+
+  <flourish:page
+      name="groups"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".group.FlourishGroupsView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="table"
+      class=".group.GroupsTable"
+      for="schooltool.group.interfaces.IGroupContainer"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="done"
+      before="table batch"
+      after="filter"
+      manager=".group.GroupsTable"
+      view=".group.FlourishGroupsView"
+      class="schooltool.app.browser.app.ManageItemDoneLink"
+      render="template"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      class=".group.GroupsTableFilter"
+      render="template"
+      manager=".group.GroupsTable"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="schoolyear"
+      after="filter"
+      view=".group.FlourishGroupsView"
+      manager=".group.GroupsTable"
+      class=".group.GroupsTableSchoolYear"
+      render="template"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="addSchoolToolGroup.html"
+      for="schooltool.group.interfaces.IGroupContainer"
+      class="schooltool.group.browser.group.FlourishGroupAddView"
+      content_template="templates/f_group_add.pt"
+      permission="schooltool.edit"
+      subtitle="Add Group"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.FlourishGroupView"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="delete.html"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.FlourishGroupDeleteView"
+      template="templates/f_confirm_delete_group.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      manager=".group.GroupLeadersTable"
+      view=".group.FlourishGroupView"
+      class="schooltool.table.table.DoNotFilter"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="group_aware_person_table"
+      for="*"
+      class=".group.GroupAwarePersonTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      before="batch table"
+      class=".group.GroupAwarePersonTableFilter"
+      render="template"
+      manager=".group.GroupAwarePersonTable"
+      view=".group.FlourishGroupView"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="members_persons.html"
+      for="schooltool.group.interfaces.IBaseGroup"
+      class=".group.FlourishMemberViewPersons"
+      permission="schooltool.edit"
+      subtitle="Members"
+      />
+
+  <flourish:viewlet
+      name="available_table"
+      class=".group.GroupListAddRelationshipTable"
+      for="schooltool.person.interfaces.IPerson"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".group.FlourishGroupListView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="current_table"
+      class=".group.GroupListRemoveRelationshipTable"
+      for="schooltool.person.interfaces.IPerson"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".group.FlourishGroupListView"
+      permission="schooltool.view"
+      />
+
+  <configure package="schooltool.skin.flourish">
+
+    <flourish:page
+        name="edit.html"
+        for="schooltool.group.interfaces.IGroup"
+        class="schooltool.group.browser.group.FlourishGroupEditView"
+        content_template="templates/z3c-schooltool-form.pt"
+        permission="schooltool.edit"
+        subtitle="Edit"
+        />
+
+    <flourish:page
+        name="delete.html"
+        for="schooltool.group.interfaces.IGroupContainer"
+        class="schooltool.group.browser.group.FlourishGroupContainerDeleteView"
+        content_template="templates/container_delete.pt"
+        permission="schooltool.edit"
+        />
+
+  </configure>
+
+  <!-- breadcrumbs -->
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.group.interfaces.IGroupContainer"
+      />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      view=".group.FlourishGroupsView"
+      />
+
+  <flourish:breadcrumb
+      for="schooltool.group.interfaces.IGroupContainer"
+      title="Groups"
+      traversal_name="groups"
+      class="schooltool.schoolyear.browser.schoolyear.SchoolyearNavBreadcrumbs"
+      />
+
+  <flourish:breadcrumb
+      for="schooltool.group.interfaces.IGroup"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      for="schooltool.group.interfaces.IGroup"
+      view=".group.FlourishGroupView"
+      />
+
+  <!-- Import -->
+
+  <flourish:viewlet
+      after="groups-add-links"
+      name="group-import-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.group.browser.group.GroupImportLinks"
+      view=".group.FlourishGroupsView"
+      title="Import"
+      permission="schooltool.edit"
+      />
+
+  <security:allow
+     interface=".group.GroupImportLinks"
+     crowds="clerks managers"
+     permission="schooltool.edit" />
+
+  <flourish:viewlet
+      name="csvimport.html"
+      title="Import CSV"
+      manager="schooltool.group.browser.group.GroupImportLinks"
+      class="schooltool.group.browser.csvimport.ImportGroupsLinkViewlet"
+      view=".group.FlourishGroupsView"
+      permission="schooltool.edit"
+      />
+
+  <security:allow
+     interface=".csvimport.ImportGroupsLinkViewlet"
+     crowds="clerks managers"
+     permission="schooltool.edit" />
+
+  <flourish:page
+      name="csvimport.html"
+      subtitle="Import"
+      for="schooltool.group.interfaces.IGroupContainer"
+      class=".csvimport.FlourishGroupCSVImportView"
+      permission="schooltool.edit"
+     />
+
+  <flourish:content
+      name="import-description"
+      view=".csvimport.FlourishGroupCSVImportView"
+      template="templates/f_group_csvimport_description.pt"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      after="group-add-links"
+      name="group-import-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.group.browser.group.GroupImportLinks"
+      view=".group.FlourishGroupView"
+      title="Import"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="csvimport.html"
+      title="Import Members CSV"
+      for="schooltool.group.interfaces.IGroup"
+      manager="schooltool.group.browser.group.GroupImportLinks"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="csvimport.html"
+      subtitle="Import"
+      for="schooltool.group.interfaces.IGroup"
+      class=".csvimport.FlourishGroupMemberCSVImportView"
+      permission="schooltool.edit"
+     />
+
+  <flourish:content
+      name="import-description"
+      view=".csvimport.FlourishGroupMemberCSVImportView"
+      template="templates/f_group_member_csvimport_description.pt"
+      permission="zope.Public"
+      />
+
+  <report:reportLink
+      name="group_id_cards_pdf"
+      before="group_detail_report group_report_card"
+      for="schooltool.group.interfaces.IGroup"
+      permission="schooltool.edit"
+      group="Group"
+      description="Includes student name, ID number, birth date, contact name and contact phone number. Prints eight per page."
+      title="ID Cards"
+      file_type="pdf"
+      link="request_group_id_cards_pdf.html"
+      />
+
+  <flourish:page
+      name="request_group_id_cards_pdf.html"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.FlourishRequestGroupIDCardsView"
+      permission="schooltool.edit"
+      />
+
+   <flourish:page
+      name="group_id_cards.pdf"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.FlourishGroupIDCardsView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="groups_table"
+      class=".group.PersonGroupsTable"
+      for="schooltool.person.interfaces.IPerson"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="groups"
+      for="schooltool.person.interfaces.IPerson"
+      manager="schooltool.skin.flourish.report.PDFStory"
+      view="schooltool.basicperson.browser.person.PersonProfilePDF"
+      class=".group.PersonProfileGroupsPart"
+      permission="schooltool.view"
+      />
+
+  <report:reportLink
+      name="sign_in_out"
+      for="schooltool.group.interfaces.IGroup"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      permission="schooltool.view"
+      group="Group"
+      description="Table of group members with spaces to sign in and out."
+      title="Sign In &amp; Out"
+      file_type="pdf"
+      link="request_sign_in_out.html"
+      />
+
+  <flourish:page
+      name="request_sign_in_out.html"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.RequestSignInOutReportView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:pdf
+      name="sign_in_out.pdf"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.SignInOutPDFView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="sign_in_out_table"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.SignInOutTable"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="group_pdf_styles"
+      after="*"
+      manager="schooltool.skin.flourish.report.PDFStylesheetSection"
+      view=".group.GroupPDFViewBase"
+      class="schooltool.skin.flourish.report.PDFPart"
+      template="rml/group_pdf_styles.pt"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="table"
+      manager="schooltool.skin.flourish.report.PDFStory"
+      view=".group.SignInOutPDFView"
+      class=".group.SignInOutTablePart"
+      permission="zope.Public"
+      />
+
+  <report:reportLink
+      name="student_name_labels"
+      for="schooltool.group.interfaces.IGroup"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      permission="schooltool.view"
+      group="Group"
+      description="Formatted for Avery 5160 labels."
+      title="Name Labels"
+      file_type="pdf"
+      link="request_student_name_labels.html"
+      />
+
+  <flourish:page
+      name="request_student_name_labels.html"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.RequestStudentNameLabelsReportView"
+      permission="schooltool.edit"
+      />
+
+  <zope:utility
+     factory=".group.OptionalRowVocabularyFactory"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     name="schooltool.group.student_name_labels_optional_row"
+     />
+
+  <flourish:pdf
+      name="student_name_labels.pdf"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.StudentNameLabelsPDFView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="table"
+      manager="schooltool.skin.flourish.report.PDFStory"
+      view=".group.StudentNameLabelsPDFView"
+      class=".group.StudentNameLabelsTablePart"
+      permission="zope.Public"
+      />
+
+  <flourish:content
+      name="student_name_labels_table"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.StudentNameLabelsTable"
+      permission="schooltool.view"
+      />
+
+  <zope:adapter
+      factory=".group.DetailsColumnProvider"
+      name="details"
+      />
+
+  <zope:adapter
+      factory=".group.DemographicsColumnProvider"
+      name="demographics"
+      />
+
+  <zope:adapter
+      factory=".group.LevelColumnProvider"
+      name="level"
+      />
+
+  <zope:adapter
+      factory=".group.GroupTitleColumnProvider"
+      name="group_title"
+      />
+
+  <flourish:viewlet
+      name="default"
+      manager="schooltool.skin.flourish.report.PDFTemplateSection"
+      view=".group.StudentNameLabelsPDFView"
+      class=".group.StudentNameLabelsPageTemplate"
+      render="template"
+      template="rml/student_name_labels_page_template.pt"
+      permission="zope.Public"
+      />
+
+  <report:reportLink
+      name="mailing_labels"
+      for="schooltool.group.interfaces.IGroup"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      permission="schooltool.view"
+      group="Group"
+      description="Formatted for Avery 5163 labels."
+      title="Mailing Labels"
+      file_type="pdf"
+      link="request_mailing_labels.html"
+      />
+
+  <flourish:page
+      name="request_mailing_labels.html"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.RequestMailingLabelsReportView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:pdf
+      name="mailing_labels.pdf"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.MailingLabelsPDFView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="table"
+      manager="schooltool.skin.flourish.report.PDFStory"
+      view=".group.MailingLabelsPDFView"
+      class=".group.MailingLabelsTablePart"
+      permission="zope.Public"
+      />
+
+  <flourish:content
+      name="mailing_labels_table"
+      for="schooltool.group.interfaces.IGroup"
+      class=".group.MailingLabelsTable"
+      permission="schooltool.view"
+      />
+
+</configure>

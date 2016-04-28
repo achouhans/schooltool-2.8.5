@@ -1,0 +1,44 @@
+<div i18n:domain="schooltool">
+  <tal:block replace="resource_library:schooltool.timetable" />
+
+  <h3>
+    <tal:block replace="context/title" />
+  </h3>
+
+  <p tal:condition="view/context/timezone">
+    <span i18n:translate="">Timezone:</span>
+    <span tal:content="view/context/timezone" />
+  </p>
+
+  <div>
+    <h3 i18n:translate="">Periods</h3>
+    <div tal:content="structure context/periods/schooltool:content/table"></div>
+  </div>
+
+  <div>
+    <h3 i18n:translate="">Time schedule</h3>
+    <div tal:content="structure context/time_slots/schooltool:content/table"></div>
+  </div>
+
+  <div tal:define="exceptions nocall:context/schooltool:content/exceptions|nothing"
+       tal:condition="exceptions">
+    <h3>
+      <tal:block i18n:translate="">Exception days</tal:block>
+      <a class="modify" href="" title="Edit exception days"
+       tal:attributes="href string:${context/@@absolute_url}/special.html"
+       i18n:attributes="title"
+       tal:condition="context/schooltool:can_edit">
+        <img tal:attributes="src context/++resource++schooltool.skin.flourish/edit-icon.png"
+             alt="Edit"
+             i18n:attributes="alt" />
+      </a>
+    </h3>
+    <div tal:content="structure exceptions"></div>
+  </div>
+
+  <h3 tal:define="done_link context/schooltool:content/done_link|nothing"
+      tal:condition="done_link">
+    <a tal:replace="structure done_link" />
+  </h3>
+
+</div>

@@ -1,0 +1,87 @@
+Tests for PersonCSVImportView
+
+Now we'll try a text import.  Note that the description is not required
+
+    >>> from zope.testbrowser.testing import Browser
+    >>> browser = Browser()
+    >>> browser.addHeader('Authorization', 'Basic manager:schooltool')
+    >>> browser.open('http://localhost/persons/@@person-csvimport.html')
+    >>> csvtext = "aperson, A, Person, secret\nanother, Another, Person With No Password\nchowa, Doña, Chowa\n\n"
+    >>> browser.getControl(name='csvtext').value = csvtext
+    >>> browser.getControl(name='charset').value = ['UTF-8']
+    >>> browser.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery('//div[@class="info"]', browser.contents)
+    <div class="info">
+      <p>CSV text imported successfully.</p>
+    </div>
+
+    >>> root = getRootFolder()
+    >>> container = root['persons']
+    >>> sorted([person for person in container])
+    [u'another', u'aperson', u'chowa', u'manager']
+
+If no data is provided, we naturally get an error
+
+    >>> browser.open('http://localhost/persons/@@person-csvimport.html')
+    >>> browser.getControl(name='charset').value = ['UTF-8']
+    >>> browser.getControl(name='UPDATE_SUBMIT').click()
+    >>> 'No data provided' in browser.contents
+    True
+
+We also get an error if a line starts with a comma (no title)
+
+    >>> browser.open('http://localhost/persons/@@person-csvimport.html')
+    >>> csvtext = ", No username provided here, secret"
+    >>> browser.getControl(name='csvtext').value = csvtext
+    >>> browser.getControl(name='charset').value = ['UTF-8']
+    >>> browser.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery("//div[@class='error']", browser.contents)
+    <div class="error">Failed to import CSV text</div>
+    <div class="error">username may not be empty</div>
+
+
+Duplicate usernames are not imported, the error is noted to the user.
+
+    >>> browser.open('http://localhost/persons/@@person-csvimport.html')
+    >>> csvtext = "student1, Student 1, Family, secret\nstudent2, Student 2, Family, secret\nstudent1, Student 100, Family"
+    >>> browser.getControl(name='csvtext').value = csvtext
+    >>> browser.getControl(name='charset').value = ['UTF-8']
+    >>> browser.getControl(name='UPDATE_SUBMIT').click()
+
+
+    >>> sorted([person for person in container])
+    [u'another', u'aperson', u'chowa', u'manager']
+
+    >>> analyze.printQuery("//div[@class='error']", browser.contents)
+    <div class="error">Failed to import CSV text</div>
+    <div class="error">Duplicate username: student1, Student 100, Family</div>
+    >>> analyze.printQuery("id('csvtext')", browser.contents)
+    <textarea name="csvtext" id="csvtext" cols="50" rows="10">student1, Student 1, Family, secret
+      student2, Student 2, Family, secret
+      student1, Student 100, Family</textarea>
+
+
+Usernames cannot begin with '+' or '@' and cannot contain '/'
+characters either:
+
+    >>> csvtext = "@@index.html, Steve, Smith, secret\npeter, Pete, Marley\n\n\n"
+    >>> browser.getControl(name='csvtext').value = csvtext
+    >>> browser.getControl(name='charset').value = ['UTF-8']
+    >>> browser.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery("//div[@class='error']", browser.contents)
+    <div class="error">Failed to import CSV text</div>
+    <div class="error">Names cannot begin with '+' or '@' or contain '/'</div>
+    >>> analyze.printQuery("id('csvtext')", browser.contents)
+    <textarea name="csvtext" id="csvtext" cols="50" rows="10">@@index.html, Steve, Smith, secret
+    peter, Pete, Marley</textarea>
+
+    >>> csvtext = "steven, Steven, Smith, secret\npete/marley, Pete, Marley\n\n\n"
+    >>> browser.getControl(name='csvtext').value = csvtext
+    >>> browser.getControl(name='charset').value = ['UTF-8']
+    >>> browser.getControl(name='UPDATE_SUBMIT').click()
+    >>> analyze.printQuery("//div[@class='error']", browser.contents)
+    <div class="error">Failed to import CSV text</div>
+    <div class="error">Names cannot begin with '+' or '@' or contain '/'</div>
+    >>> analyze.printQuery("id('csvtext')", browser.contents)
+    <textarea name="csvtext" id="csvtext" cols="50" rows="10">steven, Steven, Smith, secret
+    pete/marley, Pete, Marley</textarea>

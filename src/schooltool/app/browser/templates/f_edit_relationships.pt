@@ -1,0 +1,67 @@
+<metal:block i18n:domain="schooltool"
+             tal:define="batch view/available_table/batch;
+                         items view/getSelectedItems">
+  <h2 tal:content="view/current_title" />
+  <form method="post" tal:attributes="action request/URL">
+
+    <tal:if condition="view/selected_table/batch">
+      <tal:block replace="structure view/selected_table/batch/render" />
+    </tal:if>
+
+    <tal:block replace="structure view/selected_table/render"
+               tal:condition="items"/>
+    <h3 tal:condition="not:items" i18n:translate="">
+      There are none.
+    </h3>
+    <input type="hidden" id="nexturl" name="nexturl"
+           tal:attributes="value view/nextURL" />
+    <tal:if condition="view/selected_table/batch">
+      <input type="hidden" name="on_remove.batch_start"
+             tal:attributes="value view/selected_table/batch/start" />
+      <input type="hidden" name="on_remove.batch_size"
+             tal:attributes="value view/selected_table/batch/size" />
+    </tal:if>
+  </form>
+  <h3 class="done-link">
+    <a tal:attributes="href view/nextURL"
+       i18n:translate="">Done</a>
+  </h3>
+  <h2 tal:content="view/available_title" />
+  <form method="post" tal:attributes="action request/URL">
+    <tal:if condition="batch">
+      <div class="count" i18n:translate="">
+        Showing
+        <span i18n:name="count" tal:content="view/available_table/batch/length"/>
+        of
+        <span i18n:name="total" tal:content="view/available_table/batch/full_size"/>
+        items
+      </div>
+    </tal:if>
+    <tal:block replace="structure view/available_table/filter_widget/render|nothing" />
+    <tal:block replace="structure view/available_table/batch/render"
+               condition="batch" />
+    <tal:block replace="structure view/available_table/render"
+               condition="batch" />
+    <h3 tal:condition="not:batch" i18n:translate="">
+      There are none to add.
+    </h3>
+    <input type="hidden" id="nexturl" name="nexturl"
+           tal:attributes="value view/nextURL" />
+
+    <tal:if condition="batch">
+      <input type="hidden" name="on_add.batch_start"
+             tal:attributes="value batch/start" />
+      <input type="hidden" name="on_add.batch_size"
+             tal:attributes="value batch/size" />
+
+      <div class="buttons">
+        <input id="form-buttons-add" name="ADD_DISPLAYED_RESULTS"
+               class="submit-widget button-field button-ok"
+               value="Add all displayed" type="submit"
+               i18n:attributes="value" />
+      </div>
+
+    </tal:if>
+
+  </form>
+</metal:block>

@@ -1,0 +1,52 @@
+<tal:define define="dummy view/update"/>
+<html metal:use-macro="view/@@standard_macros/page" i18n:domain="schooltool">
+<head>
+  <title metal:fill-slot="title" tal:content="view/index_title">
+    Contents
+  </title>
+</head>
+<body>
+
+<h1 metal:fill-slot="content-header"
+    tal:content="view/index_title">Contents</h1>
+
+<metal:block metal:fill-slot="body"
+             tal:define="batch view/batch;
+                         canModify view/canModify">
+  <tal:block replace="structure view/batch/render" />
+  <div metal:use-macro="view/@@view_macros/batch-search"/>
+  <tal:if condition="batch">
+    <div class="count" i18n:translate="">
+      Showing
+      <span i18n:name="count" tal:content="python:len(batch)"/>
+      of
+      <span i18n:name="total" tal:content="python:len(batch.list)"/>
+      items
+    </div>
+    <form tal:condition="canModify"
+          method="post"
+          tal:attributes="action string:${context/@@absolute_url}/delete.html">
+      <div tal:repeat="obj batch">
+        <input type="checkbox"
+               tal:attributes="name string:delete.${obj/zope:name};
+                               disabled obj/schooltool:has_dependents" />
+        <a tal:content="obj/title"
+           tal:attributes="href obj/@@absolute_url">Some Object</a>
+      </div>
+      <div class="controls">
+        <input type="submit" class="button-cancel" value="Delete"
+               i18n:attributes="value delete-button;" />
+      </div>
+    </form>
+    <ul tal:condition="not:canModify">
+      <li tal:repeat="obj batch">
+        <a tal:content="obj/title"
+           tal:attributes="href obj/@@absolute_url">Some Object</a>
+      </li>
+    </ul>
+  </tal:if>
+  <p tal:condition="not:batch" i18n:translate="">There are none.</p>
+
+</metal:block>
+</body>
+</html>

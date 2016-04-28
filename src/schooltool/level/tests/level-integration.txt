@@ -1,0 +1,94 @@
+Grade levels
+===============
+
+A simple implementation to define a set of courses taught to
+students at a given level.  This concept is implemented by linking a
+level to a course.
+
+Ability to define a student's level, as well as any UI whatsoever,
+are not implemented yet, so levels are pretty useless at this point.
+
+Level data model
+----------------
+
+There is a root container, initialized on application startup::
+
+    >>> sorted(app.keys())
+    [u'schooltool.app.catalog:Catalogs', u'schooltool.course.course', u'schooltool.level.level', u'schooltool.relationship.uri']
+
+    >>> app['schooltool.level.level']
+    <schooltool.level.level.LevelContainer ...>
+
+Levels are stored in it.
+
+You can adapt the application to ILevelContainer to get the levels
+container.
+
+    >>> from schooltool.level.interfaces import ILevelContainer
+    >>> levels = ILevelContainer(app)
+    >>> print levels
+    <schooltool.level.level.LevelContainer ...>
+
+Levels themselves are simple objects with a title::
+
+    >>> from schooltool.level.level import Level
+    >>> levels['2'] = Level(u'Second-year')
+    >>> levels['1'] = Level(u'First-year')
+    >>> levels['3'] = Level(u'Third-year')
+
+    >>> [level.title for level in levels.values()]
+    [u'Second-year', u'First-year', u'Third-year']
+
+Level containers are ordered::
+
+    >>> levels.updateOrder(['1', '2', '3'])
+    >>> [level.title for level in levels.values()]
+    [u'First-year', u'Second-year', u'Third-year']
+
+
+Linking levels to courses
+-------------------------
+
+Levels are linked to courses via schooltool.relationship.  There
+is a helper attribute to manage the relationships::
+
+    >>> courses = app['schooltool.course.course']
+    >>> math = courses['math'] = CourseStub('Math')
+    >>> level_1 = levels['1']
+    >>> level_2 = levels['2']
+    >>> from transaction import commit
+    >>> commit()
+    >>> level_1.courses.add(math)
+    >>> level_2.courses.add(math)
+
+    >>> from schooltool.level.level import URILevelCourses, URILevel
+    >>> print [level.title
+    ...     for level in getRelatedObjects(
+    ...         math, URILevel, rel_type=URILevelCourses)]
+    [u'First-year', u'Second-year']
+
+
+Helpers
+-------
+
+If you need a dropdown of levels in a form, there is a special
+level vocabulary::
+
+    >>> from zope.schema import Choice
+    >>> levels_field = Choice(
+    ...    title=u"Levels",
+    ...    vocabulary='schooltool.level.level.levelvocabulary')
+
+    >>> context = None
+    >>> levels = levels_field.bind(context)
+
+    >>> for term in levels.vocabulary:
+    ...     print '%s: %s' % (term.token, term.title)
+    1-: First-year
+    2-: Second-year
+    3-: Third-year
+
+    >>> from zope.interface.verify import verifyObject
+    >>> from zope.schema.interfaces import IVocabularyTokenized
+    >>> verifyObject(IVocabularyTokenized, levels.vocabulary)
+    True

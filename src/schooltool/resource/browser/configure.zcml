@@ -1,0 +1,329 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <zope:class class=".resource.ResourceSubTypeWidget">
+    <require
+        permission="zope.Public"
+        interface="z3c.form.interfaces.ITextWidget"
+        />
+  </zope:class>
+
+  <zope:adapter
+      factory=".resource.ResourceSubTypeFieldWidget"
+      provides="z3c.form.interfaces.IFieldWidget"
+      for="schooltool.resource.interfaces.ResourceSubType
+           z3c.form.interfaces.IFormLayer"
+      />
+
+  <z3c:widgetTemplate
+      mode="input"
+      widget=".resource.IResourceSubTypeWidget"
+      layer="z3c.form.interfaces.IFormLayer"
+      template="subtype_widget.pt"
+      />
+
+
+  <!-- Resource Traverser -->
+  <zope:view
+      for="..interfaces.IBaseResource"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="schooltool.traverser.browser.PluggableBrowserTraverser"
+      permission="zope.Public"
+      />
+
+  <zope:view
+      for="..interfaces.IResourceContainer"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="schooltool.traverser.browser.PluggableBrowserTraverser"
+      permission="zope.Public"
+      />
+
+  <zope:adapter
+      for="schooltool.resource.types.ResourceFactoryUtility
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory=".resource.ResourceTypeFilter"
+      />
+
+  <zope:adapter
+      for="schooltool.resource.types.LocationFactoryUtility
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory=".resource.LocationTypeFilter"
+      />
+
+  <zope:adapter
+      for="schooltool.resource.types.EquipmentFactoryUtility
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory=".resource.EquipmentTypeFilter"
+      />
+
+  <viewlet
+      name="resource-booking-info"
+      for="*"
+      manager="schooltool.app.browser.skin.ICalendarEventViewletManager"
+      template="event_booking_viewlet.pt"
+      permission="zope.Public"
+      order="20"
+      />
+
+  <viewlet
+      name="resource-booking-edit"
+      for="schooltool.resource.booking.IBookingCalendar"
+      class="schooltool.app.browser.skin.CalendarEventBookingViewlet"
+      manager="schooltool.app.browser.skin.ICalendarEventViewletManager"
+      template="event_edit_booking_viewlet.pt"
+      permission="zope.Public"
+      order="30"
+      />
+
+  <configure package="schooltool.skin">
+    <navigationViewlet
+      name="resources"
+      for="*"
+      manager="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      template="templates/navigationViewlet.pt"
+      class="schooltool.skin.TopLevelContainerNavigationViewlet"
+      permission="schooltool.view"
+      link="resources"
+      title="Resources"
+      order="60"
+      />
+
+    <navigationViewlet
+      name="resource_demographics"
+      for="*"
+      manager="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      template="templates/navigationViewlet.pt"
+      class="schooltool.skin.skin.NavigationViewlet"
+      permission="schooltool.edit"
+      link="resource_demographics"
+      title="Resource Attributes"
+      order="65"
+      />
+
+    <page
+        name="index.html"
+        for="schooltool.resource.interfaces.IResourceContainer"
+        class="schooltool.resource.browser.resource.ResourceContainerView"
+        permission="schooltool.view"
+        />
+  </configure>
+
+  <containerViews
+      for="..interfaces.IResourceContainer"
+      contents="schooltool.view"
+      add="schooltool.edit"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.IResource"
+      class=".resource.ResourceView"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.ILocation"
+      class=".resource.LocationView"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="index.html"
+      for="..interfaces.IEquipment"
+      class=".resource.EquipmentView"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="resource-csvimport.html"
+      for="..interfaces.IResourceContainer"
+      class=".csvimport.ResourceCSVImportView"
+      template="resource-csvimport.pt"
+      permission="schooltool.edit"
+      menu="schooltool_actions"
+      title="Import Resources"
+      />
+
+  <zope:adapter
+      for="schooltool.resource.interfaces.IResourceContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory=".resource.ResourceContainerFilterWidget" />
+
+  <zope:adapter
+      for="schooltool.resource.interfaces.IResourceContainer
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      factory="schooltool.table.table.SchoolToolTableFormatter " />
+
+  <zope:configure package="schooltool.app.browser">
+    <page
+       name="daily.html"
+       for="schooltool.resource.interfaces.IBookingCalendar"
+       class="schooltool.resource.browser.booking.DailyBookingCalendarView"
+       template="templates/cal_daily.pt"
+       permission="schooltool.view"
+       />
+
+    <page
+       name="weekly.html"
+       for="schooltool.resource.interfaces.IBookingCalendar"
+       class="schooltool.resource.browser.booking.WeeklyBookingCalendarView"
+       template="templates/cal_weekly.pt"
+       permission="schooltool.view"
+       />
+
+    <page
+       name="monthly.html"
+       for="schooltool.resource.interfaces.IBookingCalendar"
+       class="schooltool.resource.browser.booking.MonthlyBookingCalendarView"
+       template="templates/cal_monthly.pt"
+       permission="schooltool.view"
+       />
+
+    <page
+       name="yearly.html"
+       for="schooltool.resource.interfaces.IBookingCalendar"
+       class="schooltool.resource.browser.booking.YearlyBookingCalendarView"
+       template="templates/cal_yearly.pt"
+       permission="schooltool.view"
+       />
+
+  </zope:configure>
+
+  <page
+      for="schooltool.resource.interfaces.IBookingCalendar"
+      name="book_one_resource.html"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class=".booking.CalendarEventBookOneResourceView"
+      permission="zope.View"
+      />
+
+  <viewlet
+      name="portlet-tomorrow-events"
+      for="schooltool.resource.interfaces.IBookingCalendar"
+      manager="schooltool.app.browser.cal.ICalendarPortletViewletManager"
+      template="portlet_tomorrow_events.pt"
+      permission="zope.Public"
+      layer="schooltool.skin.ISchoolToolLayer"
+      order="5"
+      />
+
+  <zope:adapterTraverserPlugin
+     for="schooltool.app.interfaces.ISchoolToolApplication"
+     layer="zope.publisher.interfaces.http.IHTTPRequest"
+     name="resource_demographics"
+     adapter="schooltool.resource.interfaces.IResourceDemographicsFields"
+     permission="zope.Public"
+     />
+
+  <zope:configure package="schooltool.basicperson.browser">
+    <page
+       name="index.html"
+       for="schooltool.resource.interfaces.IResourceDemographicsFields"
+       class="schooltool.resource.browser.resource.ResourceDemographicsView"
+       template="templates/demographics-view.pt"
+       permission="schooltool.edit"
+       />
+  </zope:configure>
+
+  <zope:adapter
+      factory=".resource.ResourceDemographicsFieldsAbsoluteURLAdapter"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL" />
+
+  <zope:adapter
+      factory=".resource.ResourceDemographicsFieldsAbsoluteURLAdapter"
+      provides="zope.interface.Interface"
+      name="absolute_url"/>
+
+  <menuItem
+      menu="schooltool_actions"
+      title="Edit Info"
+      for="schooltool.resource.interfaces.IResource"
+      action="edit.html"
+      permission="schooltool.edit"
+      />
+  <page
+      for="schooltool.resource.interfaces.IResource"
+      name="edit.html"
+      class=".resource.ResourceEditView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+  <menuItem
+      menu="schooltool_actions"
+      title="Edit Info"
+      for="schooltool.resource.interfaces.ILocation"
+      action="edit.html"
+      permission="schooltool.edit"
+      />
+  <page
+      for="schooltool.resource.interfaces.ILocation"
+      name="edit.html"
+      class=".resource.LocationEditView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+  <menuItem
+      menu="schooltool_actions"
+      title="Edit Info"
+      for="schooltool.resource.interfaces.IEquipment"
+      action="edit.html"
+      permission="schooltool.edit"
+      />
+  <page
+      for="schooltool.resource.interfaces.IEquipment"
+      name="edit.html"
+      class=".resource.EquipmentEditView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <menuItem
+      menu="schooltool_actions"
+      title="Add Resource"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      action="addResource.html"
+      permission="schooltool.edit"
+      />
+  <page
+      name="addResource.html"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class=".resource.ResourceAddView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+  <menuItem
+      menu="schooltool_actions"
+      title="Add Location"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      action="addLocation.html"
+      permission="schooltool.edit"
+      />
+  <page
+      name="addLocation.html"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class=".resource.LocationAddView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+  <menuItem
+      menu="schooltool_actions"
+      title="Add Equipment"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      action="addEquipment.html"
+      permission="schooltool.edit"
+      />
+  <page
+      name="addEquipment.html"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class=".resource.EquipmentAddView"
+      permission="schooltool.edit"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+</configure>

@@ -1,0 +1,29 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:security="http://schooltool.org/securitypolicy"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <subscriber
+      handler=".skin.schoolToolTraverseSubscriber"
+      for="zope.traversing.interfaces.IBeforeTraverseEvent"
+      />
+
+  <browser:page
+      for="zope.security.interfaces.IUnauthorized"
+      name="index.html"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class="schooltool.devmode.devmode.DebugUnauthorized"
+      permission="zope.Public"
+      />
+
+  <securityPolicy
+      component=".devmode.DebugSecurityPolicy" />
+
+  <adapter
+      for="*"
+      name="schooltool"
+      provides="zope.traversing.interfaces.IPathAdapter"
+      factory=".devmode.DevmodeSchoolToolAPI"
+      />
+
+</configure>

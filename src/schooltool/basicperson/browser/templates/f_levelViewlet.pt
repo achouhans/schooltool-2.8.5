@@ -1,0 +1,16 @@
+<div i18n:domain="schooltool">
+  <h2 tal:content="view/title" />
+  <div>
+    <h3>
+      <tal:block tal:content="view/title" />
+      <a class="modify" href="" title="Manage this person's level"
+         tal:attributes="href string:${context/@@absolute_url}/edit_level.html"
+         i18n:attributes="title"
+         tal:condition="view/canModify">
+        <img tal:attributes="src context/++resource++schooltool.skin.flourish/edit-icon.png"
+             alt="Edit"
+             i18n:attributes="alt" />
+      </a>
+    </h3>
+  </div>
+</div>

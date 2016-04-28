@@ -1,0 +1,130 @@
+=============================
+Developer Mode User Interface
+=============================
+
+The developer mode of the user interface is intended to help SchoolTool
+developers and people using SchoolTool as a development platform.
+
+To start, open the SchoolTool site in your browser::
+
+    >>> browser = Browser('manager', 'schooltool')
+
+There are some additional items in the Manage tab:
+
+    >>> def print_navigation_links(contents):
+    ...     print
+    ...     for item in analyze.queryHTML('//a[@class="navigation_header"]', contents):
+    ...         print item
+    >>> browser.getLink('Manage').click()
+    >>> print_navigation_links(browser.contents)
+    <BLANKLINE>
+    ...
+    <a class="navigation_header" href="http://localhost/++etc++site/default/RootErrorReportingUtility">Errors</a>
+    <a class="navigation_header" href="http://localhost/@@sampledata.html">Sample data</a>
+    ...
+
+Note that we only see the developer tools here, because these tests are run
+with the developer mode turned on. Commonly, the developer mode can be
+controlled using ``schooltool.conf``'s ``devmode`` switch. Simply add
+``devmode on`` to your ``schooltool.conf`` file to turn on the developer's
+mode.
+
+
+Error Reporting
+---------------
+
+Even though error reporting is always available, it is usually not easily
+accessible via the Web UI. By clicking on the `Errors` menu option
+
+    >>> browser.getLink('Manage').click()
+    >>> browser.getLink('Errors').click()
+
+you are brought to the root error reporting utility.
+
+Here you can configure the utility and view errors:
+
+    >>> print browser.contents
+    <BLANKLINE>
+    ...
+    ...<a href="http://localhost/++etc++site/default/RootErrorReportingUtility/@@configure.html">Configure</a>...
+    ...<a href="http://localhost/++etc++site/default/RootErrorReportingUtility/@@index.html">Error List</a>...
+    ...
+
+In the configuration
+
+    >>> browser.getLink('Configure').click()
+
+you can specify how many exceptions to keep, whether to copy the errors to the
+event log and what exceptions can be ignored::
+
+    >>> keep_entries = browser.getControl(name='keep_entries')
+    >>> keep_entries.value
+    '20'
+    >>> keep_entries.value = '30'
+
+    >>> copy_to_zlog = browser.getControl(name='copy_to_zlog')
+    >>> copy_to_zlog.value = True
+
+    >>> ignored_exceptions = browser.getControl(name='ignored_exceptions:lines')
+    >>> ignored_exceptions.value
+    'Unauthorized'
+    >>> ignored_exceptions.value += '\nNotImplementedError'
+
+    >>> browser.getControl('Save Changes').click()
+
+    >>> browser.getControl(name='keep_entries').value
+    '30'
+    >>> browser.getControl(name='copy_to_zlog').value
+    True
+    >>> print browser.getControl(name='ignored_exceptions:lines').value
+    Unauthorized
+    NotImplementedError
+
+Let's now make sure that we can get to the error list. First let's create a
+``NotFound`` error::
+
+    >>> browser.open('http://localhost/foo')
+    Traceback (most recent call last):
+    ...
+    NotFound: Object: <schooltool.app.app.SchoolToolApplication object at ...>, name: u'foo'
+
+Now let's see the report::
+
+    >>> browser.open('http://localhost/'
+    ...              '++etc++site/default/RootErrorReportingUtility')
+    >>> browser.getLink('Error List').click()
+    >>> print browser.contents
+    <BLANKLINE>
+    ...
+    <tr>
+      <td valign="top" nowrap="nowrap">
+        <span>...</span>
+      </td>
+      <td>
+        <span>unauthenticated, sb.person.manager, Default Manager, </span>
+      </td>
+      <td valign="top">
+        <a href="showEntry.html?id=...">
+          <span>NotFound</span>:
+          <span>Object: &lt;schooltool.app.app.SchoolToolApplication ...</span>
+        </a>
+      </td>
+    </tr>
+    ...
+
+
+Sample Data
+-----------
+
+SchoolTool also features a data generator, which will fill your SchoolTool
+instance with a lot of random data, which is perfect for performing and
+advanced functional testing. So let's have a look::
+
+    >>> browser.open('http://localhost/')
+    >>> browser.getLink('Manage').click()
+    >>> browser.getLink('Sample data').click()
+
+You are now presented with a screen in which you can choose a random seed key
+for the data and a "Generate" button. The purpose of the seed is that you can
+reproduce a particular set of generated data. Since the generation process
+takes a very long time, I am refraining from a demonstration.

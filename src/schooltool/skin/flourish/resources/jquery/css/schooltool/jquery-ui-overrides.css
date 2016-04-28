@@ -1,0 +1,156 @@
+/*
+
+  Overrides for jQuery UI CSS:
+
+*/
+
+.ui-accordion {
+    margin-top: 16px;
+    width: 528px;
+}
+
+.ui-accordion .ui-accordion-header {
+    border-style: solid;
+    border-width: 1px;
+    font-weight: bold;
+    text-align: left;
+    padding: 4px 8px;
+    padding-left: 26px;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.ui-accordion .ui-accordion-content {
+    padding-right: 8px;
+    padding-left: 8px;
+    padding-top: 4px;
+}
+
+.ui-state-hover, .ui-accordion .ui-state-hover {
+    border-style: solid;
+    border-width: 1px;
+}
+
+.ui-state-active, .ui-accordion .ui-state-active {
+    border: none;
+}
+
+.ui-dialog .ui-dialog-content {
+    padding: 8px;
+}
+
+.ui-dialog .ui-dialog-content form {
+    margin-top: 0px;
+    width: 544px;
+}
+
+.narrow-dialog .ui-dialog-content form {
+    width: 288px;
+}
+
+.ui-dialog .ui-dialog-content form fieldset {
+    padding: 0 0 8px 0;
+    margin-bottom: 0px;
+}
+
+.ui-dialog .ui-dialog-content form .required-info {
+    display: none;
+}
+
+.ui-dialog .ui-dialog-content .buttons {
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    padding: 4px 8px;
+    border: none;
+}
+
+.ui-dialog .ui-dialog-titlebar .ui-dialog-title {
+    line-height: 18px;
+    font-size: 14px;
+}
+
+.ui-datepicker {
+    border-style: solid;
+    border-width: 2px;
+    border-top-width: 1px;
+    width: 280px;
+    padding: 2px;
+}
+
+.ui-datepicker .ui-widget-header {
+    border-style: solid;
+    border-width: 1px;
+}
+
+.ui-datepicker-header a.ui-state-hover {
+    border-style: solid;
+    border-width: 1px;
+}
+
+.ui-datepicker-calendar thead {
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}
+
+.ui-datepicker-calendar thead th {
+    font-weight: normal;
+}
+
+.ui-datepicker-calendar a.ui-state-default {
+    border: none;
+}
+
+.ui-datepicker-calendar a.ui-state-highlight {
+    font-weight: bold;
+}
+
+.ui-datepicker-calendar a.ui-state-active {
+    font-weight: bold;
+}
+
+.ui-datepicker-calendar tr {
+    border-bottom: none;
+}
+
+.ui-icon-center {
+    margin: 0 auto;
+}
+
+.explicit-close-dialog .ui-dialog-titlebar-close {
+    display: none;
+}
+
+.hidden-dialog {
+    display: none;
+}
+
+.ui-autocomplete {
+    border-radius: 0px 0px 0px 0px;
+    font-size: 1em;
+    padding: 0;
+}
+
+.ui-autocomplete .ui-menu-item .ui-corner-all {
+    border-radius: 0px 0px 0px 0px;
+}
+
+.ui-autocomplete .ui-menu-item .ui-state-hover {
+    border-type: solid;
+    border-width: 1px;
+}
+
+.ui-autocomplete .ui-menu-item {
+    font-size: 1em;
+}
+
+.ui-autocomplete .ui-menu-item a {
+    line-height: 1;
+    padding: 0.3em 0 0.3em 0.1em;
+}
+
+.ui-widget select {
+    font-size: 12px;
+}

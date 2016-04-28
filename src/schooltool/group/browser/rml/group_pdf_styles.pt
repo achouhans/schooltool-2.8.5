@@ -1,0 +1,54 @@
+<metal:block
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="schooltool.fee">
+
+ <blockTableStyle id="sign-in-out">
+    <blockValign value="TOP" start="0,0" stop="-1,-1"/>
+    <blockFont start="0,0" stop="-1,-1" size="8" name="Ubuntu_Regular" />
+    <blockBackground start="0,0" stop="-1,-1"
+                     colorsByRow="table.row.background" />
+    <blockTextColor  start="0,0" stop="-1,-1" colorName="table.text" />
+    <lineStyle start="0,0" stop="-1,-1" thickness="0.5"
+               kind="grid" colorName="table.header.background" />
+  </blockTableStyle>
+
+ <blockTableStyle id="student-name-labels">
+    <blockValign value="middle" start="0,0" stop="-1,-1"/>
+    <blockFont start="0,0" stop="-1,-1" size="8" name="Ubuntu_Regular" />
+    <blockBackground start="0,0" stop="-1,-1"
+                     colorsByRow="table.row.background" />
+    <blockTextColor  start="0,0" stop="-1,-1" colorName="table.text" />
+    <blockLeftPadding start="0,0" stop="-1,-1" length="0" />
+    <blockRightPadding start="0,0" stop="-1,-1" length="0" />
+    <blockTopPadding start="0,0" stop="-1,-1" length="0" />
+    <blockBottomPadding start="0,0" stop="-1,-1" length="0" />
+  </blockTableStyle>
+
+ <blockTableStyle id="mailing-labels">
+    <blockValign value="middle" start="0,0" stop="-1,-1"/>
+    <blockFont start="0,0" stop="-1,-1" size="8" name="Ubuntu_Regular" />
+    <blockBackground start="0,0" stop="-1,-1"
+                     colorsByRow="table.row.background" />
+    <blockTextColor  start="0,0" stop="-1,-1" colorName="table.text" />
+    <blockLeftPadding start="0,0" stop="-1,-1" length="0.5in" />
+    <blockRightPadding start="0,0" stop="-1,-1" length="0.5in" />
+    <blockTopPadding start="0,0" stop="-1,-1" length="0" />
+    <blockBottomPadding start="0,0" stop="-1,-1" length="0" />
+  </blockTableStyle>
+
+  <paraStyle
+      fontName="Ubuntu_Regular"
+      fontSize="12"
+      name="label-attr-left"
+      spaceAfter="8"
+      />
+
+  <paraStyle
+      name="label-attr-center"
+      parent="label-attr-left"
+      alignment="center"
+      />
+
+</metal:block>

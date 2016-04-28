@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           i18n_domain="schooltool">
+
+  <include file="security.zcml" />
+
+  <class class=".person.PersonContainer">
+    <allow
+        interface="zope.container.interfaces.ISimpleReadContainer" />
+    <require
+        permission="schooltool.view"
+        attributes="keys values items __iter__ __len__" />
+    <require
+        permission="schooltool.edit"
+        interface="zope.container.interfaces.IWriteContainer" />
+  </class>
+
+  <class class=".person.PersonPasswordWriter">
+    <require
+        interface=".interfaces.IPasswordWriter"
+        permission="schooltool.edit" />
+  </class>
+
+  <adapter trusted="True"
+           factory=".person.PersonPasswordWriter" />
+
+  <class class=".person.Person">
+    <implements interface="schooltool.app.interfaces.IHaveCalendar" />
+    <implements interface=".interfaces.IHavePreferences" />
+    <require
+        permission="schooltool.view"
+        interface=".interfaces.IReadPerson"
+        attributes="__cmp__" />
+    <require
+        permission="schooltool.edit"
+        interface=".interfaces.IWritePerson"
+        set_schema=".interfaces.IPerson" />
+  </class>
+
+  <class class=".preference.PersonPreferences">
+    <require
+        permission="schooltool.view"
+        interface=".interfaces.IPersonPreferences" />
+    <require
+        permission="schooltool.edit"
+        set_schema=".interfaces.IPersonPreferences" />
+  </class>
+
+  <adapter
+      for=".interfaces.IHavePreferences"
+      provides=".interfaces.IPersonPreferences"
+      factory=".preference.getPersonPreferences"
+      trusted="true"
+      />
+
+  <subscriber
+      for="schooltool.person.interfaces.IPerson zope.lifecycleevent.interfaces.IObjectAddedEvent"
+      handler=".person.personAppCalendarOverlaySubscriber"
+      />
+
+  <!-- Application hook -->
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".person.PersonInit"
+      name="schooltool.persons"
+      />
+
+  <adapter
+      factory=".person.getCalendarOwner"
+      provides=".interfaces.IPerson"
+      for="schooltool.app.interfaces.ISchoolToolCalendar" />
+
+  <adapter
+      factory=".preference.getPreferencesOwner"
+      provides=".interfaces.IPerson"
+      for="schooltool.person.interfaces.IPersonPreferences" />
+
+  <adapter
+      factory=".person.getContainerOfPerson" />
+
+  <include package=".browser" />
+
+</configure>

@@ -1,0 +1,988 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <!-- SchoolTool app pages -->
+
+  <flourish:page
+      name="index.html"
+      title="SchoolTool"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class="schooltool.app.browser.app.ApplicationView"
+      permission="zope.Public"
+      />
+
+  <!-- Views for everything -->
+
+  <!-- XXX: how do we handle multiple objects implementing IHaveCalendar
+       multiple viewlet registrations for different managers? -->
+  <flourish:viewlet
+      name="calendar"
+      for="schooltool.app.interfaces.IHaveCalendar"
+      title="Calendar"
+      before="intervention-center-person-link reports"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.basicperson.browser.person.PersonLinks"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="calendar"
+      for="schooltool.app.interfaces.IHaveCalendar"
+      title="Calendar"
+      before="reports"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.group.browser.group.GroupLinks"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="calendar"
+      for="schooltool.app.interfaces.IHaveCalendar"
+      title="Calendar"
+      before="reports"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.course.browser.section.SectionLinks"
+      permission="schooltool.view"
+      />
+
+  <!-- Authentication adapter traverser and views -->
+
+  <flourish:page
+      for="schooltool.app.interfaces.ISchoolToolAuthenticationPlugin"
+      name="login.html"
+      title="Log In"
+      content_template="templates/f_login.pt"
+      class="schooltool.app.browser.app.LoginView"
+      permission="zope.Public"
+      />
+
+  <flourish:page
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      name="login.html"
+      title="Log In"
+      content_template="templates/f_login.pt"
+      class="schooltool.app.browser.app.LoginView"
+      permission="zope.Public"
+      />
+
+  <page
+      for="schooltool.person.interfaces.IPerson"
+      name="logindispatch"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class="schooltool.app.browser.app.FlourishLoginDispatchView"
+      permission="zope.Public"
+      />
+
+  <flourish:page
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      name="logout.html"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class=".app.ApplicationLogoutView"
+      permission="zope.Public"
+      />
+
+  <flourish:page
+      for="schooltool.app.interfaces.ISchoolToolAuthenticationPlugin"
+      name="logout.html"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class=".app.LogoutView"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="login"
+      view="schooltool.app.browser.app.LoginView"
+      manager="schooltool.skin.flourish.page.ISecondaryNavigationManager"
+      class="schooltool.app.browser.app.LoginNavigationViewlet"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="login"
+      manager="schooltool.skin.flourish.page.ISecondaryNavigationManager"
+      class="schooltool.app.browser.app.LoginRedirectBackNavigationViewlet"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="login"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      manager="schooltool.skin.flourish.page.ISecondaryNavigationManager"
+      class="schooltool.app.browser.app.CalendarLoginNavigationViewlet"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="logged-in-name"
+      before="login"
+      manager="schooltool.skin.flourish.page.ISecondaryNavigationManager"
+      class="schooltool.app.browser.app.LoggedInNameViewlet"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="language_selector"
+      after="logged-in-name"
+      before="login"
+      for="*"
+      manager="schooltool.skin.flourish.page.ISecondaryNavigationManager"
+      template="templates/f_language_selector.pt"
+      permission="schooltool.view"
+      class="schooltool.skin.skin.LanguageSelectorViewlet"
+      />
+
+  <flourish:activeViewlet
+      name="login"
+      manager="schooltool.skin.flourish.page.ISecondaryNavigationManager"
+      view="schooltool.app.browser.app.LoginView"
+      />
+
+  <flourish:page_breadcrumbs
+      class="schooltool.skin.flourish.Empty"
+      view="schooltool.app.browser.app.LoginView"
+      />
+
+  <!-- Server page -->
+
+  <flourish:viewlet
+      name="calendar-settings-overview"
+      after="email-settings-overview"
+      view="schooltool.app.browser.app.ManageSite"
+      permission="schooltool.edit"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".app.FlourishCalendarSettingsOverview"
+      />
+
+  <flourish:viewlet
+      name="server-settings-overview"
+      view="schooltool.app.browser.app.ManageSite"
+      permission="schooltool.edit"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".app.FlourishServerSettingsOverview"
+      />
+
+  <flourish:viewlet
+      name="package-versions-overview"
+      after="server-settings-overview"
+      view="schooltool.app.browser.app.ManageSite"
+      permission="schooltool.edit"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".app.PackageVersionsOverview"
+      />
+
+  <flourish:page
+      name="settings"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      title="Server"
+      class="schooltool.app.browser.app.ManageSite"
+      content_template="templates/f_settings.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      view="schooltool.app.browser.app.ManageSite"
+      class="schooltool.app.browser.app.ManageSiteBreadcrumb"
+      />
+
+  <flourish:viewletFactory
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="*"
+      factory="schooltool.app.browser.app.getAppViewlet"
+      />
+
+  <flourish:viewlet
+      name="manage_site"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      title="Server"
+      link="settings"
+      permission="zope.ManageApplication"
+      />
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view="schooltool.app.browser.app.ManageSite"
+      />
+
+  <flourish:viewlet
+      name="manage_site_links"
+      before="manage_school_links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.app.browser.app.ManageSiteLinks"
+      view="schooltool.app.browser.app.ManageSite"
+      title="Settings"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="school-actions-links"
+      after="customize_school_links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.app.browser.app.SchoolActionsLinks"
+      title="Actions"
+      permission="schooltool.view"
+      view="schooltool.app.browser.app.ManageSchool"
+      />
+
+  <flourish:activeViewlet
+      factory="schooltool.skin.flourish.page.getViewParentActiveViewletName"
+      manager="schooltool.skin.flourish.page.RefineLinksViewlet"
+      />
+
+  <configure package="schooltool.skin.flourish">
+
+    <flourish:page_breadcrumbs
+        view="schooltool.app.browser.app.FlourishApplicationPreferencesView"
+        follow_crumb="schooltool.app.browser.app.ManageSiteBreadcrumb"
+        />
+
+    <flourish:page
+        name="site-preferences.html"
+        title="Server"
+        subtitle="Calendar Settings"
+        for="schooltool.app.interfaces.ISchoolToolApplication"
+        class="schooltool.app.browser.app.FlourishApplicationPreferencesView"
+        content_template="templates/z3c-schooltool-form.pt"
+        permission="schooltool.edit"
+        />
+
+    <flourish:page
+        name="schoolName.html"
+        title="School Name"
+        subtitle="Edit"
+        for="schooltool.app.interfaces.ISchoolToolApplication"
+        class="schooltool.app.browser.app.FlourishSchoolNameEditView"
+        content_template="templates/z3c_form_edit.pt"
+        permission="schooltool.edit"
+        />
+
+  </configure>
+
+  <flourish:activeViewlet
+      factory="schooltool.skin.flourish.page.getViewletViewName"
+      manager="schooltool.app.browser.app.ManageSiteLinks"
+      />
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view="schooltool.app.browser.app.FlourishApplicationPreferencesView"
+      />
+
+  <flourish:viewlet
+      name="errors"
+      after="security.html"
+      title="Errors"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.ManageSiteLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="errors"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".app.FlourishErrorsView"
+      title="Server"
+      subtitle="Errors"
+      content_template="templates/f_errors.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view=".app.FlourishErrorsView"
+      />
+
+  <zope:adapter factory=".app.ErrorsSettingsAdapter" />
+
+  <flourish:page
+      name="showEntry.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".app.FlourishErrorEntryView"
+      title="Server"
+      subtitle="Error"
+      content_template="templates/f_errors_entry.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="hide_unhide_tabs.html"
+      after="errors"
+      title="Tabs"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.ManageSiteLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="hide_unhide_tabs.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".app.FlourishHideUnhideTabsView"
+      title="Server"
+      subtitle="Tabs"
+      content_template="templates/f_hide_unhide_tabs.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view=".app.FlourishHideUnhideTabsView"
+      />
+
+  <flourish:page_breadcrumbs
+      view=".app.FlourishHideUnhideTabsView"
+      class=".app.TabsBreadcrumb"
+      />
+
+  <flourish:viewlet
+      name="name_sorting.html"
+      after="hide_unhide_tabs.html"
+      title="Name Sorting"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.ManageSiteLinks"
+      permission="schooltool.edit"
+      />
+
+  <configure package="schooltool.skin.flourish">
+
+    <flourish:page
+        name="name_sorting.html"
+        title="Name Sorting"
+        subtitle="Edit"
+        for="schooltool.app.interfaces.ISchoolToolApplication"
+        class="schooltool.app.browser.app.NameSortingEditView"
+        content_template="templates/z3c_form_edit.pt"
+        permission="schooltool.edit"
+        />
+
+  </configure>
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view="schooltool.app.browser.app.NameSortingEditView"
+      />
+
+  <flourish:page_breadcrumbs
+      view="schooltool.app.browser.app.NameSortingEditView"
+      class=".app.NameSortingBreadcrumb"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_hide_unhide_tabs_related.pt"
+      view=".app.FlourishHideUnhideTabsView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="showTextTBEntry.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".app.FlourishErrorEntryView"
+      template="templates/f_errors_entry_text.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view=".app.FlourishErrorEntryView"
+      />
+
+  <configure package="schooltool.skin.flourish">
+
+    <flourish:page
+        name="errors-configure.html"
+        class="schooltool.app.browser.app.FlourishErrorsConfigureView"
+        title="Server"
+        subtitle="Errors Settings"
+        content_template="templates/z3c-schooltool-form.pt"
+        permission="schooltool.edit"
+        />
+
+  </configure>
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view=".app.FlourishErrorsConfigureView"
+      />
+
+  <flourish:page
+      name="about.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class="schooltool.app.browser.app.FlourishAboutView"
+      title="SchoolTool"
+      subtitle="About"
+      content_template="templates/f_about.pt"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="about-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.app.browser.app.AboutLinks"
+      title="More Information"
+      permission="zope.Public"
+      view="schooltool.app.browser.app.FlourishAboutView"
+      />
+
+  <flourish:viewlet
+      name="website"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.AboutLinks"
+      title="Website"
+      url="http://www.schooltool.org"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="launchpad"
+      after="website"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.AboutLinks"
+      title="Launchpad project page"
+      url="https://launchpad.net/schooltool-project"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="documentation"
+      after="launchpad"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.AboutLinks"
+      title="Documentation"
+      url="http://book.schooltool.org"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="mailing-list"
+      after="documentation"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.AboutLinks"
+      title="Mailing list"
+      url="https://launchpad.net/~schooltoolers"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="irc-channel"
+      after="mailing-list"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.AboutLinks"
+      title="IRC channel"
+      url="http://webchat.freenode.net/?channels=schooltool"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="about-related"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_about_related.pt"
+      view="schooltool.app.browser.app.FlourishAboutView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="zope.Public"
+      />
+
+  <!-- Manage School page -->
+
+  <flourish:page
+      name="manage.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class="schooltool.app.browser.app.ManageSite"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="manage"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.view"
+      />
+
+  <security:allow
+     interface=".app.ManageSchool"
+     crowds="logged_in"
+     permission="schooltool.view" />
+
+  <flourish:viewletFactory
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="*"
+      factory="schooltool.app.browser.app.getAppViewlet"
+      />
+
+  <flourish:viewlet
+      name="manage_school"
+      after="manage_site"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      class="schooltool.app.browser.app.ManageSchoolViewlet"
+      title="School"
+      link="manage"
+      permission="schooltool.view"
+      />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view="schooltool.app.browser.app.ManageSchool"
+      />
+
+  <flourish:viewlet
+      name="customize_school_links"
+      after="school_add_links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.app.browser.app.CustomizeSchoolLinks"
+      view="schooltool.app.browser.app.ManageSchool"
+      title="Customize"
+      permission="schooltool.view"
+      />
+
+  <security:allow
+     interface=".app.CustomizeSchoolLinks"
+     crowds="managers administrators clerks"
+     permission="schooltool.edit" />
+
+  <flourish:viewlet
+      name="school_add_links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.app.browser.app.SchoolAddLinks"
+      view="schooltool.app.browser.app.ManageSchool"
+      title="Add"
+      permission="schooltool.edit"
+      />
+
+  <!-- Content providers -->
+
+  <flourish:content
+      class=".app.ContentTitle"
+      view="zope.publisher.interfaces.browser.IBrowserPage"
+      permission="schooltool.view"
+      name="title" />
+
+  <flourish:content
+      class=".app.ContentLink"
+      view="zope.publisher.interfaces.browser.IBrowserPage"
+      permission="schooltool.view"
+      name="link" />
+
+  <flourish:content
+      class=".app.ContentLabel"
+      view="zope.publisher.interfaces.browser.IBrowserPage"
+      permission="schooltool.view"
+      name="label" />
+
+  <flourish:page
+      name="leaders.html"
+      for="schooltool.app.interfaces.IAsset"
+      class="schooltool.basicperson.browser.person.FlourishLeaderView"
+      permission="schooltool.edit"
+      subtitle="Responsible parties"
+      />
+
+  <flourish:viewlet
+      name="available_table"
+      class="schooltool.basicperson.browser.person.BasicPersonAddTemporalRelationshipTable"
+      for="schooltool.app.interfaces.IAsset"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view="schooltool.basicperson.browser.person.FlourishLeaderView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="add_all_button"
+      after="table"
+      manager=".app.RelationshipAddTableMixin"
+      class="schooltool.app.browser.app.AddAllResultsButton"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="remove_all_button"
+      after="table"
+      manager=".app.RelationshipRemoveTableMixin"
+      class="schooltool.app.browser.app.RemoveAllResultsButton"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="add_all_button"
+      after="table"
+      manager=".states.TemporalRelationshipAddTableMixin"
+      class="schooltool.app.browser.states.TemporalAddAllResultsButton"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="remove_all_button"
+      after="table"
+      manager=".states.TemporalRelationshipRemoveTableMixin"
+      class="schooltool.app.browser.states.TemporalRemoveAllResultsButton"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="action_dialog_script"
+      after="table"
+      manager=".states.TemporalRelationshipAddTableMixin"
+      class="schooltool.app.browser.states.AddStateActionDialog"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="action_dialog_script"
+      after="table"
+      manager=".states.TemporalRelationshipRemoveTableMixin"
+      class="schooltool.app.browser.states.RemoveStateActionDialog"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      manager=".app.RelationshipRemoveTableMixin"
+      class="schooltool.table.table.DoNotFilter"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="current_table"
+      class="schooltool.basicperson.browser.person.BasicPersonRemoveTemporalRelationshipTable"
+      for="schooltool.app.interfaces.IAsset"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view="schooltool.basicperson.browser.person.FlourishLeaderView"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      class="schooltool.app.browser.app.ContentTitle"
+      permission="schooltool.view"
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      title="Server"
+      name="title" />
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      />
+
+  <flourish:viewlet
+      name="application_control_links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".app.ApplicationControlLinks"
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      view=".app.FlourishRuntimeInfoView"
+      title="Details"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="TranslationDomain.html"
+      title="Translation Domains"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager=".app.ApplicationControlLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="generations.html"
+      title="Generations"
+      after="TranslationDomain.html"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager=".app.ApplicationControlLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      name="index.html"
+      content_template="templates/f_runtimeinfo.pt"
+      class=".app.FlourishRuntimeInfoView"
+      permission="schooltool.edit"
+      subtitle="Information"
+      />
+
+  <flourish:page
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      name="TranslationDomain.html"
+      content_template="templates/f_translationdomaincontrol.pt"
+      class="zope.app.applicationcontrol.browser.translationdomaincontrol.TranslationDomainControlView"
+      permission="schooltool.edit"
+      subtitle="Translation Domains"
+      />
+
+  <flourish:page
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      name="generations.html"
+      content_template="templates/f_managers.pt"
+      class="zope.app.generations.browser.managers.Managers"
+      permission="schooltool.edit"
+      subtitle="Database generations"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_generations_related.pt"
+      view="zope.app.generations.browser.managers.Managers"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="server-actions-links"
+      after="manage_site_links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.app.browser.app.ServerActionsLinks"
+      title="Actions"
+      permission="schooltool.edit"
+      view="schooltool.app.browser.app.ManageSite"
+      />
+
+  <flourish:viewlet
+      name="packDatabase.html"
+      title="Pack Database"
+      class=".app.PackDatabaseLink"
+      manager="schooltool.app.browser.app.ServerActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="packDatabase.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".app.PackDatabaseView"
+      template="templates/f_pack_database.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="schoolName.html"
+      after="*"
+      title="School Name"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.CustomizeSchoolLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page_breadcrumbs
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      follow_crumb="schooltool.app.browser.app.ManageSiteBreadcrumb"
+      />
+
+  <flourish:page_breadcrumbs
+      view="schooltool.app.browser.app.FlourishErrorsView"
+      class="schooltool.app.browser.app.ErrorsBreadcrumb"
+      />
+
+  <flourish:page_breadcrumbs
+      view="schooltool.app.browser.app.FlourishErrorsConfigureView"
+      follow_crumb="schooltool.app.browser.app.ErrorsBreadcrumb"
+      />
+
+  <flourish:page_breadcrumbs
+      view="schooltool.app.browser.app.FlourishErrorEntryView"
+      follow_crumb="schooltool.app.browser.app.ErrorsBreadcrumb"
+      />
+
+  <!-- Misplaced calendar overlay selection -->
+
+  <zope:adapter
+      for=".overlay.IOverlayCalendarsContainer
+           schooltool.skin.flourish.interfaces.IFlourishLayer"
+      factory=".overlay.OverlayCalendarsFormatter" />
+
+  <zope:adapter
+      for=".overlay.IOverlayCalendarsContainer
+           schooltool.skin.flourish.interfaces.IFlourishLayer"
+      factory=".overlay.OverlayCalendarsFilterWidget" />
+
+  <flourish:page
+      for="schooltool.person.interfaces.IPerson"
+      name="calendar_selection.html"
+      class=".overlay.FlourishCalendarSelectionView"
+      permission="schooltool.editCalendarOverlays"
+      subtitle="Shown Calendars"
+      />
+
+  <flourish:viewlet
+      name="available_table"
+      class=".overlay.CalendarAddRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".overlay.FlourishCalendarSelectionView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="current_table"
+      class=".overlay.CalendarRemoveRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".overlay.FlourishCalendarSelectionView"
+      permission="schooltool.view"
+      />
+
+  <flourish:page_breadcrumbs
+      crumb_parent="schooltool.calendar.interfaces.ISchoolToolCalendar"
+      view=".overlay.FlourishCalendarSelectionView"
+      />
+
+  <zope:adapter
+      for="* schooltool.skin.flourish.IFlourishLayer"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="schooltool.traverser.traverser.PluggableTraverser"
+      permission="zope.Public"
+      />
+
+  <page
+      name="logo"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      class=".app.SchoolLogoView"
+      permission="zope.Public"
+      />
+
+  <page
+      name="logo"
+      for="schooltool.app.interfaces.IApplicationPreferences"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      class=".app.SchoolLogoView"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="school_logo"
+      before="*"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.app.browser.app.SchoolLogoViewlet"
+      view="schooltool.app.browser.app.ManageSchool"
+      title="School Logo"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="school_logo"
+      before="*"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.app.browser.app.SchoolLoginLogoViewlet"
+      view="schooltool.app.browser.app.LoginView"
+      title="School Logo"
+      permission="schooltool.view"
+      />
+
+  <zope:adapter
+      for="*
+           schooltool.skin.flourish.IFlourishLayer
+           .report.FlourishReportPDFView"
+      provides="schooltool.app.browser.interfaces.IReportPageTemplate"
+      name="default"
+      factory=".report.FlourishDefaultPageTemplate"
+      />
+
+  <flourish:page
+      name="index.html"
+      subtitle="Edit"
+      for="schooltool.app.interfaces.IRelationshipStates"
+      class="schooltool.app.browser.states.RelationshipStatesEditView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_relationship_states_related.pt"
+      view="schooltool.app.browser.states.RelationshipStatesEditView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.app.interfaces.IRelationshipStateContainer"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      title="Membership States"
+      view="schooltool.app.browser.states.RelationshipStateContainerView"
+      />
+
+  <flourish:breadcrumb
+      title="Membership States"
+      for="schooltool.app.interfaces.IRelationshipStateContainer"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      view="schooltool.app.browser.states.RelationshipStatesEditView"
+      />
+
+  <flourish:breadcrumb
+      for="schooltool.app.interfaces.IRelationshipStates"
+      />
+
+  <flourish:page
+      name="index.html"
+      title="Membership States"
+      subtitle=""
+      for="schooltool.app.interfaces.IRelationshipStateContainer"
+      class="schooltool.app.browser.states.RelationshipStateContainerView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      class="schooltool.table.table.DoNotFilter"
+      for="schooltool.app.interfaces.IRelationshipStateContainer"
+      manager="schooltool.table.ajax.Table"
+      view="schooltool.app.browser.states.RelationshipStateContainerView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="done"
+      after="*"
+      for="schooltool.app.interfaces.IRelationshipStateContainer"
+      manager="schooltool.table.ajax.Table"
+      view="schooltool.app.browser.states.RelationshipStateContainerView"
+      class="schooltool.app.browser.app.ManageItemDoneLink"
+      render="template"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="relationship-states"
+      link="schooltool.app.relationships-states"
+      after="*"
+      title="Membership States"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.CustomizeSchoolLinks"
+      permission="schooltool.edit"
+      />
+
+  <zope:adapter
+       factory=".states.EditMembership_date"
+       name="default"
+       />
+
+  <zope:adapter
+       factory=".states.EditMembership_state"
+       name="default"
+       />
+
+</configure>

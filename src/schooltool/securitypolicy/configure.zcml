@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           i18n_domain="schooltool">
+
+  <!-- Basically a copy of zope.securitypolicy/securitypolicy.zcml  -->
+  <securityPolicy
+    component=".policy.CachingSecurityPolicy" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".customisation.getAccessControlCustomisations"
+      provides=".interfaces.IAccessControlCustomisations" />
+
+  <adapter
+      for=".interfaces.ICrowd * *"
+      provides=".interfaces.ICrowdToDescribe"
+      factory=".crowds.defaultCrowdToDescribe" />
+
+  <!-- Some basic crowds -->
+  <security:crowd
+      name="everybody"
+      factory=".crowds.EverybodyCrowd" />
+
+  <security:crowd
+      name="anonymous"
+      factory=".crowds.AnonymousCrowd" />
+
+  <security:crowd
+      name="authenticated"
+      factory=".crowds.AuthenticatedCrowd" />
+
+  <security:crowd
+      name="logged_in"
+      factory=".crowds.LoggedInCrowd" />
+
+  <security:crowd
+      name="owner"
+      factory=".crowds.OwnerCrowd" />
+
+  <security:crowd
+      name="superuser"
+      factory=".crowds.SuperUserCrowd" />
+
+  <security:crowd
+      name="managers"
+      factory=".crowds.ManagersCrowd" />
+
+  <security:crowd
+      name="administrators"
+      factory=".crowds.AdministratorsCrowd" />
+
+  <security:crowd
+      name="clerks"
+      factory=".crowds.ClerksCrowd" />
+
+  <security:crowd
+      name="teachers"
+      factory=".crowds.TeachersCrowd" />
+
+  <security:crowd
+      name="administration"
+      factory=".crowds.AdministrationCrowd" />
+
+  <security:allow
+      crowds="everybody"
+      permission="zope.View" />
+  <security:allow
+      crowds="managers"
+      permission="zope.ManageApplication" />
+  <security:allow
+      crowds="administration"
+      permission="zope.ManageContent" />
+  <security:allow
+      crowds="administration"
+      permission="zope.ManageServices" />
+  <security:allow
+      crowds="administration"
+      permission="zope.dublincore.change" />
+  <security:allow
+      crowds="everybody"
+      permission="zope.dublincore.view" />
+
+  <security:describe_crowd
+      crowd_factory=".crowds.Crowd"
+      factory=".crowds.DefaultCrowdDescription" />
+
+  <security:describe_crowd
+      crowd_factory=".crowds.AggregateCrowd"
+      factory=".crowds.AggregateCrowdDescription" />
+
+</configure>

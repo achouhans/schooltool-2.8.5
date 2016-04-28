@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <configure package="schooltool.securitypolicy.browser">
+
+    <flourish:page_breadcrumbs
+        view=".control.SecurityDescriptions"
+        follow_crumb="schooltool.app.browser.app.ManageSiteBreadcrumb"
+        />
+
+    <flourish:page
+        name="security.html"
+        title="Server"
+        subtitle="Security"
+        for="schooltool.app.interfaces.ISchoolToolApplication"
+        class=".control.SecurityDescriptions"
+        content_template="templates/f_security_descriptions.pt"
+        permission="schooltool.edit"
+        />
+
+    <flourish:activeViewlet
+        name="manage_site"
+        manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+        view=".control.SecurityDescriptions"
+        />
+
+    <flourish:viewlet
+        name="security.html"
+        title="Security"
+        class="schooltool.skin.flourish.page.LinkViewlet"
+        manager="schooltool.app.browser.app.ManageSiteLinks"
+        permission="schooltool.edit"
+        />
+
+    <flourish:page_breadcrumbs
+        view=".views.FlourishAccessControlView"
+        follow_crumb="schooltool.app.browser.app.ManageSiteBreadcrumb"
+        />
+
+    <flourish:page
+        name="access_control.html"
+        title="Server"
+        subtitle="Access Rights"
+        for="schooltool.app.interfaces.ISchoolToolApplication"
+        class=".views.FlourishAccessControlView"
+        content_template="templates/f_access_control.pt"
+        permission="schooltool.edit"
+        />
+
+    <flourish:activeViewlet
+        name="manage_site"
+        manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+        view=".views.AccessControlView"
+        />
+
+  </configure>
+
+</configure>

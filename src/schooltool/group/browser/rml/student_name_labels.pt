@@ -1,0 +1,27 @@
+<tal:block
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="schooltool">
+
+  <pto>
+    <tal:block repeat="table options/content">
+      <blockTable
+          tal:define="rows python: view.getRows(table);"
+          tal:attributes="colWidths options/col_widths;
+                          rowHeights python:view.getRowHeights(rows);
+                          style view/table_style"
+                  alignment="left">
+        <tr tal:repeat="row rows">
+          <td tal:repeat="cell row">
+            <tal:block repeat="attr cell">
+              <para tal:condition="attr" tal:content="attr"
+                    tal:attributes="style view/paragraph_style" />
+            </tal:block>
+          </td>
+        </tr>
+      </blockTable>
+    </tal:block>
+  </pto>
+
+</tal:block>

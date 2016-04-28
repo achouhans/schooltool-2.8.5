@@ -1,0 +1,43 @@
+/*
+
+  Timetabling CSS.
+
+*/
+
+@media all {
+
+div.timetable-table {
+    overflow: auto;
+}
+
+.body > .container div.timetable-table {
+    width: 528px;
+}
+
+.body > .widecontainer div.timetable-table {
+    width: 720px;
+}
+
+table.timetable td .period {
+    word-break: normal;
+    white-space: nowrap;
+}
+
+.timetable-wizard textarea {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.body > .container form fieldset div.timetable-table {
+    width: 512px;
+}
+
+.body > .widecontainer form fieldset div.timetable-table {
+    width: 704px;
+}
+
+form fieldset table.timetable td.error {
+    padding-left: 24px;
+}
+
+}

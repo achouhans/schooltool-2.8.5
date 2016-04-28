@@ -1,0 +1,123 @@
+Test for Sections, SectionEnrollment and SectionTimetables sheets
+-----------------------------------------------------------------
+
+Log in as manager:
+
+    >>> manager = browsers.manager
+    >>> manager.ui.login('manager', 'schooltool')
+
+Let's import a file containing the Sections, SectionEnrollment and
+SectionTimetables sheets:
+
+    >>> import os
+    >>> dirname = os.path.abspath(os.path.dirname(__file__))
+    >>> filename = os.path.join(dirname, 'section_sheets.xls')
+    >>> manager.ui.import_xls(filename)
+
+There should be no errors so we should be back at the School tab view:
+
+    >>> manager.url
+    u'http://localhost/manage'
+
+Let's export the just imported data.
+
+    >>> manager.open('http://localhost/export.xls')
+    >>> manager.wait(downloads.new)
+
+We'll demonstrate that the data that we just imported has exported the same.
+
+    >>> from schooltool.testing.xls import print_sheet
+    >>> xls = downloads.read()
+    >>> print_sheet(xls.sheet_by_name('Sections'))
+      *         A              B              C                       D                               E                               F                           G                  H               I
+      1  [u'School Year'][ u'Courses' ][   u'Term'    ][        u'Section ID'         ][        u'Previous ID'        ][          u'Next ID'          ][      u'Title'       ][u'Description'][     u'Resources'     ]
+      2  [ u'2010-2011' ][  u'art_a'  ][ u'2010-fall' ][u'art_a_2010-fall_2010-spring'][                              ][u'art_a_2010-fall_2010-spring'][  u'Art A \u2013 1'  ][ u'Art desc.' ][      u'room00'       ]
+      3  [ u'2010-2011' ][  u'art_a'  ][u'2011-spring'][u'art_a_2010-fall_2010-spring'][u'art_a_2010-fall_2010-spring'][                              ][  u'Art A \u2013 1'  ][ u'Art desc.' ][      u'room00'       ]
+      4  [ u'2010-2011' ][u'english_a'][ u'2010-fall' ][    u'english_a_2010-fall'    ][                              ][   u'history_a_2011-spring'   ][u'English A \u2013 1'][              ][u'room01, projector00']
+      5  [ u'2010-2011' ][u'history_a'][u'2011-spring'][   u'history_a_2011-spring'   ][    u'english_a_2010-fall'    ][                              ][u'History A \u2013 1'][              ][                      ]
+
+    >>> print_sheet(xls.sheet_by_name('SectionEnrollment'))
+      *          A               B                       C                  D
+      1   [u'School Year'][   u'Term'    ][        u'Section ID'         ][    ]
+      2   [ u'2010-2011' ][ u'2010-fall' ][u'art_a_2010-fall_2010-spring'][    ]
+      3   [              ][              ][                              ][    ]
+      4   [ u'Students'  ][              ][                              ][    ]
+      5   [u'student000' ][              ][          2010-09-01          ][u'a']
+      6   [u'student001' ][              ][          2010-09-01          ][u'a']
+      7   [u'student002' ][              ][          2010-09-01          ][u'a']
+      8   [u'student003' ][              ][          2010-09-01          ][u'a']
+      9   [u'student004' ][              ][          2010-09-01          ][u'a']
+      10  [u'student005' ][              ][          2010-09-01          ][u'a']
+      11  [              ][              ][                              ][    ]
+      12  [u'School Year'][   u'Term'    ][        u'Section ID'         ][    ]
+      13  [ u'2010-2011' ][ u'2010-fall' ][    u'english_a_2010-fall'    ][    ]
+      14  [              ][              ][                              ][    ]
+      15  [ u'Students'  ][              ][                              ][    ]
+      16  [u'student003' ][              ][          2010-09-01          ][u'a']
+      17  [u'student004' ][              ][          2010-09-01          ][u'a']
+      18  [u'student005' ][              ][          2010-09-01          ][u'a']
+      19  [u'student006' ][              ][          2010-09-01          ][u'a']
+      20  [u'student007' ][              ][          2010-09-01          ][u'a']
+      21  [u'student008' ][              ][          2010-09-01          ][u'a']
+      22  [u'student009' ][              ][          2010-09-01          ][u'a']
+      23  [              ][              ][                              ][    ]
+      24  [u'School Year'][   u'Term'    ][        u'Section ID'         ][    ]
+      25  [ u'2010-2011' ][u'2011-spring'][u'art_a_2010-fall_2010-spring'][    ]
+      26  [              ][              ][                              ][    ]
+      27  [ u'Students'  ][              ][                              ][    ]
+      28  [u'student000' ][              ][          2010-09-01          ][u'a']
+      29  [u'student001' ][              ][          2010-09-01          ][u'a']
+      30  [u'student002' ][              ][          2010-09-01          ][u'a']
+      31  [u'student003' ][              ][          2010-09-01          ][u'a']
+      32  [u'student004' ][              ][          2010-09-01          ][u'a']
+      33  [u'student005' ][              ][          2010-09-01          ][u'a']
+      34  [              ][              ][                              ][    ]
+      35  [u'School Year'][   u'Term'    ][        u'Section ID'         ][    ]
+      36  [ u'2010-2011' ][u'2011-spring'][   u'history_a_2011-spring'   ][    ]
+      37  [              ][              ][                              ][    ]
+      38  [ u'Students'  ][              ][                              ][    ]
+      39  [u'student003' ][              ][          2010-09-01          ][u'a']
+      40  [u'student004' ][              ][          2010-09-01          ][u'a']
+      41  [u'student005' ][              ][          2010-09-01          ][u'a']
+      42  [u'student006' ][              ][          2010-09-01          ][u'a']
+      43  [u'student007' ][              ][          2010-09-01          ][u'a']
+      44  [u'student008' ][              ][          2010-09-01          ][u'a']
+      45  [u'student009' ][              ][          2010-09-01          ][u'a']
+
+    >>> print_sheet(xls.sheet_by_name('SectionTimetables'))
+      *          A               B                       C                   D
+      1   [u'School Year'][   u'Term'    ][        u'Section ID'         ][      ]
+      2   [ u'2010-2011' ][ u'2010-fall' ][u'art_a_2010-fall_2010-spring'][      ]
+      3   [ u'2010-2011' ][u'2011-spring'][u'art_a_2010-fall_2010-spring'][      ]
+      4   [              ][              ][                              ][      ]
+      5   [ u'Timetable' ][  u'simple'   ][        u'Consecutive'        ][u'no' ]
+      6   [              ][              ][                              ][      ]
+      7   [    u'Day'    ][ u'Period ID' ][                              ][      ]
+      8   [   u'Day 1'   ][     u'B'     ][                              ][      ]
+      9   [   u'Day 2'   ][     u'B'     ][                              ][      ]
+      10  [   u'Day 3'   ][     u'B'     ][                              ][      ]
+      11  [   u'Day 4'   ][     u'B'     ][                              ][      ]
+      12  [   u'Day 5'   ][     u'B'     ][                              ][      ]
+      13  [   u'Day 6'   ][     u'B'     ][                              ][      ]
+      14  [              ][              ][                              ][      ]
+      15  [u'School Year'][   u'Term'    ][        u'Section ID'         ][      ]
+      16  [ u'2010-2011' ][ u'2010-fall' ][    u'english_a_2010-fall'    ][      ]
+      17  [ u'2010-2011' ][u'2011-spring'][   u'history_a_2011-spring'   ][      ]
+      18  [              ][              ][                              ][      ]
+      19  [ u'Timetable' ][  u'simple'   ][        u'Consecutive'        ][u'yes']
+      20  [              ][              ][                              ][      ]
+      21  [    u'Day'    ][ u'Period ID' ][                              ][      ]
+      22  [   u'Day 1'   ][     u'E'     ][                              ][      ]
+      23  [   u'Day 2'   ][     u'E'     ][                              ][      ]
+      24  [   u'Day 3'   ][     u'E'     ][                              ][      ]
+      25  [   u'Day 4'   ][     u'E'     ][                              ][      ]
+      26  [   u'Day 5'   ][     u'E'     ][                              ][      ]
+      27  [   u'Day 6'   ][     u'E'     ][                              ][      ]
+
+Finally, we'll re-import the just exported data to show that the importer can
+survive the round-trip.
+
+    >>> dirname = downloads.path
+    >>> filename = os.path.join(dirname, downloads.files.keys()[0])
+    >>> manager.ui.import_xls(filename)
+

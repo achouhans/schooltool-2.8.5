@@ -1,0 +1,183 @@
+Tests for timetable events in calendar views
+--------------------------------------------
+
+Regression test for issue405:
+
+Traceback when trying to render weekly view when there are timetable
+events.
+
+A manager logs in and sets up timetabling:
+
+    >>> from schooltool.app.browser.ftests import setup
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> addPerson('The', 'Frog', 'frog')
+    >>> setup.setUpTimetabling(username='frog')
+
+Frog logs in:
+
+    >>> frog = setup.logIn('frog')
+
+Looks at his daily view:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-09-07')
+    >>> print analyze.queryHTML('id("content-body")', frog.contents)[0]
+    <div id="content-body">
+    ...
+      <h6 style="background: #...">
+        <a href="http://localhost/schoolyears/2005-2006/2005-fall/sections/1/calendar/..." title="History 6">
+          History 6
+          <span class="start-end">
+            (<span>11:35</span>
+               -
+             <span>12:20</span>)
+          </span>
+        </a>
+      </h6>
+    ...
+
+And tries to get an overview of the whole week:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-w37')
+    >>> print analyze.queryHTML('id("content-body")', frog.contents)[0]
+    <div id="content-body">
+    ...
+
+Month:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-09')
+
+    >>> def print_table_cell_for_day(date):
+    ...    print analyze.queryHTML('id("content-body")'
+    ...                            '//td/a[contains(@href, "%s")]' % date,
+    ...                            frog.contents)[0]
+
+    >>> print_table_cell_for_day('2005-09-11')
+    <a href="http://localhost/persons/frog/calendar/2005-09-11">
+      <span class="">11</span>
+    </a>
+
+    >>> print_table_cell_for_day('2005-09-12')
+    <a href="http://localhost/persons/frog/calendar/2005-09-12">
+      <span class="">12</span>
+          <span style="background: #...;
+                                border-color: #..." class="event">History 6 (09:30...10:25)</span>
+    </a>
+
+Year:
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005')
+    >>> print_table_cell_for_day('2005-09-11')
+    <a href="http://localhost/persons/frog/calendar/2005-09-11" class="term1">11</a>
+
+    >>> print_table_cell_for_day('2005-09-12')
+    <a href="http://localhost/persons/frog/calendar/2005-09-12" class="term1">12</a>
+
+
+Tests for Time Table editing
+----------------------------
+
+First log in as manager.
+
+    >>> manager = setup.logInManager()
+
+Now check the calendar for the 1 section.  We should have a
+class from 9:30 to 10:25.
+
+    >>> manager.open('http://localhost/schoolyears/2005-2006/2005-fall/sections/1/calendar/2006-01-02')
+    >>> events = analyze.queryHTML('//span[@class="start-end"]', manager.contents)
+    >>> for event in events: print event
+    <BLANKLINE>
+    ...09:30...
+    ...10:25...
+    >>> for event in events: '10:30' not in event
+    True
+
+Now we will go and modify the schedule for 1 and see if the
+calendar events are updated
+
+    >>> manager.open('http://localhost/schoolyears/2005-2006/2005-fall/sections/1/@@schedule.html')
+    >>> manager.getControl(name="Monday.09:30-10:25").value = False
+    >>> manager.getControl(name="Monday.10:30-11:25").value = True
+    >>> manager.getControl("Save").click()
+    >>> manager.open('http://localhost/schoolyears/2005-2006/2005-fall/sections/1/calendar/2006-01-02')
+    >>> events = analyze.queryHTML('//span[@class="start-end"]', manager.contents)
+    >>> for event in events: print event
+    <BLANKLINE>
+    ...10:30...
+    ...11:25...
+    >>> for event in events: '09:30' not in event
+    True
+
+
+Tests for timetable event blocks in weekly calendar view
+--------------------------------------------------------
+
+First to test how timetable events are displayed in the weekly calendar view,
+we need more courses and sections
+
+    >>> setup.addCourse('English 6', '2005-2006', 'English for the sixth class')
+    >>> setup.addSection('English 6', '2005-2006', '2005 Fall')
+    >>> setup.addCourse('Math 6', '2005-2006', 'Math for the sixth class')
+    >>> setup.addSection('Math 6', '2005-2006', '2005 Fall')
+    >>> setup.addCourse('Science 6', '2005-2006', 'Science for the sixth class')
+    >>> setup.addSection('Science 6', '2005-2006', '2005 Fall')
+
+
+    >>> manager.open('http://localhost/schoolyears/2005-2006/2005-fall/sections/2')
+    >>> manager.getLink('edit instructors').click()
+    >>> manager.getControl('Frog').selected = True
+    >>> manager.getControl('Add').click()
+
+    >>> manager.getLink('Schedule').click()
+    >>> manager.getLink('Add Timetable').click()
+    >>> manager.getControl('Add').click()
+    >>> manager.getControl(name="Monday.13:35-14:20").value = True
+    >>> manager.getControl(name="Tuesday.09:30-10:25").value = True
+    >>> manager.getControl(name="Wednesday.09:30-10:25").value = True
+    >>> manager.getControl(name="Friday.14:30-15:15").value = True
+    >>> manager.getControl('Save').click()
+
+
+    >>> manager.open('http://localhost/schoolyears/2005-2006/2005-fall/sections/3')
+    >>> manager.getLink('edit instructors').click()
+    >>> manager.getControl('Frog').selected = True
+    >>> manager.getControl('Add').click()
+
+    >>> manager.getLink('Schedule').click()
+    >>> manager.getLink('Add Timetable').click()
+    >>> manager.getControl('Add').click()
+    >>> manager.getControl(name="Monday.11:35-12:20").value = True
+    >>> manager.getControl(name="Wednesday.12:45-13:30").value = True
+    >>> manager.getControl(name="Thursday.10:30-11:25").value = True
+    >>> manager.getControl(name="Friday.11:35-12:20").value = True
+    >>> manager.getControl('Save').click()
+
+
+    >>> manager.open('http://localhost/schoolyears/2005-2006/2005-fall/sections/4')
+    >>> manager.getLink('edit instructors').click()
+    >>> manager.getControl('Frog').selected = True
+    >>> manager.getControl('Add').click()
+
+    >>> manager.getLink('Schedule').click()
+    >>> manager.getLink('Add Timetable').click()
+    >>> manager.getControl('Add').click()
+    >>> manager.getControl(name="Tuesday.14:30-15:15").value = True
+    >>> manager.getControl(name="Wednesday.14:30-15:15").value = True
+    >>> manager.getControl(name="Thursday.11:35-12:20").value = True
+    >>> manager.getControl(name="Friday.13:35-14:20").value = True
+    >>> manager.getControl('Save').click()
+
+    >>> frog.open('http://localhost/persons/frog/calendar/2005-w37')
+    >>> from schooltool.app.testing import format_weekly_calendar
+    >>> print format_weekly_calendar(frog.contents)
+    +----------------------------+-----------------------------+-------------------------------+------------------------------+----------------------------+------------------------------+----------------------------+
+    | Monday, September 12, 2005 | Tuesday, September 13, 2005 | Wednesday, September 14, 2005 | Thursday, September 15, 2005 | Friday, September 16, 2005 | Saturday, September 17, 2005 | Sunday, September 18, 2005 |
+    +----------------------------+-----------------------------+-------------------------------+------------------------------+----------------------------+------------------------------+----------------------------+
+    |                            | English 6, 09:30, 10:25     | English 6, 09:30, 10:25       |                              |                            |                              |                            |
+    | History 6, 10:30, 11:25    |                             |                               | Math 6, 10:30, 11:25         |                            |                              |                            |
+    | Math 6, 11:35, 12:20       |                             | History 6, 11:35, 12:20       | Science 6, 11:35, 12:20      | Math 6, 11:35, 12:20       |                              |                            |
+    |                            |                             | Math 6, 12:45, 13:30          |                              |                            |                              |                            |
+    | English 6, 13:35, 14:20    |                             |                               |                              | Science 6, 13:35, 14:20    |                              |                            |
+    |                            | Science 6, 14:30, 15:15     | Science 6, 14:30, 15:15       |                              | English 6, 14:30, 15:15    |                              |                            |
+    +----------------------------+-----------------------------+-------------------------------+------------------------------+----------------------------+------------------------------+----------------------------+
+

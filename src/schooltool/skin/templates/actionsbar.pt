@@ -1,0 +1,14 @@
+<tal:block i18n:domain="schooltool"
+	   tal:condition="python:actions or options['viewlets']"
+           tal:define="url view/context/@@absolute_url;
+                       actions view/context/@@view_get_menu/schooltool_actions">
+
+    <!-- old-style menu actions (obsolete) -->
+    <div class="content-nav" tal:repeat="view actions">
+      <a tal:attributes="href string:${url}/${view/action}"
+         tal:content="view/title">Item one</a></div>
+
+    <!-- new-style menu actions (yay!) -->
+    <tal:block repeat="viewlet options/viewlets"
+               content="structure viewlet/render" />
+</tal:block>

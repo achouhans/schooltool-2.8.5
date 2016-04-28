@@ -1,0 +1,485 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           xmlns:flourish="http://schooltool.org/flourish"
+           xmlns:report="http://namespaces.schooltool.org/report"
+           i18n_domain="schooltool">
+
+  <!-- ResourceDemographicsFields pages -->
+
+  <zope:adapter
+      factory=".resource.getAddEditViewTitle" />
+
+  <zope:adapter
+      factory=".resource.getLimitKeysLabel" />
+
+  <zope:adapter
+      factory=".resource.getLimitKeysHint" />
+
+  <configure package="schooltool.basicperson.browser">
+    <flourish:page
+       name="index.html"
+       for="schooltool.resource.interfaces.IResourceDemographicsFields"
+       class="schooltool.resource.browser.resource.FlourishResourceDemographicsView"
+       content_template="templates/f_demographics_view.pt"
+       permission="schooltool.edit"
+       title="Resource Attributes"
+       />
+
+    <flourish:page
+       name="reorder.html"
+       for="schooltool.resource.interfaces.IResourceDemographicsFields"
+       class="schooltool.resource.browser.resource.FlourishReorderResourceDemographicsView"
+       content_template="templates/f_demographics_reorder.pt"
+       permission="schooltool.edit"
+       title="Resource Attributes"
+       subtitle="Reorder"
+       />
+  </configure>
+
+  <flourish:viewlet
+      name="resource_demographics"
+      after="demographics"
+      title="Resource Attributes"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.app.browser.app.CustomizeSchoolLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_resource_demographics_related.pt"
+      view="schooltool.resource.browser.resource.FlourishResourceDemographicsView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_resource_container_related.pt"
+      view=".resource.FlourishResourcesView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <!-- Resource containers -->
+
+  <zope:adapter
+      for="schooltool.resource.interfaces.IResourceContainer
+           schooltool.skin.flourish.interfaces.IFlourishLayer"
+      factory=".resource.FlourishResourceContainerFilterWidget" />
+
+  <zope:adapter
+      for="schooltool.resource.interfaces.IResourceContainer
+           schooltool.skin.flourish.interfaces.IFlourishLayer"
+      factory=".resource.FlourishResourceContainerTableFormatter " />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      />
+
+  <flourish:breadcrumb
+      for="schooltool.resource.interfaces.IResourceContainer"
+      title="Resources"
+      />
+
+  <flourish:content
+      class="schooltool.app.browser.app.ContentTitle"
+      permission="schooltool.view"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      title="Resources"
+      name="title" />
+
+  <flourish:viewlet
+      name="resource_container"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.resource.browser.resource.ResourceContainerLinks"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      title="Add"
+      permission="schooltool.edit"
+      view=".resource.FlourishResourcesView"
+      />
+
+  <flourish:viewlet
+      name="addEquipment.html"
+      title="Equipment"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.resource.browser.resource.ResourceContainerLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="addLocation.html"
+      title="Location"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.resource.browser.resource.ResourceContainerLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="addResource.html"
+      title="Resource"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.resource.browser.resource.ResourceContainerLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class=".resource.FlourishResourcesView"
+      permission="schooltool.view"
+      />
+
+ <flourish:viewlet
+      name="table"
+      class=".resource.ResourcesTable"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+
+  <flourish:viewlet
+      name="filter"
+      class=".resource.ResourcesTableFilter"
+      render="template"
+      manager=".resource.ResourcesTable"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="done"
+      before="table batch"
+      after="filter"
+      manager=".resource.ResourcesTable"
+      view=".resource.FlourishResourcesView"
+      class="schooltool.app.browser.app.ManageItemDoneLink"
+      render="template"
+      permission="schooltool.view"
+      />
+
+
+  <flourish:page
+      name="addResource.html"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class="schooltool.resource.browser.resource.FlourishResourceAddView"
+      permission="schooltool.edit"
+      subtitle="Add Resource"
+      content_template="templates/f_resource_form.pt"
+      />
+
+  <flourish:page
+      name="addLocation.html"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class="schooltool.resource.browser.resource.FlourishLocationAddView"
+      permission="schooltool.edit"
+      subtitle="Add Location"
+      content_template="templates/f_resource_form.pt"
+      />
+
+  <flourish:page
+      name="addEquipment.html"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class="schooltool.resource.browser.resource.FlourishEquipmentAddView"
+      permission="schooltool.edit"
+      subtitle="Add Equipment"
+      content_template="templates/f_resource_form.pt"
+      />
+
+  <!--Resources -->
+
+  <flourish:breadcrumb
+      for="schooltool.resource.interfaces.IBaseResource"
+      class="schooltool.skin.flourish.breadcrumbs.TitleBreadcrumb"
+      />
+
+  <flourish:viewlet
+      name="resource-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.resource.browser.resource.ResourceLinks"
+      for="schooltool.resource.interfaces.IBaseResource"
+      permission="schooltool.view"
+      view=".resource.FlourishBaseResourceView"
+      />
+
+  <flourish:viewlet
+      name="resource-actions"
+      after="resource-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.resource.browser.resource.ResourceActions"
+      for="schooltool.resource.interfaces.IBaseResource"
+      permission="schooltool.view"
+      view=".resource.FlourishBaseResourceView"
+      title="Actions"
+      />
+
+  <flourish:viewlet
+      name="calendar"
+      manager="schooltool.resource.browser.resource.ResourceLinks"
+      permission="schooltool.view"
+      title="Calendar"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      />
+
+  <flourish:viewlet
+      name="delete.html"
+      manager="schooltool.resource.browser.resource.ResourceActions"
+      permission="schooltool.edit"
+      title="Delete"
+      class=".resource.FlourishResourceDeleteLink"
+      />
+
+  <flourish:viewlet
+      name="book"
+      before="delete"
+      manager="schooltool.resource.browser.resource.ResourceActions"
+      permission="schooltool.view"
+      title="Reserve"
+      class=".booking.BookResourceLink"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.resource.interfaces.IResource"
+      class=".resource.FlourishResourceView"
+      permission="schooltool.view"
+      content_template="templates/f_resource_view.pt"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.resource.interfaces.ILocation"
+      class=".resource.FlourishLocationView"
+      permission="schooltool.view"
+      content_template="templates/f_resource_view.pt"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.resource.interfaces.IEquipment"
+      class=".resource.FlourishEquipmentView"
+      permission="schooltool.view"
+      content_template="templates/f_resource_view.pt"
+      />
+
+  <flourish:page
+      for="schooltool.resource.interfaces.IResource"
+      name="edit.html"
+      class=".resource.FlourishResourceEditView"
+      permission="schooltool.edit"
+      content_template="templates/f_resource_form.pt"
+      subtitle="Edit"
+      />
+
+  <flourish:page
+      for="schooltool.resource.interfaces.ILocation"
+      name="edit.html"
+      class=".resource.FlourishLocationEditView"
+      permission="schooltool.edit"
+      content_template="templates/f_resource_form.pt"
+      subtitle="Edit"
+      />
+
+  <flourish:page
+      for="schooltool.resource.interfaces.IEquipment"
+      name="edit.html"
+      class=".resource.FlourishEquipmentEditView"
+      permission="schooltool.edit"
+      content_template="templates/f_resource_form.pt"
+      subtitle="Edit"
+      />
+
+  <flourish:page
+      name="delete.html"
+      for="schooltool.resource.interfaces.IBaseResource"
+      class=".resource.FlourishResourceDeleteView"
+      template="templates/f_resource_delete_confirmation.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="book"
+      for="schooltool.resource.interfaces.IBaseResource"
+      class=".resource.FlourishBookResourceView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="manage-resources-overview"
+      after="manage-timetables-overview"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.view"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".resource.FlourishManageResourcesOverview"
+      />
+
+  <security:allow
+     interface=".resource.FlourishManageResourcesOverview"
+     crowds="managers administrators clerks"
+     permission="schooltool.view" />
+
+  <flourish:page
+      for="schooltool.resource.interfaces.IBookingCalendar"
+      name="book_one_resource.html"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class=".booking.FlourishCalendarEventBookOneResourceView"
+      permission="zope.View"
+      />
+
+  <!-- XXX: hacky event deletion view for event booking -->
+
+  <flourish:page
+      name="delete-temp.html"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class="schooltool.app.browser.cal.EventDeleteView"
+      permission="schooltool.edit"
+      />
+
+    <flourish:breadcrumb
+        for="schooltool.resource.interfaces.IResourceDemographicsFields"
+        view="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionEditView"
+        title="Resource Attributes"
+        />
+
+    <flourish:breadcrumb
+        for="schooltool.resource.interfaces.IResourceDemographicsFields"
+        view="schooltool.basicperson.browser.demographics.FlourishFieldDescriptionAddView"
+        title="Resource Attributes"
+        />
+
+  <!-- Import -->
+
+  <flourish:viewlet
+      after="resources_container"
+      name="resource-import-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.resource.browser.resource.ResourceImportLinks"
+      view=".resource.FlourishResourcesView"
+      title="Import"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="csvimport.html"
+      title="Import CSV"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      manager="schooltool.resource.browser.resource.ResourceImportLinks"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="csvimport.html"
+      subtitle="Import"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class=".csvimport.FlourishResourceCSVImportView"
+      permission="schooltool.edit"
+     />
+
+  <flourish:content
+      name="import-description"
+      view=".csvimport.FlourishResourceCSVImportView"
+      template="templates/f_resource_csvimport_description.pt"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="available_table"
+      class=".resource.LocationAddRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".resource.EditLocationRelationships"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="current_table"
+      class=".resource.LocationRemoveRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".resource.EditLocationRelationships"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="available_table"
+      class=".resource.EquipmentAddRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".resource.EditEquipmentRelationships"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="current_table"
+      class=".resource.EquipmentRemoveRelationshipTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      view=".resource.EditEquipmentRelationships"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="location_table"
+      for="*"
+      class=".resource.LocationListTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="equipment_table"
+      for="*"
+      class=".resource.EquipmentListTable"
+      manager="schooltool.skin.flourish.interfaces.IAJAXParts"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      before="batch table"
+      class="schooltool.table.table.DoNotFilter"
+      manager=".resource.LocationListTable"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      before="batch table"
+      class="schooltool.table.table.DoNotFilter"
+      manager=".resource.EquipmentListTable"
+      permission="schooltool.view"
+      />
+
+  <report:reportLink
+      name="resource_report"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      permission="schooltool.view"
+      group="Resource"
+      description="List all resources"
+      title="Resources"
+      file_type="pdf"
+      link="request_resource_report.html"
+      />
+
+  <flourish:page
+      name="request_resource_report.html"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class=".resource.FlourishRequestResourceReportView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:pdf
+      name="resource_report.pdf"
+      for="schooltool.resource.interfaces.IResourceContainer"
+      class=".resource.ResourceReportPDFView"
+      content_template="rml/resource_report.pt"
+      permission="schooltool.edit"
+      />
+
+</configure>

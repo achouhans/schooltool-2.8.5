@@ -1,0 +1,22 @@
+<div class="devtools"
+     i18n:domain="schooltool">
+
+  <div class="header" style="clear: both">
+    <a href="javascript:switchDisplay('devtools')"
+       style="text-decoration: none">
+      <img src="/@@/harrow.png" border="0" id=".arrow"
+           style="vertical-align: middle"
+           alt="(>)"
+           tal:attributes="id string:devtools.arrow" />
+      <h4 i18n:translate="">Developer Tools</h4>
+    </a>
+  </div>
+
+  <div id="devtools" style="display:none;">
+    <div class="body">
+      <a href="/++etc++site/default/RootErrorReportingUtility" i18n:translate="">Errors</a>
+      <a href="/@@sampledata.html" i18n:translate="">Sample data</a>
+    </div>
+  </div>
+
+</div>

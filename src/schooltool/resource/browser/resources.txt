@@ -1,0 +1,65 @@
+Functional doctests for creating different resources
+====================================================
+
+This test shows how different types of resources can be created and accessed
+through the browser.
+
+Set up
+------
+
+    >>> manager = Browser('manager', 'schooltool')
+
+Creating Resources
+------------------
+
+We can create generic resources
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Resources').click()
+
+    >>> manager.getLink('Add Resource').click()
+    >>> manager.getControl('Title').value = 'Book'
+    >>> manager.getControl('Add').click()
+    >>> manager.getLink('Resource', index=2).click()
+    >>> 'Book' in manager.contents
+    True
+
+We can create Location resources, the form is currently identical to
+other resources.
+
+    >>> manager.getLink('Add Location').click()
+    >>> manager.getControl('Title').value = 'Room 101'
+    >>> manager.getControl('Add').click()
+
+    >>> urls = manager.queryHTML('//form//a/@href')
+    >>> print '\n'.join(urls)
+    ?SEARCH_TYPE=location|Resource
+    ?SEARCH_TYPE=resource|Resource
+
+    >>> manager.open(urls[0])
+    >>> 'Room 101' in manager.contents
+    True
+
+We can create Equipment resources also:
+
+    >>> manager.getLink('Add Equipment').click()
+    >>> manager.getControl('Title').value = 'Projector 1'
+    >>> manager.getControl('Add').click()
+
+    >>> urls = manager.queryHTML('//form//a/@href')
+    >>> print '\n'.join(urls)
+    ?SEARCH_TYPE=equipment|
+    ?SEARCH_TYPE=location|Resource
+    ?SEARCH_TYPE=resource|Resource
+
+    >>> manager.open(urls[0])
+    >>> 'Projector 1' in manager.contents
+    True
+
+If we click Cancel in any of the forms, we get back to resources index.
+
+    >>> manager.getLink('Add Equipment').click()
+    >>> manager.getControl('Cancel').click()
+    >>> manager.url
+    'http://localhost/resources'
+

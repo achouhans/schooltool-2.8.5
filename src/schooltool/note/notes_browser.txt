@@ -1,0 +1,131 @@
+Creating SchoolTool Notes
+=========================
+
+Set up
+------
+
+    >>> from zope.testbrowser.testing import Browser
+    >>> manager = Browser()
+    >>> manager.addHeader('Authorization', 'Basic manager:schooltool')
+    >>> manager.handleErrors = False
+    >>> manager.open('http://localhost/')
+
+We add a person
+
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> addPerson('The', 'person1', 'person', 'pwd')
+
+
+Test
+----
+
+Add a note to the person
+
+    >>> manager.open('http://localhost')
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('person1').click()
+    >>> manager.getLink('New Note').click()
+
+    >>> manager.getControl('Title').value = 'My Note'
+    >>> manager.getControl('Privacy').value = ['public']
+    >>> manager.getControl('Body').value = 'This is the note.'
+    >>> manager.getControl('Add').click()
+
+We should see the note now:
+
+    >>> print analyze.queryHTML("//div[@id='notes']", manager.contents)[0]
+    <div id="notes">
+      <h5>Notes</h5>
+    <BLANKLINE>
+        <div class="note public">
+          <div class="header">
+            <h6>
+    <BLANKLINE>
+              My Note
+            </h6>
+    ...
+          </div>
+          <div class="body">
+            <p>This is the note.</p>
+          </div>
+        </div>
+    <BLANKLINE>
+    </div>
+
+Notes can also be private (viewable only to the person who added them):
+
+    >>> manager.getLink('New Note').click()
+
+    >>> manager.getControl('Title').value = 'My Private Note'
+    >>> manager.getControl('Privacy').value = ['private']
+    >>> manager.getControl('Body').value = 'This is private.'
+    >>> manager.getControl('Add').click()
+
+Make sure the note is there when we view it:
+
+    >>> print analyze.queryHTML("//div[@class='note private']",
+    ...                         manager.contents)[0]
+    <div class="note private">
+          <div class="header">
+            <h6>
+    <BLANKLINE>
+                <span class="privacy">( p )</span>
+              My Private Note
+            </h6>
+    ...
+          </div>
+          <div class="body">
+            <p>This is private.</p>
+          </div>
+        </div>
+
+# Add a user who won't be able to see the private note:
+
+#     >>> addPerson('The', 'Frog', 'frog', 'pwd')
+
+# View the page as our new user and we will only see the first (public) note:
+
+#     >>> frog = Browser()
+#     >>> frog.addHeader('Authorization', 'Basic frog:pwd')
+#     >>> frog.handleErrors = False
+#     >>> frog.open('http://localhost/persons/person')
+
+#     >>> print analyze.queryHTML("//div[@id='notes']", frog.contents)[0]
+#     <div id="notes">
+#       <h5>Notes</h5>
+#     <BLANKLINE>
+#         <div class="note public">
+#           <div class="header">
+#             <h6>
+#     <BLANKLINE>
+#               My Note
+#             </h6>
+#     <BLANKLINE>
+#     <BLANKLINE>
+#           </div>
+#           <div class="body">
+#             <p>This is the note.</p>
+#           </div>
+#         </div>
+#     <BLANKLINE>
+#     </div>
+
+Notes can also be deleted, but only by the person who created the note:
+
+#     >>> frog.getLink(url='edit.html').click()
+#     >>> frog.getLink(url='DELETE_NOTE').click()
+#     Traceback (most recent call last):
+#     ...
+#     LinkNotFoundError
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('Persons').click()
+    >>> manager.getLink('person1').click()
+    >>> manager.getLink(url='DELETE_NOTE').click()
+    >>> manager.getLink(url='DELETE_NOTE').click()
+
+    >>> print analyze.queryHTML("//div[@id='notes']", manager.  contents)[0]
+    <div id="notes">
+      <h5>Notes</h5>
+    </div>

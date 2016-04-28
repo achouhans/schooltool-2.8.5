@@ -1,0 +1,547 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <class class="zope.container.btree.BTreeContainer">
+    <allow interface="zope.container.interfaces.ISimpleReadContainer" />
+    <require permission="schooltool.view"
+             attributes="keys values items __iter__ __len__ has_key" />
+    <require permission="schooltool.edit"
+             interface="zope.container.interfaces.IWriteContainer" />
+  </class>
+
+  <class class="zope.container.ordered.OrderedContainer">
+    <allow interface="zope.container.interfaces.ISimpleReadContainer" />
+    <require permission="schooltool.view"
+             attributes="keys values items __iter__ __len__ has_key" />
+    <require permission="schooltool.edit"
+             interface="zope.container.interfaces.IWriteContainer" />
+    <require permission="schooltool.edit"
+             interface="zope.container.interfaces.IOrdered" />
+  </class>
+
+
+  <include file="security.zcml" />
+
+  <!-- Adapters -->
+
+  <class class="schooltool.app.overlay.CalendarOverlayInfo">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable" />
+  </class>
+
+  <adapter
+      for=".interfaces.IHaveCalendar"
+      provides=".interfaces.ISchoolToolCalendar"
+      factory=".cal.getCalendar"
+      trusted="true"
+      />
+
+  <adapter
+      for=".interfaces.ISchoolToolCalendar"
+      provides=".interfaces.IWriteCalendar"
+      factory=".cal.WriteCalendar"
+      />
+
+  <adapter
+      for=".interfaces.ISchoolToolApplication"
+      provides=".interfaces.IApplicationPreferences"
+      factory=".app.getApplicationPreferences"
+      trusted="true"
+      />
+
+  <adapter
+      for=".interfaces.ISchoolToolApplication"
+      provides=".interfaces.IApplicationTabs"
+      factory=".app.getApplicationTabs"
+      trusted="true"
+      />
+
+  <class class=".cal.WriteCalendar">
+    <allow interface=".interfaces.IWriteCalendar" />
+  </class>
+
+  <adapter
+      for="None"
+      provides=".interfaces.ISchoolToolApplication"
+      factory=".app.getSchoolToolApplication" />
+
+  <adapter factory=".cal.expandedEventLocation" />
+
+  <!-- Utilities -->
+
+  <class class=".security.SchoolToolAuthenticationUtility">
+    <require
+        permission="zope.ManageServices"
+        interface="zope.authentication.interfaces.IAuthentication"
+        />
+  </class>
+
+  <utility
+      provides="schooltool.relationship.interfaces.IRelationshipSchema"
+      component=".relationships.Instruction"
+      name="http://schooltool.org/ns/instruction" />
+
+  <utility
+      provides="schooltool.relationship.interfaces.IRelationshipSchema"
+      component=".relationships.CourseSections"
+      name="http://schooltool.org/ns/coursesections" />
+
+  <utility
+      provides="schooltool.relationship.interfaces.IRelationshipSchema"
+      component=".membership.Membership"
+      name="http://schooltool.org/ns/membership" />
+
+  <utility
+      provides="schooltool.relationship.uri.IURIObject"
+      component=".relationships.URIInstructor"
+      name="http://schooltool.org/ns/instruction/instructor" />
+
+  <utility
+      provides="schooltool.relationship.uri.IURIObject"
+      component=".relationships.URISection"
+      name="http://schooltool.org/ns/instruction/section" />
+
+  <utility
+      provides="schooltool.relationship.uri.IURIObject"
+      component=".relationships.URICourse"
+      name="http://schooltool.org/ns/coursesections/course" />
+
+  <utility
+      provides="schooltool.relationship.uri.IURIObject"
+      component=".relationships.URISectionOfCourse"
+      name="http://schooltool.org/ns/coursesections/section" />
+
+  <utility
+      provides="schooltool.relationship.uri.IURIObject"
+      component=".membership.URIMember"
+      name="http://schooltool.org/ns/membership/member" />
+
+  <utility
+      provides="schooltool.relationship.uri.IURIObject"
+      component=".membership.URIGroup"
+      name="http://schooltool.org/ns/membership/group" />
+
+  <utility
+      provides="schooltool.app.interfaces.ISchoolToolInitializationUtility"
+      factory=".app.SchoolToolInitializationUtility" />
+
+  <!-- Event Subscribers -->
+
+  <subscriber
+      for="schooltool.app.interfaces.ISchoolToolApplication zope.lifecycleevent.interfaces.IObjectAddedEvent"
+      handler=".security.authSetUpSubscriber"
+      />
+
+  <subscriber
+      for="schooltool.relationship.interfaces.IBeforeRelationshipEvent"
+      handler=".membership.enforceMembershipConstraints"
+      />
+
+  <subscriber
+      for="schooltool.relationship.interfaces.IBeforeRelationshipEvent"
+      handler=".relationships.enforceInstructionConstraints"
+    />
+
+  <subscriber
+      for="schooltool.relationship.interfaces.IRelationshipAddedEvent"
+      handler=".relationships.updateStudentCalendars"
+      />
+
+  <subscriber
+      for="schooltool.relationship.interfaces.IRelationshipRemovedEvent"
+      handler=".relationships.updateStudentCalendars"
+      />
+
+  <subscriber
+      for="schooltool.relationship.interfaces.IRelationshipAddedEvent"
+      handler=".relationships.updateInstructorCalendars"
+      />
+
+  <subscriber
+      for="schooltool.relationship.interfaces.IRelationshipRemovedEvent"
+      handler=".relationships.updateInstructorCalendars"
+      />
+
+  <subscriber
+      for="zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+      handler=".overlay.unrelateCalendarOnDeletion"
+      />
+
+  <subscriber
+      for="zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+      handler=".cal.clearCalendarOnDeletion" />
+
+  <subscriber
+      for="schooltool.app.interfaces.IApplicationInitializationEvent"
+      handler=".main.initializeSchoolToolPlugins" />
+
+  <subscriber
+      for="schooltool.app.interfaces.IApplicationStartUpEvent"
+      handler=".main.startSchoolToolPlugins" />
+
+  <!-- Catalog support -->
+  <include file="catalog.zcml" />
+
+  <!-- Timetable support -->
+  <include file="timetable-integration.zcml" />
+
+  <!-- Core and Domain content objects -->
+
+  <class class=".app.SchoolToolApplication">
+    <implements interface="schooltool.app.interfaces.IHaveCalendar" />
+    <allow interface=".interfaces.ISchoolToolApplication" />
+    <allow attributes="getSiteManager" />
+  </class>
+
+  <class class=".cal.Calendar">
+    <require permission="schooltool.view"
+             interface="schooltool.calendar.interfaces.ICalendar"
+             attributes="title __cmp__" />
+    <require permission="schooltool.edit"
+             attributes="addEvent" />
+    <require permission="schooltool.edit"
+             attributes="clear removeEvent" />
+  </class>
+
+  <class class=".cal.CalendarEvent">
+    <require permission="schooltool.view"
+             interface="schooltool.calendar.interfaces.ICalendarEvent"
+             attributes="resources" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.calendar.interfaces.ICalendarEvent"
+             attributes="bookResource unbookResource"
+             set_attributes="__parent__" />
+  </class>
+
+  <class class=".app.ApplicationPreferences">
+    <require permission="zope.Public"
+             interface=".interfaces.IApplicationPreferences" />
+    <require permission="schooltool.edit"
+             set_schema=".interfaces.IApplicationPreferences" />
+  </class>
+
+  <class class="schooltool.relationship.relationship.LinkSet">
+    <allow
+       interface="schooltool.relationship.interfaces.IRelationshipLinks"
+       />
+  </class>
+
+  <class class="schooltool.relationship.relationship.Link">
+    <allow
+       interface="schooltool.relationship.interfaces.IRelationshipLink"
+       />
+  </class>
+
+  <class class="schooltool.relationship.uri.URIObject">
+    <allow
+       interface="schooltool.relationship.uri.IURIObject"
+       />
+  </class>
+
+  <class class="schooltool.relationship.uri.PersistentURIObject">
+    <allow
+       interface="schooltool.relationship.uri.IURIObject"
+       />
+  </class>
+
+  <class class="schooltool.relationship.temporal.TemporalURIObject">
+    <allow
+       interface="schooltool.relationship.uri.IURIObject"
+       />
+  </class>
+
+  <class class="schooltool.relationship.temporal.PersistentTemporalURIObject">
+    <allow
+       interface="schooltool.relationship.uri.IURIObject"
+       />
+  </class>
+
+  <!-- Views -->
+
+  <include package=".browser" />
+
+  <!-- XXX It feels wrong to tweak permissions of objects in a sibling. -->
+
+  <class class="schooltool.calendar.mixins.ExpandedCalendarEvent">
+    <require permission="schooltool.view"
+             interface="schooltool.calendar.interfaces.IExpandedCalendarEvent"
+             attributes="resources"
+             />
+  </class>
+
+  <class class="schooltool.calendar.recurrent.DailyRecurrenceRule">
+    <require permission="zope.Public"
+             interface="schooltool.calendar.interfaces.IDailyRecurrenceRule" />
+  </class>
+
+  <class class="schooltool.calendar.recurrent.WeeklyRecurrenceRule">
+    <require permission="zope.Public"
+             interface="schooltool.calendar.interfaces.IWeeklyRecurrenceRule"
+             />
+  </class>
+
+  <class class="schooltool.calendar.recurrent.MonthlyRecurrenceRule">
+    <require permission="zope.Public"
+             interface="schooltool.calendar.interfaces.IMonthlyRecurrenceRule"
+             />
+  </class>
+
+  <class class="schooltool.calendar.recurrent.YearlyRecurrenceRule">
+    <require permission="zope.Public"
+             interface="schooltool.calendar.interfaces.IYearlyRecurrenceRule"
+             />
+  </class>
+
+  <class class="schooltool.calendar.simple.ImmutableCalendar">
+    <require permission="zope.Public"
+             interface="schooltool.calendar.interfaces.ICalendar" />
+  </class>
+
+  <adapter
+      for="schooltool.calendar.interfaces.IEditCalendar"
+      factory=".cal.WriteCalendar"
+      provides=".interfaces.IWriteCalendar" />
+
+  <class
+      class="schooltool.app.overlay.BoundOverlaidCalendarsProperty">
+    <allow attributes="__iter__ __contains__" />
+    <require
+        permission="schooltool.view"
+        attributes="add remove" />
+  </class>
+
+  <class class="schooltool.app.overlay.CalendarOverlayInfo">
+    <require
+        permission="schooltool.view"
+        interface="schooltool.app.overlay.ICalendarOverlayInfo"/>
+    <require
+        permission="schooltool.editCalendarOverlays"
+        set_schema="schooltool.app.overlay.ICalendarOverlayInfo"/>
+  </class>
+
+  <adapter
+      factory=".app.getApplicationControl"
+      trusted="true"
+      />
+
+  <adapterTraverserPlugin
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      layer="zope.publisher.interfaces.http.IHTTPRequest"
+      name="control"
+      adapter="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      permission="schooltool.edit"
+      />
+
+  <!-- Documentation -->
+
+  <utility
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="not-have authentication"
+      factory=".security.PersonContainerAuthenticationPlugin"
+      provides=".interfaces.ISchoolToolAuthenticationPlugin" />
+
+  <!-- general utilities -->
+  <!-- XXX: move the code to schooltool.app too -->
+  <utility
+      factory="schooltool.term.term.DateManagerUtility" />
+
+  <view
+      for="zope.interface.Interface"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      provides="zope.publisher.interfaces.http.IHTTPPublisher"
+      factory="schooltool.traverser.traverser.PluggableTraverser"
+      permission="zope.Public"
+      />
+
+  <view
+      for=".interfaces.ISchoolToolApplication"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      provides="zope.publisher.interfaces.http.IHTTPPublisher"
+      factory="schooltool.traverser.traverser.PluggableTraverser"
+      permission="zope.Public"
+      />
+
+  <view
+      for=".interfaces.ISchoolToolCalendar"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      provides="zope.publisher.interfaces.http.IHTTPPublisher"
+      factory="schooltool.traverser.traverser.PluggableTraverser"
+      permission="zope.Public"
+      />
+
+  <traverserPlugin
+      for="zope.container.interfaces.ISimpleReadContainer"
+      layer="zope.publisher.interfaces.http.IHTTPRequest"
+      plugin="schooltool.traverser.traverser.ContainerTraverserPlugin"
+      permission="zope.Public"
+      />
+
+  <adapterTraverserPlugin
+      for="schooltool.app.interfaces.IHaveCalendar"
+      layer="zope.publisher.interfaces.http.IHTTPRequest"
+      name="calendar.vfb"
+      adapter="schooltool.app.interfaces.ISchoolToolCalendar"
+      permission="zope.Public"
+      />
+
+  <adapterTraverserPlugin
+      for="schooltool.app.interfaces.IHaveCalendar"
+      layer="zope.publisher.interfaces.http.IHTTPRequest"
+      name="calendar.ics"
+      adapter="schooltool.app.interfaces.ISchoolToolCalendar"
+      permission="zope.Public"
+      />
+
+  <adapterTraverserPlugin
+      for="schooltool.app.interfaces.IHaveCalendar"
+      layer="zope.publisher.interfaces.http.IHTTPRequest"
+      name="calendar"
+      adapter="schooltool.app.interfaces.ISchoolToolCalendar"
+      permission="zope.Public"
+      />
+
+  <!-- the following are used by PUT requests on the normal web server -->
+  <nullTraverserPlugin
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      layer="zope.publisher.interfaces.http.IHTTPRequest"
+      name="calendar.ics"
+      permission="zope.Public"
+      />
+
+  <nullTraverserPlugin
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      layer="zope.publisher.interfaces.http.IHTTPRequest"
+      name="calendar.vfb"
+      permission="zope.Public"
+      />
+
+  <view
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      name="GET"
+      factory=".browser.app.HTTPCalendarView"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      permission="zope.Public"
+      />
+
+  <view
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      name="PUT"
+      factory=".browser.app.HTTPCalendarView"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      permission="zope.Public"
+      />
+
+  <adapter
+      for="zope.publisher.interfaces.http.IHTTPRequest"
+      provides="schooltool.app.interfaces.IRequestHelpers"
+      factory=".app.RequestHelpers"
+      />
+
+  <adapter
+      for="zope.traversing.interfaces.IBeforeTraverseEvent
+           zope.component.interfaces.ISite"
+      provides="schooltool.schoolyear.interfaces.ISubscriber"
+      factory=".app.beforeTraverseSchoolToolSite"
+      name="schooltool.app.app.beforeTraverseSchoolToolSite"
+      />
+
+  <adapter
+      for="zope.publisher.interfaces.http.IHTTPRequest"
+      provides="schooltool.app.interfaces.IRequestHelper"
+      factory=".app.getRequestApplicationPreferences"
+      name="preferences"
+      />
+
+  <adapter
+      for="zope.publisher.interfaces.http.IHTTPRequest"
+      provides="schooltool.app.interfaces.IRequestHelper"
+      factory=".catalog.getRequestIntIds"
+      name="int_ids"
+      />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.StateInit"
+      name="schooltool.app.states" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.StateStartUp"
+      name="schooltool.app.states" />
+
+  <class class=".states.RelationshipStateContainer">
+    <allow interface="zope.container.interfaces.ISimpleReadContainer" />
+    <require permission="schooltool.view"
+             attributes="keys values items __iter__ __len__ has_key" />
+    <require permission="schooltool.edit"
+             interface="zope.container.interfaces.IWriteContainer" />
+  </class>
+
+  <class class=".states.RelationshipStates">
+    <require permission="schooltool.view"
+             interface="schooltool.app.interfaces.IRelationshipStates" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.app.interfaces.IRelationshipStates" />
+  </class>
+
+  <class class=".states.RelationshipState">
+    <require permission="schooltool.view"
+             interface="schooltool.app.interfaces.IRelationshipState" />
+    <require permission="schooltool.edit"
+             set_schema="schooltool.app.interfaces.IRelationshipState" />
+  </class>
+
+  <adapter factory=".states.getStateContainer" />
+
+  <adapter factory=".states.RelationshipStateTerms" />
+  <adapter factory=".states.RelationshipStateFieldWidget" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.LeadershipStatesStartUp"
+      provides="schooltool.app.interfaces.IPluginInit"
+      name="schooltool.app.states-leadership" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.LeadershipStatesStartUp"
+      provides="schooltool.app.interfaces.IPluginStartUp"
+      name="schooltool.app.states-leadership" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.GroupMembershipStatesStartup"
+      provides="schooltool.app.interfaces.IPluginInit"
+      name="schooltool.app.states-groups" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.GroupMembershipStatesStartup"
+      provides="schooltool.app.interfaces.IPluginStartUp"
+      name="schooltool.app.states-groups" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.StudentMembershipStatesStartup"
+      provides="schooltool.app.interfaces.IPluginInit"
+      name="schooltool.app.states-student" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.StudentMembershipStatesStartup"
+      provides="schooltool.app.interfaces.IPluginStartUp"
+      name="schooltool.app.states-student" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.StudentLevelsStatesStartup"
+      provides="schooltool.app.interfaces.IPluginInit"
+      name="schooltool.app.states-student-levels" />
+
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".states.StudentLevelsStatesStartup"
+      provides="schooltool.app.interfaces.IPluginStartUp"
+      name="schooltool.app.states-student-levels" />
+
+</configure>

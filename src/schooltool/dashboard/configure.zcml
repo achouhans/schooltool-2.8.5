@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<configure
+    xmlns="http://namespaces.zope.org/browser"
+    xmlns:zope="http://namespaces.zope.org/zope"
+    i18n_domain="schooltool">
+
+  <page
+      name="dashboard.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      template="dashboardpage.pt"
+      permission="schooltool.view"
+      />
+
+<!--
+  <page
+      name="dashboardContent"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      template="dashContent.pt"
+      permission="schooltool.view"
+      />
+
+  <viewlet
+      name="dashboard"
+      for="*"
+      manager="schooltool.skin.IHeaderManager"
+      template="dashboard.pt"
+      permission="schooltool.view"
+      class="schooltool.dashboard.dashboard.DashboardTabView"
+      />
+-->
+
+  <viewletManager
+      name="schooltool.dashboard"
+      for="*"
+      permission="schooltool.view"
+      class=".dashboard.Dashboard"
+      provides=".interfaces.IDashboard"
+      template="dashboard_manager.pt"
+      />
+
+  <navigationViewlet
+      name="sections"
+      for="*"
+      manager=".interfaces.IDashboard"
+      template="sections.pt"
+      class=".dashboard.SectionsCategory"
+      permission="schooltool.view"
+      title="My Sections"
+      weight="10"
+      />
+
+<!--
+  <navigationViewlet
+      name="term_admin"
+      for="*"
+      manager=".interfaces.IDashboard"
+      template="term.pt"
+      class=".dashboard.DashboardCategory"
+      permission="schooltool.view"
+      title="Term Administration"
+      weight="50"
+      />
+
+  <navigationViewlet
+      name="school_admin"
+      for="*"
+      manager=".interfaces.IDashboard"
+      template="school.pt"
+      class=".dashboard.DashboardCategory"
+      permission="schooltool.view"
+      title="School Administration"
+      weight="200"
+      />
+-->
+
+</configure>

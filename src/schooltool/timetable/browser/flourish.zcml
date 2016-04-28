@@ -1,0 +1,665 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <!-- timetable container -->
+
+  <flourish:breadcrumb
+      for="schooltool.timetable.interfaces.ITimetableContainer"
+      title="Timetables"
+      traversal_name="timetables"
+      class="schooltool.schoolyear.browser.schoolyear.SchoolyearNavBreadcrumbs"
+      />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.timetable.interfaces.ITimetableContainer"
+      />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      view=".app.FlourishTimetablesView"
+      />
+
+  <flourish:page
+      name="index.html"
+      title="School Timetables"
+      for="schooltool.timetable.interfaces.ITimetableContainer"
+      class=".app.FlourishTimetableContainerView"
+      content_template="templates/f_timetable_container.pt"
+      permission="schooltool.view"
+      />
+
+  <zope:adapter
+      for="schooltool.timetable.interfaces.ITimetableContainer
+           schooltool.skin.flourish.IFlourishLayer"
+      factory=".app.TimetableContainerTableFormatter" />
+
+  <zope:adapter
+      factory=".timetable.SelectedPeriodsSubmitLabel"
+      name="title"
+      />
+
+  <flourish:viewlet
+      name="timetable_container"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      view="schooltool.timetable.browser.app.FlourishTimetableContainerView"
+      class="schooltool.timetable.browser.app.FlourishTimetableContainerLinks"
+      for="schooltool.timetable.interfaces.ITimetableContainer"
+      title="Add"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_timetable_container_related.pt"
+      view="schooltool.timetable.browser.app.FlourishTimetablesView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <!-- timetables -->
+
+  <flourish:breadcrumb
+      for="schooltool.timetable.interfaces.ITimetable"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.timetable.interfaces.ITimetable"
+      class=".timetable.FlourishTimetableView"
+      content_template="templates/f_timetable.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      name="done_link"
+      render="template"
+      for="schooltool.timetable.interfaces.ITimetable"
+      class=".app.TimetableDoneLink"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      name="done_link"
+      render="template"
+      view=".ttwizard.FlourishTimetableWizard"
+      class=".app.TimetableDoneLink"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="timetable-action-links"
+      after="timetable-add-links"
+      for="schooltool.timetable.interfaces.ITimetable"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".timetable.TimetableActionsLinks"
+      title="Actions"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="delete.html"
+      for="schooltool.timetable.interfaces.ITimetable"
+      title="Delete"
+      class="schooltool.skin.flourish.page.ModalFormLinkViewlet"
+      manager=".timetable.TimetableActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="make_default.html"
+      before="delete.html"
+      for="schooltool.timetable.interfaces.ITimetable"
+      title="Make Default"
+      class="schooltool.skin.flourish.page.ModalFormLinkViewlet"
+      manager=".timetable.TimetableActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="delete.html"
+      for="schooltool.timetable.interfaces.ITimetable"
+      class=".timetable.FlourishTimetableDeleteView"
+      template="templates/f_confirm_delete_timetable.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="make_default.html"
+      for="schooltool.timetable.interfaces.ITimetable"
+      class=".timetable.FlourishTimetableMakeDefaultView"
+      template="templates/f_confirm_make_default.pt"
+      permission="schooltool.edit"
+      />
+
+  <!-- timetable wizard -->
+
+  <flourish:content
+      name="first_step"
+      class=".ttwizard.FlourishFirstStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      template="templates/f_ttwizard_first.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="cycle_step"
+      class=".ttwizard.FlourishCycleStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="day_entry_step"
+      class=".ttwizard.FlourishDayEntryStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="independent_days_step"
+      class=".ttwizard.FlourishIndependentDaysStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="sequential_model_step"
+      class=".ttwizard.FlourishSequentialModelStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="simple_slot_entry_step"
+      class=".ttwizard.FlourishSimpleSlotEntryStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="rotating_slot_entry_step"
+      class=".ttwizard.FlourishRotatingSlotEntryStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="weekly_slot_entry_step"
+      class=".ttwizard.FlourishWeeklySlotEntryStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="named_periods_step"
+      class=".ttwizard.FlourishNamedPeriodsStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="period_names_step"
+      class=".ttwizard.FlourishPeriodNamesStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="period_sequence_same_step"
+      class=".ttwizard.FlourishPeriodSequenceSameStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="period_order_simple_step"
+      class=".ttwizard.FlourishPeriodOrderSimple"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="period_order_complex_step"
+      class=".ttwizard.FlourishPeriodOrderComplex"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="homeroom_step"
+      class=".ttwizard.FlourishHomeroomStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="homeroom_periods_step"
+      class=".ttwizard.FlourishHomeroomPeriodsStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      render="template"
+      permission="schooltool.edit"
+      />
+
+  <flourish:content
+      name="final_step"
+      class=".ttwizard.FlourishFinalStep"
+      view=".ttwizard.FlourishTimetableWizard"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="add.html"
+      title="New Timetable"
+      for="schooltool.timetable.interfaces.ITimetableContainer"
+      class="schooltool.timetable.browser.ttwizard.FlourishTimetableWizard"
+      permission="schooltool.edit"
+      content_template="templates/f_ttwizard.pt"
+      render="template"
+      />
+
+<!-- Misplaced content adapters -->
+
+  <flourish:content
+      for="schooltool.timetable.interfaces.IScheduleWithExceptions"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      template="templates/schedule_exceptions_content.pt"
+      permission="schooltool.view"
+      name="exceptions" />
+
+  <flourish:content
+      class=".timetable.DayTemplatesTable"
+      for="schooltool.timetable.interfaces.IDayTemplateSchedule"
+      layer="schooltool.skin.ISchoolToolLayer"
+      view=".timetable.IRenderDayTableCells"
+      template="templates/daytemplates_table.pt"
+      permission="schooltool.view"
+      name="table" />
+
+  <flourish:content
+      class=".timetable.DayTemplatesTable"
+      for="schooltool.timetable.interfaces.IDayTemplateSchedule"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      view=".timetable.IRenderDayTableCells"
+      template="templates/f_daytemplates_table.pt"
+      permission="schooltool.view"
+      name="table" />
+
+  <flourish:content
+      class=".timetable.SelectedPeriodsContent"
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      template="templates/selected_periods_content.pt"
+      permission="schooltool.view"
+      name="view" />
+
+  <flourish:content
+      class=".timetable.SelectedPeriodsContent"
+      for="schooltool.term.interfaces.ITerm"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      template="templates/selected_periods_content.pt"
+      display_title="Term"
+      permission="schooltool.view"
+      name="view" />
+
+  <flourish:content
+      for="schooltool.term.interfaces.ITerm"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      template="templates/date_boundaries_content.pt"
+      display_title="Term"
+      permission="schooltool.view"
+      name="boundaries" />
+
+  <flourish:content
+      for="schooltool.timetable.interfaces.ISchedule"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      template="templates/date_boundaries_content.pt"
+      display_title="Schedule"
+      permission="schooltool.view"
+      name="boundaries" />
+
+  <flourish:content
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      template="templates/selected_period_date_boundaries.pt"
+      permission="schooltool.view"
+      name="boundaries" />
+
+  <flourish:content
+      for="schooltool.timetable.interfaces.ITimetable"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      template="templates/date_boundaries_content.pt"
+      display_title="Timetable"
+      permission="schooltool.view"
+      name="boundaries" />
+
+  <!-- Timetables overview -->
+
+  <flourish:page
+      name="timetables"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".app.FlourishTimetablesView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="done"
+      after="*"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      view=".app.FlourishTimetablesView"
+      class="schooltool.app.browser.app.ManageItemDoneLink"
+      render="template"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      name="tertiary_navigation"
+      class=".app.SchoolTimetablesTertiaryNavigation"
+      view=".app.FlourishTimetablesView"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="timetable-add-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".app.TimetableAddLinks"
+      title="Add"
+      permission="schooltool.edit"
+      view=".app.FlourishTimetablesView"
+      />
+
+  <flourish:viewlet
+      name="timetable-wizard"
+      title="Timetable"
+      link="add.html"
+      view=".app.FlourishTimetablesView"
+      class=".app.TimetablesLinkViewlet"
+      manager=".app.TimetableAddLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="manage-timetables-overview"
+      after="manage-years-overview"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.view"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".app.FlourishManageTimetablesOverview"
+      />
+
+  <security:allow
+     interface=".app.FlourishManageTimetablesOverview"
+     crowds="managers administrators clerks"
+     permission="schooltool.view" />
+
+  <!-- misplaced integration -->
+
+  <flourish:viewlet
+      name="schedule"
+      after="calendar"
+      title="Schedule"
+      link="schedule"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager="schooltool.course.browser.section.SectionLinks"
+      permission="schooltool.view"
+      />
+
+  <!-- schedule -->
+
+  <flourish:contentFactory
+      factory=".schedule.scheduleOwnerTitle"
+      for="schooltool.timetable.interfaces.IScheduleContainer"
+      name="title" />
+
+  <flourish:contentFactory
+      factory=".schedule.scheduleOwnerTitle"
+      view=".timetable.FlourishSelectedPeriodsScheduleEditView"
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      name="title" />
+
+  <flourish:contentFactory
+      factory=".schedule.scheduleOwnerTitle"
+      view=".schedule.FlourishSpecialDayView"
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      name="title" />
+
+  <flourish:breadcrumb
+      title="Schedule"
+      for="schooltool.timetable.interfaces.IScheduleContainer"
+      class=".schedule.ScheduleContainerBreadcrumbs"
+      crumb_parent="schooltool.timetable.interfaces.IHaveSchedule"
+      />
+
+  <flourish:page_breadcrumbs
+      title="Schedule"
+      for="schooltool.timetable.interfaces.IScheduleContainer"
+      class=".schedule.ScheduleContainerBreadcrumbs"
+      crumb_parent="schooltool.timetable.interfaces.IHaveSchedule"
+      view=".schedule.FlourishScheduleContainerView"
+      />
+
+  <flourish:page
+      name="index.html"
+      subtitle="Schedule"
+      for="schooltool.timetable.interfaces.IScheduleContainer"
+      class=".schedule.FlourishScheduleContainerView"
+      content_template="templates/f_schedule_container_view.pt"
+      permission="schooltool.view" />
+
+  <flourish:content
+      class=".timetable.DayTemplatesTable"
+      for="schooltool.timetable.interfaces.IDayTemplateSchedule"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      view=".timetable.SelectedPeriodsContent"
+      template="templates/f_daytemplates_selected_table.pt"
+      permission="schooltool.view"
+      name="table" />
+
+  <flourish:breadcrumb
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      />
+
+  <flourish:page
+      name="edit.html"
+      subtitle="Edit Schedule"
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      class=".timetable.FlourishSelectedPeriodsScheduleEditView"
+      content_template="templates/f_selected_periods_edit.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="edit_multi.html"
+      subtitle="Edit Schedule"
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      class=".timetable.FlourishSelectedPeriodsMultiScheduleEditView"
+      content_template="templates/f_multi_schedule_periods_edit.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="schedule-action-links"
+      after="schedule-add-links"
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".schedule.ScheduleActionsLinks"
+      title="Actions"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="delete.html"
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      title="Delete"
+      class="schooltool.skin.flourish.page.ModalFormLinkViewlet"
+      manager=".schedule.ScheduleActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="delete.html"
+      for="schooltool.timetable.interfaces.ISelectedPeriodsSchedule"
+      class=".timetable.FlourishSelectedScheduleDeleteView"
+      template="templates/f_confirm_delete_selected_schedule.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="schedule-add-links"
+      for="schooltool.timetable.interfaces.IScheduleContainer"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".schedule.ScheduleAddLinks"
+      title="Add"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="addTimetable.html"
+      subtitle="Schedule Timetable"
+      for="schooltool.timetable.interfaces.IScheduleContainer"
+      class=".timetable.FlourishSelectedPeriodsAddView"
+      content_template="templates/f_selected_periods_add.pt"
+      permission="schooltool.edit"
+      />
+
+  <configure package="schooltool.skin.flourish">
+    <flourish:page
+        name="addTermsTimetable.html"
+        subtitle="Schedule Timetable"
+        for="schooltool.timetable.interfaces.IScheduleContainer"
+        class="schooltool.timetable.browser.timetable.FlourishSelectedPeriodsAddTermsView"
+        content_template="templates/z3c_form_edit.pt"
+        permission="schooltool.edit"
+        />
+  </configure>
+
+  <zope:adapter
+      factory=".timetable.SelectedPeriodsAddTermsSubmitLabel"
+      name="title"
+      />
+
+  <flourish:viewletManager
+      name="tertiary_navigation"
+      provides="schooltool.skin.flourish.page.ITertiaryNavigationManager"
+      class=".timetable.SelectedPeriodsAddTertiaryNav"
+      view=".timetable.FlourishSelectedPeriodsAddView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="addTimetable.html"
+      title="Custom date range"
+      manager=".timetable.SelectedPeriodsAddTertiaryNav"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      permission="schooltool.edit"
+      />
+
+  <flourish:activeViewlet
+      name="addTimetable.html"
+      manager=".timetable.SelectedPeriodsAddTertiaryNav"
+      view=".timetable.FlourishSelectedPeriodsAddView"
+      />
+
+  <flourish:viewlet
+      name="addTermsTimetable.html"
+      title="Term(s)"
+      manager=".timetable.SelectedPeriodsAddTertiaryNav"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      permission="schooltool.edit"
+      />
+
+  <flourish:activeViewlet
+      name="addTermsTimetable.html"
+      manager=".timetable.SelectedPeriodsAddTertiaryNav"
+      view=".timetable.FlourishSelectedPeriodsAddTermsView"
+      />
+
+  <flourish:viewlet
+      name="schedule-timetable"
+      title="Schedule"
+      link="addTermsTimetable.html"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      view=".schedule.FlourishScheduleContainerView"
+      manager=".schedule.ScheduleAddLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="special.html"
+      subtitle="Exception Days"
+      for="schooltool.timetable.interfaces.IScheduleWithExceptions"
+      class=".schedule.FlourishSpecialDayView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_specialday_related.pt"
+      view=".schedule.FlourishSpecialDayView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <!-- resources -->
+
+  <zope:resourceLibrary
+      name="schooltool.timetable"
+      require=""
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+        source="resources"
+        include="timetable.css"
+        />
+  </zope:resourceLibrary>
+
+  <!-- Calendar -->
+
+  <page
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      name="daily_calendar_rows"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class=".calendar.ScheduleDailyCalendarRowsView"
+      permission="zope.View"
+      />
+
+  <flourish:page
+      name="add.html"
+      subtitle="New Meeting"
+      for="schooltool.timetable.interfaces.IScheduleCalendar"
+      class=".calendar.FlourishScheduleEventAddView"
+      permission="schooltool.edit"
+      content_template="templates/f_schedule_event_add.pt"
+      />
+
+  <flourish:page
+      name="edit.html"
+      subtitle="Edit Meeting"
+      for="schooltool.timetable.interfaces.IScheduleCalendarEvent"
+      class=".calendar.FlourishScheduleEventEditView"
+      permission="schooltool.edit"
+      content_template="templates/f_schedule_event_edit.pt"
+      />
+
+</configure>

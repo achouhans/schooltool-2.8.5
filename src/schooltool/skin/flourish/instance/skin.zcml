@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <!-- Skin resources -->
+
+  <configure package="schooltool.skin.flourish">
+
+    <resource
+        name="editor_config.js"
+        file="resources/editor_config.js"
+        layer="schooltool.skin.flourish.IFlourishLayer" />
+
+    <resource
+        name="favicon.ico"
+        file="resources/favicon.ico"
+        layer="schooltool.skin.flourish.IFlourishLayer" />
+
+    <zope:resourceLibrary
+        name="schooltool.skin.flourish-ckeditor"
+        layer="schooltool.skin.flourish.IFlourishLayer">
+      <directory
+          source="resources/ckeditor"
+          />
+    </zope:resourceLibrary>
+
+  </configure>
+
+  <!-- Error messages -->
+
+  <configure package="schooltool.skin">
+
+  <flourish:page
+      for="zope.interface.common.interfaces.IException"
+      name="index.html"
+      title="Server Error"
+      class="schooltool.skin.flourish.error.ErrorPage"
+      content_template="templates/f_error.pt"
+      permission="zope.Public"
+      />
+
+  <flourish:page
+      for="zope.publisher.interfaces.INotFound"
+      name="index.html"
+      title="Not Found"
+      class="schooltool.skin.flourish.error.NotFound"
+      content_template="templates/f_notfound.pt"
+      permission="zope.Public"
+      />
+
+  <flourish:page
+      for="zope.security.interfaces.IUnauthorized"
+      name="index.html"
+      title="Unauthorized"
+      class="schooltool.skin.flourish.error.UnauthorizedPage"
+      content_template="templates/f_unauthorized.pt"
+      permission="zope.Public"
+      />
+
+  <!-- XXX: all of these macros need a review! -->
+
+  <page
+      name="standard_macros"
+      for="*"
+      class=".macros.StandardMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      />
+
+  <page
+      name="schooltool_macros"
+      for="*"
+      class=".macros.SchoolToolMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      />
+
+  <page
+      name="view_macros"
+      for="*"
+      permission="zope.View"
+      template="templates/view_macros.pt"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      />
+
+  <page
+      name="generic_macros"
+      for="*"
+      permission="zope.View"
+      template="templates/generic_macros.pt"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      />
+
+  </configure>
+
+
+  <configure package="schooltool.skin.flourish">
+    <page
+        name="widget_macros"
+        for="*"
+        permission="zope.View"
+        template="templates/f_widget_macros.pt"
+        layer="schooltool.skin.flourish.IFlourishLayer"
+        />
+    <page
+        name="formlib_macros"
+        for="*"
+        permission="zope.View"
+        template="templates/f_formlib_macros.pt"
+        layer="schooltool.skin.flourish.IFlourishLayer"
+        />
+    <page
+        name="rml_macros"
+        for="*"
+        permission="zope.View"
+        template="templates/rml_macros.pt"
+        layer="schooltool.skin.flourish.IFlourishLayer"
+        />
+  </configure>
+
+  <include file="z3cform.zcml" />
+
+</configure>

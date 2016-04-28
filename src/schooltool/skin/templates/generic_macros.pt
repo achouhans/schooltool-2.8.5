@@ -1,0 +1,15 @@
+<tal:block i18n:domain="schooltool">
+<metal:block define-macro="stylesheets">
+    <link rel="stylesheet" type="text/css" href="schooltool.css"
+          tal:attributes="href context/++resource++schooltool.css"/>
+</metal:block>
+
+<metal:block define-macro="title">
+  <title i18n:translate="">SchoolTool</title>
+</metal:block>
+
+<metal:block define-macro="serverinfo">
+  <span i18n:translate="">Server Running SchoolTool</span>
+  <span tal:content="modules/schooltool/common/get_version"/>
+</metal:block>
+</tal:block>

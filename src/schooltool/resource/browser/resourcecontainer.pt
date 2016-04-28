@@ -1,0 +1,67 @@
+<tal:define define="dummy view/update"/>
+<html metal:use-macro="view/@@standard_macros/page" i18n:domain="schooltool">
+  <head>
+    <title metal:fill-slot="title" tal:content="view/index_title">
+      Contents
+    </title>
+  </head>
+  <body>
+
+    <h1 metal:fill-slot="content-header"
+        tal:content="view/index_title">Contents</h1>
+
+    <metal:block metal:fill-slot="body">
+      <form method="GET" tal:attributes="action view/context/@@absolute_url">
+
+        <!-- Type Searching -->
+        <tal:block>
+          <div class="oneline-form" tal:define="subtypes view/getSubTypes">
+            <tal:block repeat="term subtypes">
+              <tal:block
+                  define="optionValue python:'%s|%s'%(term[0],term[1]);
+                          optionContent python:term[1];
+                          clickable python:term[2]=='clickable';
+                          selected python:request.get('SEARCH_TYPE') == optionValue">
+                <tal:if condition="not: selected">
+                  <span tal:condition="clickable">
+                    <a tal:content="optionContent"
+                       tal:attributes="href string:?SEARCH_TYPE=${optionValue}" />
+                  </span>
+                  <h3 tal:content="optionContent"
+                      tal:condition="not:clickable" />
+                  <span tal:condition="python: not clickable and (subtypes.index(term) == len(subtypes)-1 or term[0] != subtypes[subtypes.index(term)+1][0])">None</span>
+                </tal:if>
+                <tal:if condition="selected">
+                  <span tal:content="optionContent"
+                        tal:condition="clickable" />
+                  <h3 tal:content="optionContent"
+                      tal:condition="not:clickable" />
+                </tal:if>
+              </tal:block>
+            </tal:block>
+          </div>
+        </tal:block>
+
+        <!-- Filtering viewlet by type -->
+        <div tal:define="factory view/getResourceUtility"
+             tal:condition="factory"
+             tal:content="structure view/filter_widget/render"/>
+
+        <div>
+          <div tal:condition="view/getResourceUtility">
+            <tal:block replace="structure view/renderResourceTable" />
+          </div>
+        </div>
+        <div class="controls">
+          <input tal:condition="python:request.get('SEARCH_TYPE', False)"
+                 tal:repeat="action view/actions"
+                 tal:replace="structure action/render" />
+          <input tal:condition="python:request.get('SEARCH_TYPE', False)"
+                 type="hidden"
+                 name="SEARCH_TYPE"
+                 tal:attributes="value python:request.get('SEARCH_TYPE')" />
+        </div>
+      </form>
+    </metal:block>
+  </body>
+</html>

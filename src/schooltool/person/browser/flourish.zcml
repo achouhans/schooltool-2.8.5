@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <flourish:viewlet
+      name="preferences"
+      before="password_edit.html"
+      for="schooltool.person.interfaces.IPerson"
+      title="Preferences"
+      class=".person.FlourishPersonPreferencesLink"
+      manager="schooltool.basicperson.browser.person.PersonSettingsLinks"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="password_edit.html"
+      for="schooltool.person.interfaces.IPerson"
+      title="Password"
+      class=".person.FlourishPasswordLinkViewlet"
+      manager="schooltool.basicperson.browser.person.PersonSettingsLinks"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="delete.html"
+      for="schooltool.person.interfaces.IPerson"
+      title="Delete"
+      class=".person.FlourishPersonDeleteLink"
+      manager="schooltool.basicperson.browser.person.PersonActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <configure package="schooltool.skin.flourish">
+    <flourish:page
+        name="index.html"
+        for="schooltool.person.interfaces.IPersonPreferences"
+        class="schooltool.person.browser.person.FlourishPersonPreferencesView"
+        template="templates/z3c_form_edit.pt"
+        permission="schooltool.edit"
+        subtitle="Edit"
+        />
+  </configure>
+
+  <flourish:page
+      name="delete.html"
+      for="schooltool.person.interfaces.IPerson"
+      class="schooltool.person.browser.person.FlourishPersonDeleteView"
+      template="f_confirm_delete_person.pt"
+      permission="schooltool.edit"
+      />
+
+  <zope:adapter
+      for="schooltool.person.interfaces.IPersonContainer
+           schooltool.skin.flourish.interfaces.IFlourishLayer"
+      factory=".person.FlourishPersonFilterWidget" />
+
+  <zope:adapter factory=".person.CalendarPublicWidgetLabel" name="label" />
+
+  <flourish:page
+      name="password_edit.html"
+      for="schooltool.person.interfaces.IPerson"
+      class=".person.FlourishPersonPasswordEditView"
+      content_template="f_password_form.pt"
+      permission="schooltool.view"
+      subtitle="Password"
+      />
+
+  <flourish:page
+      name="password_changed.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class=".person.FlourishPasswordChangedView"
+      template="f_password_changed.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="filter"
+      before="batch table"
+      class=".person.PersonTableFilter"
+      render="template"
+      manager=".person.PersonTable"
+      permission="schooltool.view"
+      />
+
+</configure>

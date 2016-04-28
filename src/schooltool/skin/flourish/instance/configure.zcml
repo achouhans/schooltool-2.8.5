@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           i18n_domain="schooltool">
+
+  <include package="zope.browserpage" file="meta.zcml" />
+  <include package="zc.resourcelibrary" file="meta.zcml" />
+  <include package="schooltool.skin.flourish" file="meta.zcml" />
+
+  <include package="z3c.autoinclude" file="meta.zcml" />
+  <includePlugins package="schooltool" file="meta.zcml" />
+
+  <include package="schooltool.common" />
+  <include package="zc.resourcelibrary" />
+  <include package="schooltool.skin.flourish" />
+
+  <include package="schooltool.timetable" />
+  <include package="schooltool.basicperson" />
+
+  <interface
+      interface="schooltool.skin.flourish.interfaces.IFlourishBrowserLayer"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="SchoolToolFlourish"
+      />
+
+  <browser:defaultSkin name="SchoolToolFlourish" />
+
+  <configure xmlns:zcml="http://namespaces.zope.org/zcml"
+             zcml:condition="have devmode">
+    <include package="schooltool.devmode" />
+    <include package="schooltool.devmode" file="flourish.zcml" />
+    <includeOverrides package="schooltool.devmode" file="overrides.zcml" />
+    <includeOverrides package="schooltool.devmode"
+                      file="flourish-overrides.zcml" />
+  </configure>
+
+  <include file="skin.zcml" />
+  <include package="schooltool.app.browser" file="flourish.zcml" />
+  <include package="schooltool.calendar.browser" file="flourish.zcml" />
+  <include package="schooltool.basicperson.browser" file="flourish.zcml" />
+  <include package="schooltool.contact.browser" file="flourish.zcml" />
+  <include package="schooltool.course.browser" file="flourish.zcml" />
+  <include package="schooltool.email.browser" file="flourish.zcml" />
+  <include package="schooltool.group.browser" file="flourish.zcml" />
+  <include package="schooltool.person.browser" file="flourish.zcml" />
+  <include package="schooltool.report.browser" file="flourish.zcml" />
+  <include package="schooltool.resource.browser" file="flourish.zcml" />
+  <include package="schooltool.timetable.browser" file="flourish.zcml" />
+  <include package="schooltool.table" file="flourish.zcml" />
+  <include package="schooltool.schoolyear.browser" file="flourish.zcml" />
+  <include package="schooltool.securitypolicy.browser" file="flourish.zcml" />
+  <include package="schooltool.task.browser" file="flourish.zcml" />
+  <include package="schooltool.term.browser" file="flourish.zcml" />
+  <include package="schooltool.level.browser" file="flourish.zcml" />
+  <include package="schooltool.export" file="flourish.zcml" />
+
+  <includePluginsOverrides package="schooltool" />
+  <includePlugins package="schooltool" file="plugin.zcml" />
+  <includePlugins package="schooltool" file="i18n.zcml" />
+
+</configure>

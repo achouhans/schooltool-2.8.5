@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:security="http://schooltool.org/securitypolicy"
+    i18n_domain="schooltool">
+
+  <adapter
+      for=".interfaces.IHaveNotes"
+      provides=".interfaces.INotes"
+      factory=".note.getNotes"
+      trusted="true"
+      />
+
+  <class class=".note.Notes">
+    <require permission="zope.Public"
+             attributes="__iter__" />
+    <require permission="schooltool.view"
+             attributes="add remove clear" />
+  </class>
+
+  <class class=".note.Note">
+    <require permission="zope.Public"
+             interface=".interfaces.INote" />
+    <require permission="schooltool.edit"
+             set_schema=".interfaces.INote" />
+  </class>
+
+  <class class="schooltool.app.cal.CalendarEvent">
+    <implements interface="schooltool.note.interfaces.IHaveNotes" />
+  </class>
+
+  <class class="schooltool.course.course.Course">
+    <implements interface="schooltool.note.interfaces.IHaveNotes" />
+  </class>
+
+  <class class="schooltool.course.section.Section">
+    <implements interface="schooltool.note.interfaces.IHaveNotes" />
+  </class>
+
+  <class class="schooltool.person.person.Person">
+    <implements interface="schooltool.note.interfaces.IHaveNotes" />
+  </class>
+
+  <class class="schooltool.person.person.PersonContainer">
+    <implements interface="schooltool.note.interfaces.IHaveNotes" />
+  </class>
+
+  <class class="schooltool.group.group.Group">
+    <implements interface="schooltool.note.interfaces.IHaveNotes" />
+  </class>
+
+  <class class="schooltool.resource.resource.BaseResource">
+    <implements interface="schooltool.note.interfaces.IHaveNotes" />
+  </class>
+
+
+  <!-- Browser UI -->
+
+  <browser:page
+      name="notes"
+      for=".interfaces.IHaveNotes"
+      class=".browser.NotesView"
+      template="notes.pt"
+      permission="zope.Public"
+      />
+
+  <browser:page
+      name="addNote.html"
+      for=".interfaces.IHaveNotes"
+      class=".browser.NoteAddView"
+      template="note_add.pt"
+      permission="schooltool.view"
+      menu="schooltool_actions"
+      title="New Note"
+      />
+
+  <security:crowd
+      name="note_viewers"
+      factory=".note.NoteCrowd" />
+
+  <security:allow
+      interface=".interfaces.INote"
+      permission="schooltool.view"
+      crowds="note_viewers" />
+
+</configure>

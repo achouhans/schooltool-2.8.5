@@ -1,0 +1,16 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:meta="http://namespaces.zope.org/meta"
+           i18n_domain="zope">
+
+  <meta:provides feature="devmode" />
+
+  <include package="schooltool.common" />
+  <include package="schooltool.devmode" />
+
+  <!-- Provide local overrides of standard configurations-->
+  <includeOverrides package="schooltool.devmode" file="overrides.zcml" />
+
+  <browser:defaultSkin name="SchoolTool" />
+
+</configure>

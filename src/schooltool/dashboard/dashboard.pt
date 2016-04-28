@@ -1,0 +1,75 @@
+<tal:block i18n:domain="schooltool">
+<script type="text/javascript" tal:content="view/dynamicVariables">
+</script>
+
+<script type="text/javascript">
+  maxHeight = 75; //height it should go to in percent
+  function openDash(){
+    $('#dashboardContents').html('loading...');
+    $('#dashboardContents').slideDown("fast");
+    $('#dashboardTab').unbind();
+    $('#dashboardTab').click(closeDash);
+    $.get(ajaxURL, function(data) {$('#dashboardContents').html(data);});
+    return null;
+  }
+
+  function closeDash(){
+    $('#dashboardContents').slideUp("fast");
+    $('#dashboardTab').unbind();
+    $('#dashboardTab').click(openDash);
+    return null;
+  }
+
+  function getDashboardContent(){
+    $.get(ajaxURL, alertContents);
+  }
+
+  function alertContents(data) {
+  }
+</script>
+
+<style type="text/css">
+  .dashboardButton {
+    position: fixed;
+    bottom: 0;
+    width: 20%;
+    right: 40%;
+    background: #EAE8E3;
+    text-align: center;
+    font-weight: bold;
+    border: solid 1px #BAB5AB;
+    border-bottom: 0;
+    z-index: 99;
+    cursor: pointer;
+  }
+  div .dashboardContents {
+    position: fixed;
+    left: 10%;
+    bottom: 0;
+    width: 80%;
+    height: 70%;
+    margin: auto;
+    background: #EAE8E3;
+    text-align: center;
+    border: solid 1px #BAB5AB;
+    border-bottom: 0;
+    overflow: auto;
+    text-align: left;
+    z-index: 98;
+  }
+</style>
+<noscript>
+<a style="bottom: 0px;" class="dashboardButton" tal:attributes="href string:${context/schooltool:app/@@absolute_url}/@@dashboard.html"
+   i18n:translate=""
+   id="dashboardTab">Dashboard</a>
+</noscript>
+<a class="dashboardButton"
+   i18n:translate=""
+   id="dashboardTab">Dashboard</a>
+<div id="dashboardContents" class="dashboardContents">
+</div>
+<script type="text/javascript">
+$('#dashboardTab').click(openDash);
+$('#dashboardContents').hide();
+</script>
+</tal:block>

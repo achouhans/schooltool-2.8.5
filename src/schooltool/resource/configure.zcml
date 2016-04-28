@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <include file="security.zcml" />
+
+  <class class=".resource.ResourceContainer">
+    <allow interface="zope.container.interfaces.ISimpleReadContainer" />
+    <require permission="schooltool.view"
+             attributes="keys values items __iter__ __len__" />
+    <require permission="schooltool.edit"
+             interface="zope.container.interfaces.IWriteContainer" />
+  </class>
+
+  <class class=".resource.Resource">
+    <implements interface="schooltool.app.interfaces.IHaveCalendar" />
+
+    <allow attributes="__cmp__" />
+    <require permission="zope.Public"
+             attributes="title description" />
+    <require permission="schooltool.view"
+             attributes="type notes groups leaders" />
+    <require permission="schooltool.edit"
+             set_schema=".interfaces.IResource" />
+  </class>
+
+  <class class=".resource.Location">
+    <implements interface="schooltool.app.interfaces.IHaveCalendar" />
+
+    <require like_class=".resource.Resource" />
+    <require permission="schooltool.view"
+             attributes="capacity" />
+    <require permission="schooltool.edit"
+             set_schema=".interfaces.ILocation" />
+  </class>
+
+  <class class=".resource.Equipment">
+    <implements interface="schooltool.app.interfaces.IHaveCalendar" />
+
+    <require like_class=".resource.Resource" />
+    <require permission="schooltool.view"
+             attributes="type manufacturer model serialNumber purchaseDate" />
+    <require permission="schooltool.edit"
+             set_schema=".interfaces.IEquipment" />
+  </class>
+
+  <adapter
+      for=".interfaces.IResourceContainer"
+      factory="schooltool.app.app.SimpleNameChooser"
+      provides="zope.container.interfaces.INameChooser" />
+
+  <!-- Application Init -->
+  <adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      factory=".resource.ResourceInit"
+      name="schooltool.resources"
+      />
+
+  <!-- Application StartUp -->
+  <adapter
+      factory=".resource.ResourceStartUp"
+      name="schooltool.resources.startup"
+      />
+
+  <!-- sample data -->
+  <configure
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have devmode">
+
+    <utility
+        factory=".sampledata.SampleResources"
+        provides="schooltool.sampledata.interfaces.ISampleDataPlugin"
+        name="resources"
+        />
+
+  </configure>
+
+  <!-- resource types -->
+
+  <utility
+      factory=".types.ResourceFactoryUtility"
+      name="resource"
+      provides=".interfaces.IResourceFactoryUtility"
+      />
+
+  <utility
+      factory=".types.LocationFactoryUtility"
+      name="location"
+      provides=".interfaces.IResourceFactoryUtility"
+      />
+
+  <utility
+      factory=".types.EquipmentFactoryUtility"
+      name="equipment"
+      provides=".interfaces.IResourceFactoryUtility"
+      />
+
+  <adapter
+      factory=".types.ResourceTypeAdapter" />
+
+  <adapter
+      factory=".types.LocationTypeAdapter" />
+
+  <adapter
+      factory=".types.EquipmentTypeAdapter" />
+
+  <adapter
+      for="schooltool.resource.interfaces.IResourceContainer"
+      factory=".booking.ResourceBookingCalendar"
+      provides=".booking.IBookingCalendar" />
+
+  <traverserPlugin
+      for=".interfaces.IResourceContainer"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      name="booking"
+      plugin=".booking.ResourceBookingTraverserPlugin"
+      />
+
+  <adapter factory=".resource.getResourceDemographics" />
+  <adapter factory=".resource.DemographicsFormAdapter" />
+  <adapter factory=".resource.getResourceDemographicsFields" />
+
+  <class class=".booking.ResourceBookingCalendar">
+    <require permission="schooltool.view"
+             interface=".interfaces.IBookingCalendar"
+             attributes="__cmp__" />
+  </class>
+
+  <class class=".booking.BookingCalendarEvent">
+    <require permission="schooltool.view"
+             interface=".interfaces.IBookingCalendarEvent"
+             />
+  </class>
+
+  <!-- resource demos -->
+
+  <class class=".resource.ResourceDemographicsFields">
+    <implements interface="schooltool.resource.interfaces.IResourceDemographicsFields" />
+    <require
+       permission="schooltool.edit"
+       interface="schooltool.resource.interfaces.IResourceDemographicsFields"
+       set_schema="schooltool.resource.interfaces.IResourceDemographicsFields" />
+  </class>
+
+  <adapter factory=".resource.getLimitKeyVocabularyForResourceFields" />
+
+  <subscriber
+      for="schooltool.resource.interfaces.IBookingCalendar
+           zope.publisher.interfaces.http.IHTTPRequest"
+      provides="schooltool.app.browser.interfaces.ICalendarProvider"
+      factory=".booking.ResourceBookingCalendarProvider"
+      />
+
+  <include package=".browser" />
+
+</configure>

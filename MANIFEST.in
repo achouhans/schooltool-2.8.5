@@ -1,0 +1,30 @@
+recursive-include src *.zcml
+recursive-include src *.zcml_tmpl
+recursive-include src *.js
+recursive-include src *.pt
+recursive-include src *.css
+recursive-include src *.pot
+recursive-include src *.po
+recursive-include src *.mo
+recursive-include src *.txt
+recursive-include src *.png
+recursive-include src *.gif
+recursive-include src *.ico
+recursive-include src *.ini_tmpl
+recursive-include src *.conf
+recursive-include src *.conf_tmpl
+recursive-include src *.xml
+recursive-include src *.fs
+recursive-include src *.ics
+recursive-include src *.xls
+recursive-include src *.svg
+include version.txt
+include version.txt.in
+include CHANGES.txt
+include GPL.txt
+include Makefile
+include base.cfg
+include buildout.cfg
+include deploy.cfg
+include develop.cfg
+include bootstrap.py

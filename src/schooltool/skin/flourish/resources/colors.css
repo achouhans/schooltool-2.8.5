@@ -1,0 +1,978 @@
+/*
+
+  Colors style sheet
+
+    - General elements
+    - Main containers
+    - Header
+    - Page
+    - Form
+    - Table
+    - Batching
+    - jQuery overrides
+    - Gradebook
+    - Timetable
+    - Calendar
+    - JSTree
+
+*/
+
+@media all {
+
+/*
+
+  General elements:
+
+    - body
+    - a (links)
+
+*/
+
+body {
+    background-color: #ffffff;
+    color: #333333;
+}
+
+a, a:link, a:visited, a:active {
+    color: #005c61;
+}
+
+select {
+    color: #333333;
+}
+
+h3.done-link a {
+    background-color: #6C7B7C;
+    border-color: #6C7B7C;
+    box-shadow: 0px 1px 6px #bbbbbb;
+    color: #ffffff;
+}
+
+h3.done-link a:hover {
+    background-color: #026b6e;
+    border-color: #026b6e;
+}
+
+h3.done-link a:active {
+    background-color: #056163;
+    border-color: #056163;
+    color: #aea79f;
+    outline: none;
+}
+
+/*
+
+  Main containers:
+
+    - header
+    - page
+    - footer
+
+*/
+
+.schooltool > .header {
+    background-color: #ffffff;
+
+    -moz-box-shadow: 0px -3px 4px #bbbbbb;
+    -webkit-box-shadow: 0px -3px 4px #bbbbbb;
+    box-shadow: 0px -3px 4px #bbbbbb;
+}
+
+.schooltool > .page {
+    background-color: #ffffff;
+
+    -moz-box-shadow: 0px 1px 4px #bbbbbb;
+    -webkit-box-shadow: 0px 1px 4px #bbbbbb;
+    box-shadow: 0px 1px 4px #bbbbbb;
+}
+
+.schooltool > .footer > p {
+    color: #aea79f;
+}
+
+/*
+
+  Header:
+
+    - brand ('school' + 'tool' + logo)
+    - navigation (main tabs)
+    - breadcrumbs (absolute positioned on the second-nav)
+    - second-nav (breadcrumbs + language selector + login information)
+
+ */
+
+.header > h1.brand {
+    color: #ffffff;
+}
+
+.header > h1.brand > .school {
+    color: #dbe2de;
+}
+
+.header > h1.brand > .tool {
+    color: #ffffff;
+}
+
+.header ul.navigation {
+    background-color: #008c93;
+
+    -moz-box-shadow: 0px 1px 6px #bbbbbb;
+    -webkit-box-shadow: 0px 1px 6px #bbbbbb;
+    box-shadow: 0px 1px 6px #bbbbbb;
+}
+
+.header ul.navigation li a {
+    color: #ffffff;
+}
+
+.header ul.navigation li a:hover {
+    background: #026b6e;
+    color: #ffffff;
+}
+
+.header ul.navigation li.active a {
+    background: #026b6e;
+    color: #ffffff;
+}
+
+.header ul.breadcrumbs li {
+    background: none;
+    color: #ffffff;
+}
+
+.header ul.breadcrumbs > li a:hover {
+    background: none;
+}
+
+.header ul.breadcrumbs a {
+    color: #ffffff;
+}
+
+.header ul.second-nav {
+    background-color: #485454;
+
+    -moz-box-shadow: 0px 1px 6px #bbbbbb;
+    -webkit-box-shadow: 0px 1px 6px #bbbbbb;
+    box-shadow: 0px 1px 6px #bbbbbb;
+}
+
+.header ul.second-nav > li {
+    background: none;
+}
+
+.header ul.second-nav > li a,
+.header ul.second-nav > li span {
+    color: #ffffff;
+}
+
+.header ul.second-nav > li a.new-messages {
+    color: #ff0000;
+}
+
+.header ul.second-nav > li.active a,
+.header ul.second-nav > li a:hover {
+    background: none;
+}
+
+.header ul.second-nav > li.active a {
+    color: #ffffff;
+}
+
+.header ul.second-nav #language-selector {
+    color: #ffffff;
+}
+
+/*
+
+  Page:
+
+    - header
+      + title (h1)
+      + subtitle (h2)
+    - third-nav (school year/activity/period tabs)
+    - body
+      + sidebars
+      + container (content area)
+
+*/
+
+.page > .header h2 {
+    color: #aea79f;
+}
+
+.page .third-nav {
+    border-bottom-color: #D9D9D9;
+}
+
+.page .third-nav > li a,
+.page .third-nav > li span {
+    color: #005c61;
+    border-color: #d9d9d9;
+    outline: 0;
+}
+
+.page .third-nav > li.active a,
+.page .third-nav > li.active span,
+.page .third-nav > li.active a:hover,
+.page .third-nav > li.active span:hover {
+    background: #f7f7f7;
+    border-bottom-color: #f7f7f7;
+    color: #3c4342;
+    cursor: default;
+}
+
+.page .third-nav > li a:hover {
+    background: transparent url(subnav_active_bg.png) repeat left 1px;
+}
+
+.page > .body {
+    background-color: #ffffff;
+}
+
+.page > .body > .sidebar {
+    background-color: #f7f7f7;
+}
+
+.page > .body > .container {
+    background-color: #f7f7f7;
+}
+
+.page > .body > .sidebar .content > .header {
+    border-bottom-color: #00abb3;
+    color: #333333;
+}
+
+.page > .body > .sidebar .content > .body > ul.filter > li.active > a {
+    color: #00abb3;
+}
+
+/*
+
+  Form:
+
+    - count (absolute positioned on the fieldset of search boxes)
+    - fieldset legends
+    - fielset rows:
+      + label
+      + hint
+      + widget
+    - required information
+    - buttons
+    - custom forms
+
+*/
+
+form > .count {
+    color: #ffffff;
+}
+
+form fieldset {
+    background-color: #e6e5e5;
+}
+
+form fieldset > legend > span,
+.fieldset-legend {
+    background-color: #485454;
+    color: #ffffff;
+}
+
+form fieldset .row .label {
+    color: #000000;
+}
+
+form fieldset .row .hint {
+    color: #000000;
+}
+
+form fieldset .row > .error .error {
+    background: transparent url(error-icon.png) no-repeat scroll top left;
+    color: #ef4444;
+}
+
+form fieldset .row .widget input.text-widget,
+input.text-widget,
+form fieldset .row .widget input[type="text"],
+form fieldset .row .widget input.password-widget,
+form fieldset .row .widget input[type="password"] {
+    background-color: #ffffff;
+    border-color: #ccc1c1;
+    color: #333333;
+}
+
+form fieldset .row .widget input.text-widget:focus,
+input.text-widget:focus,
+form fieldset .row .widget input[type="text"]:focus,
+form fieldset .row .widget input.password-widget:focus,
+form fieldset .row .widget input[type="password"]:focus {
+    border-color: #00abb3;
+}
+
+form fieldset .row .widget textarea.textarea-widget {
+    background-color: #ffffff;
+    border-color: #ccc1c1;
+    color: #333333;
+}
+
+form fieldset .row .widget textarea:focus {
+    border-color: #00abb3;
+}
+
+form fieldset .row .widget input[type="text"].error,
+form fieldset .row .widget input[type="password"].error,
+form fieldset .row .widget textarea.error {
+    background-color: #feeee9;
+    border-color: #ef4444;
+}
+
+form fieldset .row .widget .option {
+    color: #333333;
+}
+
+form .buttons .button-ok {
+    background-color: #009499;
+    border-color: #009499;
+    box-shadow: 0px 1px 6px #bbbbbb;
+    color: #ffffff;
+}
+
+form .buttons .button-neutral,
+form .buttons .button-cancel {
+    background-color: #6C7B7C;
+    border-color: #6C7B7C;
+    box-shadow: 0px 1px 6px #bbbbbb;
+    color: #ffffff;
+}
+
+form .buttons .button-ok:hover,
+form .buttons .button-neutral:hover,
+form .buttons .button-cancel:hover {
+    background-color: #026B6E;
+    border-color: #026B6E;
+}
+
+form .buttons .button-ok:active,
+form .buttons .button-neutral:active,
+form .buttons .button-cancel:active {
+    background-color: #056163;
+    border-color: #056163;
+    color: #aea79f;
+}
+
+form .required-info {
+    color: #ffffff;
+}
+
+form span.required {
+    color: #00abb3;
+}
+
+form pre.csv-text {
+    border-color: #888;
+}
+
+form .temporal-relationship-button-options fieldset {
+    background-color: transparent;
+}
+
+/*
+
+  Table:
+
+    - table header
+      + headers
+    - table body
+      + headers
+      + rows
+    - custom tables
+
+*/
+
+thead {
+    background-color: #6c7b7c;
+}
+
+th {
+    color: #ffffff;
+}
+
+tbody {
+    border-top-color: #aea79f;
+}
+
+tbody th {
+    background-color: #dfdcd9;
+    color: #333333;
+}
+
+tbody tr {
+    border-bottom-color: #cccccc;
+}
+
+table.data tbody tr:hover,
+table.highlight-rows tbody tr:hover {
+    background-color: #dfdcd9;
+}
+
+table.schooldaymodel tbody th {
+    background: none;
+}
+
+table.schooldaymodel tbody th.month {
+    background: #dfdcd9;
+}
+
+table.schooldaymodel tbody td.schoolday {
+    background: #efefef;
+}
+
+table.schoolday-legend td.schoolday {
+    background: #efefef;
+}
+
+table.schooltool-tasks-status td .error {
+    color: #ff0000;
+}
+
+table.schooltool-tasks-status td .info {
+    color: #ff8800;
+}
+
+table.schooltool-tasks-status td .success {
+    color: #0000ff;
+}
+
+/*
+
+  Batching
+
+*/
+
+.batch-navigation {
+    background-color: #DFDCD9;
+}
+
+.batch-navigation span.batch_page a:hover,
+.batch-navigation span.batch_page a.current {
+    background-color: #6c7b7c;
+    color: #ffffff;
+}
+
+/*
+
+  jQuery overrides:
+
+    - accordion
+      + state-hover
+      + state-active
+    - dialog
+    - datepicker
+    - autocomplete
+
+*/
+
+.ui-accordion .ui-accordion-header {
+    background-color: #485454;
+    background-image: none;
+    color: #ffffff;
+    border-color: #485454;
+}
+
+.ui-state-hover, .ui-accordion .ui-state-hover {
+    border-color: #008c93;
+    background-color: #008c93;
+}
+
+.ui-state-active, .ui-accordion .ui-state-active {
+    background-color: #008c93;
+}
+
+.ui-accordion .ui-accordion-content {
+    background: none;
+}
+
+.ui-dialog .ui-dialog-content form fieldset {
+    background-color: #ffffff;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    background: #008C93;
+}
+
+.ui-dialog .ui-dialog-titlebar .ui-dialog-title {
+    color: #ffffff;
+}
+
+.ui-datepicker {
+    border-color: #00abb3;
+}
+
+.ui-datepicker .ui-widget-header {
+    background: #4B5554;
+    border-color: #4B5554;
+}
+
+.ui-datepicker-header a.ui-state-hover {
+    background: none;
+    border-color: #dfdfdf;
+}
+
+.ui-datepicker-calendar thead {
+    background: none;
+    border-bottom-color: #dfdfdf;
+}
+
+.ui-datepicker-calendar thead th {
+    color: #4B5554;
+}
+
+.ui-datepicker-calendar a.ui-state-default {
+    background: none;
+    color: #4B5554;
+}
+
+.ui-datepicker-calendar a.ui-state-default:hover {
+    background: #009499;
+    color: #ffffff;
+}
+
+.ui-datepicker-calendar a.ui-state-active {
+    color: #009499;
+}
+
+.ui-datepicker-calendar .ui-datepicker-other-month {
+    background: none;
+    opacity: 1;
+}
+
+.ui-datepicker-calendar tr th:nth-child(even),
+.ui-datepicker-calendar tr td:nth-child(even) {
+    background: #f0f0f0;
+}
+
+.ui-autocomplete .ui-menu-item .ui-state-hover {
+    background: #009499;
+    border-color: #009499;
+}
+
+.ui-autocomplete .ui-menu-item {
+    background: #6C7B7C
+}
+
+.ui-autocomplete .ui-menu-item a {
+    color: #ffffff;
+}
+
+/*
+
+  Gradebook:
+
+    - table headers
+    - odd table rows
+    - grade input colors
+    - popup menu
+
+*/
+
+.gradebook-part thead {
+    background-color: #e7e4e2;
+}
+
+.gradebook-part tbody tr {
+    border-top-color: #aea79f;
+}
+
+.gradebook-part tbody tr.odd {
+    background-color: #f0efee;
+}
+
+.gradebook-part tbody tr.single-odd,
+.gradebook-part tbody tr.double-odd {
+    background-color: #f0efee;
+}
+
+.gradebook-part tbody tr.single-even,
+.gradebook-part tbody tr.double-even {
+    background-color: #f7f7f7;
+}
+
+.gradebook-part tbody tr.grade-hint.double-odd td:not(.placeholder) {
+    background-color: #d0efee;
+}
+
+.gradebook-part tbody tr.grade-hint.double-even td:not(.placeholder) {
+    background-color: #d0f7f7;
+}
+
+.gradebook-part th, .gradebook-part td {
+    border-color: #cccccc;
+}
+
+.gradebook-part th {
+    color: #333333;
+}
+
+.grades input[type="text"] {
+    background: transparent;
+}
+
+.grades input[type="text"]:focus {
+    background-color: #bdd7f0;
+}
+
+.grades input[type="text"].valid {
+    background: #009499;
+    color: #ffffff;
+}
+
+.grades input[type="text"].error {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.grades input[type="text"].extracredit {
+    background: #f6db5a;
+}
+
+.popup_menu li {
+    background-color: #6c7b7c;
+}
+
+.popup_menu li.header {
+    background-color: #485454;
+    color: #ffffff;
+}
+
+.popup_menu li span, .hover_menu li.current {
+    color: #ffffff;
+}
+
+.popup_menu li a {
+    color: #ffffff;
+}
+
+.popup_menu li a:hover {
+    background-color: #026B6E;
+}
+
+.popup_menu span.hover_link {
+    background-color: #6c7b7c;
+}
+
+.students tbody a.inactive-student {
+    color: #485454;
+}
+
+/*
+
+  Timetable:
+
+*/
+
+table.timetable tbody td {
+    border-left: 1px dotted #cccccc;
+    border-right: 1px dotted #cccccc;
+}
+
+table.timetable td .inactive {
+    color: #aaa;
+}
+
+form fieldset table.timetable {
+    background-color: #f7f7f7;
+}
+
+form fieldset table.timetable td.error {
+    background: transparent url(error-icon.png) no-repeat scroll 8px 10px;
+}
+
+/*
+
+  Calendar:
+
+    - daily
+    - weekly
+    - monthly
+    - yearly
+    - overlay
+    - refine sidebar monthly calendar
+
+*/
+
+
+#calendar-view-day {
+    border: 1px solid #aaaaaa;
+}
+
+#calendar-view-day .hour {
+    border-top: 1px #bab5ab solid;
+}
+
+#calendar-view-day .even {
+    background: #eae8e3;
+}
+
+#calendar-view-day .active {
+    background: #a8a5a0;
+}
+
+#calendar-view-day .event {
+    background: #DFDCD9;
+    opacity: 0.85;
+}
+
+#calendar-view-day .expanded {
+    opacity: 1;
+}
+
+#calendar-view-day .other {
+    background: #e0b6af;
+    border: 1px #884631 solid;
+}
+
+#calendar-view-day .event H6 {
+    background: #7590ae;
+    opacity: 1 !important;
+}
+
+#calendar-view-day .other H6 {
+    background: #c1665a;
+}
+
+#calendar-view-day .event H6 A {
+    color: #fff;
+}
+
+#calendar-view-day .event H6 .start-end {
+    color: #000;
+}
+
+#calendar-view-day .event A.delete {
+    border: 0;
+}
+
+#calendar-view-day .event .booked-resources {
+    border: 1px;
+}
+
+#calendar-view-day .event .booked-resources-header A {
+    color: #000;
+}
+
+#calendar-view-week {
+    border: 1px solid #dfdfdf;
+}
+
+#calendar-view-week tbody {
+    border-top: 1px solid #dfdfdf;
+}
+
+#calendar-view-week tr td:nth-child(even) {
+    background: #f0f0f0;
+}
+
+#calendar-view-week tr {
+    border-bottom: none;
+}
+
+#calendar-view-week TD {
+    background: #ffffff;
+}
+
+#calendar-view-week TH {
+    border-bottom: 1px solid #dfdfdf;
+}
+
+#calendar-view-week TH.day-title {
+    background: #f0f0f0;
+}
+
+#calendar-view-week TH.cal-day-today {
+    background: #4B5554;
+}
+
+#calendar-view-week TH.cal-day-today a {
+    color: #ffffff;
+}
+
+#calendar-view-month {
+    background: #ffffff;
+    border: 1px #dfdfdf solid;
+}
+
+#calendar-view-month TH {
+    background: #f0f0f0;
+    border-bottom: 1px #dfdfdf solid;
+}
+
+#calendar-view-month tr {
+    border-bottom: 1px #dfdfdf solid;
+}
+
+#calendar-view-month tbody {
+    border-top: 1px #dfdfdf solid;
+}
+
+#calendar-view-month tr td:nth-child(odd) {
+    background: #f0f0f0;
+}
+
+#calendar-view-month TH.weekday {
+    border: 1px #dfdfdf solid;
+}
+
+#calendar-view-month TH.month-title {
+    color: #ffffff;
+    background: #000000;
+}
+
+#calendar-view-month TD.day-other A {
+    color: #000000;
+}
+
+#calendar-view-month TD.day A:hover,
+#calendar-view-month TD.day-other A:hover {
+    color: #ffffff;
+    background: #009499;
+}
+
+#calendar-view-month a.cal-day-today {
+    color: white;
+    background: #4B5554;
+}
+
+#calendar-view-month A:hover .event,
+#calendar-view-month A:hover .comp_event {
+    color: #000;
+    border: 1px #314e6c solid;
+}
+
+#calendar-view-month .event {
+    background: #DFDCD9;
+}
+
+#calendar-view-month .comp_event {
+    background: #e0b6af;
+}
+
+#calendar-view-year tbody,
+#calendar-view-year tbody tr {
+    border-top: none;
+    border-bottom: none;
+}
+
+#calendar-view-year table.month tbody tr td:nth-child(even) {
+    background: #f0f0f0;
+}
+
+#calendar-view-year TABLE.month {
+    background: #ffffff;
+    border: 1px #dfdfdf solid;
+}
+
+#calendar-view-year table.month tbody {
+    border-top: 1px solid #dfdfdf;
+}
+
+#calendar-view-year TABLE.month TH.month-weekday{
+    color: #4b5554;
+    background: #ffffff;
+}
+
+#calendar-view-year TABLE.month TH.month-weekday {
+    border-bottom: 1px #dfdfdf solid;
+}
+
+#calendar-view-year TABLE.month TH.month-title A {
+    color: #ffffff;
+    background: #4b5554;
+}
+
+#calendar-view-year TABLE.month TD A:hover {
+    color: #ffffff;
+    background: #009499;
+}
+
+#events-allday .event-allday A.delete {
+    border: 0;
+}
+
+.page .refine .calendar-overlay table tbody {
+    border: 0 none;
+}
+
+.page .refine .calendar-month table.month tbody tr td:nth-child(even) {
+    background: #f0f0f0;
+}
+
+.page .refine .calendar-month TABLE.month {
+    background: #ffffff;
+    border: 1px #dfdfdf solid;
+}
+
+.page .refine .calendar-month TABLE.month TH A {
+    color: #ffffff;
+}
+
+.page .refine .calendar-month TABLE.month TD A:hover {
+    color: #ffffff;
+    background: #009499;
+}
+
+.page .refine .calendar-month table.month thead td {
+    background: #ffffff;
+    color: #4B5554;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.page .refine .calendar-month table.month thead td:nth-child(even) {
+    background: #f0f0f0;
+}
+
+.page .refine .calendar-month TABLE.month tbody {
+    border-top: 1px solid #000000;
+}
+
+.page .refine .calendar-month TABLE.month TH {
+    color: #ffffff;
+    background: #4b5554;
+}
+
+a.cal_yearly_day {
+    color: #4b5554;
+}
+
+a.cal_yearly_day_busy {
+    color: #009499;
+}
+
+td.cal_yearly_day a.cal-day-today {
+    color: white;
+    background: #4B5554;
+}
+
+
+/*
+
+  JSTree:
+
+    - sections tree
+
+*/
+
+.tree_list li a.clicked,
+.tree_list li a.clicked:hover,
+.tree_list li span.clicked {
+    background: none;
+    border: 0;
+    color: #333333;
+}
+
+.tree_list li a.leaf_url {
+    color: #005c61;
+}
+
+table.report-dialog-message span.error {
+    color: #ff0000;
+}
+
+}

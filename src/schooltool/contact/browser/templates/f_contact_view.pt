@@ -1,0 +1,46 @@
+<metal:block i18n:domain="schooltool">
+  <div class="photo-display" tal:condition="context/photo">
+    <img tal:attributes="src string:${context/@@absolute_url}/photo"
+         alt="Photo" i18n:attributes="alt" />
+  </div>
+  <h3>
+    <tal:block i18n:translate="">
+      Contact information
+    </tal:block>
+    <a class="modify" href="" title="Edit this contact"
+       tal:attributes="href string:${context/@@absolute_url}/edit.html"
+       i18n:attributes="title"
+       tal:condition="context/schooltool:can_edit">
+      <img tal:attributes="src context/++resource++schooltool.skin.flourish/edit-icon.png"
+           alt="Edit"
+           i18n:attributes="alt" />
+    </a>
+  </h3>
+  <table class="form-fields show-photo"
+         tal:attributes="class python:'form-fields' if context.photo is None else 'form-fields show-photo'">
+    <tbody>
+      <tal:loop repeat="widget view/widgets/values">
+        <tr tal:condition="widget/value">
+          <td tal:content="widget/label" class="label"/>
+          <td tal:content="structure widget/render" />
+        </tr>
+      </tal:loop>
+      <tr tal:repeat="info view/relationships">
+        <td class="label">
+          <label>
+            <span>
+              <tal:block tal:replace="info/title" />
+            </span>
+          </label>
+        </td>
+        <td>
+          <div class="widget">
+            <span>
+              <a tal:replace="structure info/person/schooltool:content/link" />
+            </span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</metal:block>

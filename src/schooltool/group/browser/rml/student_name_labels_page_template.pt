@@ -1,0 +1,25 @@
+<metal:block
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="schooltool">
+
+  <pageTemplate
+      i18n:domain="schooltool"
+      tal:attributes="id view/__name__"
+      tal:define="top_bar view/top_bar;
+                  header view/header;
+                  bottom_bar view/bottom_bar;
+                  top_line view/top_line;
+                  bottom_line view/bottom_line;
+                  frame view/frame;">
+    <!-- Content frame -->
+    <frame
+        tal:attributes="x1 frame/x;
+                        y1 frame/y;
+                        width frame/width;
+                        height frame/height;
+                        id view/__name__" />
+  </pageTemplate>
+
+</metal:block>

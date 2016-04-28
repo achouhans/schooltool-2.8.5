@@ -1,0 +1,231 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:z3c="http://namespaces.zope.org/z3c"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <flourish:breadcrumb
+      for="schooltool.calendar.interfaces.ICalendar"
+      title="Calendar"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      for="schooltool.calendar.interfaces.ICalendar"
+      view=".calendar.FlourishCalendarView"
+      title="Calendar"
+      />
+
+  <flourish:page
+      name="daily.html"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendar"
+      class=".calendar.FlourishDailyCalendarView"
+      content_template="templates/calendar_daily.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      for="schooltool.calendar.interfaces.ICalendar"
+      name="daily_calendar_rows"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class="schooltool.app.browser.cal.DailyCalendarRowsView"
+      permission="zope.View"
+      />
+
+  <zope:adapter
+      for="schooltool.calendar.interfaces.ICalendar
+           schooltool.skin.flourish.IFlourishLayer
+           schooltool.calendar.browser.calendar.FlourishCalendarView"
+      provides="schooltool.skin.flourish.interfaces.IContentProvider"
+      factory=".calendar.getParentTitleContent"
+      name="title"
+      permission="zope.Public"
+      />
+
+  <flourish:page
+      name="weekly.html"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendar"
+      class=".calendar.FlourishWeeklyCalendarView"
+      content_template="templates/calendar_weekly.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="monthly.html"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendar"
+      class=".calendar.FlourishMonthlyCalendarView"
+      content_template="templates/calendar_monthly.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="yearly.html"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendar"
+      class=".calendar.FlourishYearlyCalendarView"
+      content_template="templates/calendar_yearly.pt"
+      permission="schooltool.view"
+      />
+
+  <!-- XXX: probably wrong security -->
+  <flourish:viewlet
+      name="calendar-overlay"
+      view=".interfaces.IHaveEventLegend"
+      class=".overlay.CalendarOverlayView"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="calendar-jump-to"
+      after="calendar-overlay"
+      view=".calendar.FlourishCalendarView"
+      class=".calendar.CalendarJumpTo"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="calendar-add-links"
+      after="calendar-jump-to"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendar"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".calendar.CalendarAddLinks"
+      title="Add"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="event-add"
+      title="Event"
+      class=".calendar.AddEventLink"
+      view=".calendar.FlourishCalendarView"
+      manager=".calendar.CalendarAddLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="calendar-previous-month"
+      before="calendar-current-month"
+      after="calendar-jump-to"
+      view=".calendar.FlourishCalendarView"
+      class=".calendar.CalendarPrevMonthViewlet"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="calendar-current-month"
+      after="calendar-jump-to"
+      view=".calendar.FlourishCalendarView"
+      class=".calendar.CalendarMonthViewlet"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="calendar-next-month"
+      after="calendar-jump-to calendar-current-month"
+      view=".calendar.FlourishCalendarView"
+      class=".calendar.CalendarNextMonthViewlet"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      before="calendar-overlay"
+      name="calendar-tomorrow-events"
+      view=".calendar.FlourishCalendarView"
+      class=".calendar.CalendarTomorrowEvents"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      name="tertiary_navigation"
+      class=".calendar.CalendarTertiaryNavigation"
+      view=".calendar.FlourishCalendarView"
+      permission="zope.Public"
+      />
+
+  <!-- event -->
+
+  <flourish:breadcrumb
+      for="schooltool.calendar.interfaces.ICalendarEvent"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.calendar.interfaces.ICalendarEvent"
+      class=".event.FlourishCalendarEventView"
+      content_template="templates/event.pt"
+      permission="zope.View"
+      />
+
+  <flourish:page
+      name="edit.html"
+      subtitle="Edit"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendarEvent"
+      class=".event.FlourishCalendarEventEditView"
+      permission="schooltool.edit"
+      content_template="templates/event_edit.pt"
+      />
+
+  <flourish:page
+      name="add.html"
+      subtitle="New Event"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendar"
+      class=".event.FlourishCalendarEventAddView"
+      permission="schooltool.edit"
+      content_template="templates/event_edit.pt"
+      />
+
+  <flourish:page
+      name="booking.html"
+      subtitle="Reserve resources"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendarEvent"
+      class=".event.FlourishCalendarEventBookingView"
+      permission="schooltool.view"
+      content_template="templates/event_booking.pt"
+      />
+
+  <flourish:page
+      name="delete.html"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendar"
+      class=".event.DeleteEventDialog"
+      template="templates/event_delete_dialog.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="event-links"
+      after="event-links"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendarEvent"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".event.EventLinks"
+      title="Actions"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="delete.html"
+      for="schooltool.calendar.interfaces.ISchoolToolCalendarEvent"
+      title="Delete"
+      class=".event.DeleteEventLinkViewlet"
+      manager=".event.EventLinks"
+      permission="schooltool.edit"
+      />
+
+  <!-- resources -->
+
+  <zope:resourceLibrary
+      name="schooltool.calendar"
+      require="schooltool.skin.flourish"
+      layer="schooltool.skin.flourish.IFlourishLayer">
+    <directory
+        source="resources"
+        include="calendar.css"
+        />
+  </zope:resourceLibrary>
+
+</configure>

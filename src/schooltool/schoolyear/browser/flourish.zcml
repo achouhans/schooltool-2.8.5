@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:flourish="http://schooltool.org/flourish"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           i18n_domain="schooltool">
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+      />
+
+  <flourish:breadcrumb
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+      title="School Years"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      title="School Years"
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+      view=".schoolyear.FlourishSchoolYearContainerView"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+      class=".schoolyear.FlourishSchoolYearContainerView"
+      title="School Years"
+      content_template="templates/f_table_container.pt"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="schoolyear_container"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".schoolyear.FlourishSchoolYearContainerLinks"
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+      title="Add"
+      permission="schooltool.edit"
+      view=".schoolyear.FlourishSchoolYearContainerView"
+      />
+
+  <flourish:viewlet
+      name="schoolyear_container_actions"
+      after="schoolyear_container"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".schoolyear.FlourishSchoolYearContainerActionLinks"
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+      title="Actions"
+      permission="schooltool.edit"
+      view=".schoolyear.FlourishSchoolYearContainerView"
+      />
+
+  <flourish:viewlet
+      name="schoolyear_actions"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class=".schoolyear.FlourishSchoolYearActionLinks"
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      title="Actions"
+      permission="schooltool.edit"
+      view=".schoolyear.FlourishSchoolYearView"
+      />
+
+  <flourish:viewlet
+      name="add.html"
+      title="School Year"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager=".schoolyear.FlourishSchoolYearContainerLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="delete_year.html"
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      title="Delete"
+      class=".schoolyear.FlourishSchoolYearDeleteLink"
+      manager="schooltool.schoolyear.browser.schoolyear.FlourishSchoolYearActionLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="activate.html"
+      title="Activate New Year"
+      class="schooltool.skin.flourish.page.LinkViewlet"
+      manager=".schoolyear.FlourishSchoolYearContainerActionLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="activate.html"
+      title="Activate New Year"
+      class=".schoolyear.FlourishActivateNewYearLink"
+      manager="schooltool.app.browser.app.CustomizeSchoolLinks"
+      permission="schooltool.view"
+      />
+
+  <flourish:breadcrumb
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      />
+
+  <flourish:page_breadcrumbs
+      show_page_title="false"
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      view=".schoolyear.FlourishSchoolYearView"
+      />
+
+  <flourish:viewlet
+      name="manage-year-overview"
+      before="manage-people-overview"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.edit"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".schoolyear.FlourishManageYearOverview"
+      />
+
+  <security:allow
+     interface=".schoolyear.FlourishManageYearOverview"
+     crowds="administrators clerks"
+     permission="schooltool.edit" />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      class=".schoolyear.FlourishSchoolYearView"
+      title="School Year"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="details"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".schoolyear.FlourishSchoolYearDetails"
+      view=".schoolyear.FlourishSchoolYearView"
+      permission="schooltool.view"
+      />
+
+  <flourish:page
+      name="add.html"
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+      class="schooltool.schoolyear.browser.schoolyear.FlourishSchoolYearAddView"
+      title="School Years"
+      subtitle="New School Year"
+      content_template="templates/f_schoolyear_add.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="activate.html"
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+      class="schooltool.schoolyear.browser.schoolyear.FlourishSchoolYearActivateView"
+      title="School Years"
+      subtitle="Activate New Year"
+      content_template="templates/f_schoolyear_activate.pt"
+      permission="schooltool.edit"
+      />
+
+  <configure package="schooltool.skin.flourish">
+  <flourish:page
+      name="edit.html"
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      class="schooltool.schoolyear.browser.schoolyear.FlourishSchoolYearEditView"
+      title="School Year"
+      subtitle="Edit"
+      content_template="templates/z3c_form_edit.pt"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+    name="delete.html"
+    for="schooltool.schoolyear.interfaces.ISchoolYearContainer"
+    class="schooltool.skin.flourish.containers.ContainerDeleteView"
+    content_template="templates/container_delete.pt"
+    permission="schooltool.edit"
+    />
+  </configure>
+
+  <flourish:page
+      name="delete_year.html"
+      for="schooltool.schoolyear.interfaces.ISchoolYear"
+      class="schooltool.schoolyear.browser.schoolyear.FlourishSchoolYearDeleteView"
+      template="templates/f_confirm_delete_schoolyear.pt"
+      permission="schooltool.edit"
+      />
+
+  <zope:adapter factory=".schoolyear.FlourishOverlapAddValidator" />
+
+  <zope:adapter factory=".schoolyear.FlourishOverlapEditValidator" />
+
+  <zope:adapter
+      for="schooltool.schoolyear.interfaces.ISchoolYearContainer
+           schooltool.skin.flourish.interfaces.IFlourishLayer"
+      factory=".schoolyear.SchoolYearTableFormatter" />
+
+  <flourish:content
+      name="tertiary_navigation"
+      class=".schoolyear.ManageSchoolTertiaryNavigation"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      before="*"
+      name="flourish-schoolyears-overview"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.edit"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".schoolyear.FlourishSchoolYearsOverview"
+      />
+
+  <flourish:viewlet
+      name="add-schoolyear"
+      manager="schooltool.app.browser.app.SchoolAddLinks"
+      permission="schooltool.edit"
+      title="School Year"
+      class=".schoolyear.SchoolYearAddLink"
+      />
+
+</configure>

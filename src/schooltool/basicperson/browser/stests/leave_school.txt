@@ -1,0 +1,208 @@
+Leave School
+============
+
+Helper:
+
+    >>> def demo_fields(browser):
+    ...     sel = 'table.person-view-demographics tbody'
+    ...     for tbody in browser.query_all.css(sel):
+    ...         for tr in tbody.query_all.css('tr'):
+    ...             label = tr.query.xpath('td[1]').text
+    ...             value = tr.query.xpath('td[2]').text
+    ...             yield '%s: %s' % (label, value)
+
+Log in as manager:
+
+    >>> manager = browsers.manager
+    >>> manager.ui.login('manager', 'schooltool')
+
+Let's set today's date to August 9th, 2014:
+
+    >>> manager.open('http://localhost/time?value=2014-08-09')
+
+When the application is initialized three demographics fields are
+created which are used in the leave school functionality: Date of
+leaving, Reason for leaving and Destination school:
+
+    >>> manager.open('http://localhost/')
+    >>> manager.query.link('School').click()
+    >>> manager.query.link('Demographics').click()
+    >>> for row in manager.query_all.css('table tbody tr'):
+    ...     label = row.query.css('td:first-child').text
+    ...     print label
+    ID
+    Ethnicity
+    Language
+    Place of birth
+    Citizenship
+    Date of un-enrollment
+    Reason for un-enrollment
+    Destination school
+
+The enum fields are empty, let's add some values to them:
+
+    >>> manager.query.link('Reason for un-enrollment').click()
+    >>> reasons = '\n'.join([
+    ...     'A reason',
+    ...     'Another reason',
+    ...     'Last reason',
+    ... ])
+    >>> manager.query.id('form-widgets-items').ui.set_value(reasons)
+    >>> manager.query.id('form-buttons-apply').click()
+
+    >>> manager.query.link('Destination school').click()
+    >>> schools = '\n'.join([
+    ...     'A school',
+    ...     'Another school',
+    ...     'Last school',
+    ... ])
+    >>> manager.query.id('form-widgets-items').ui.set_value(schools)
+    >>> manager.query.id('form-buttons-apply').click()
+
+These fields cannot be deleted:
+
+    >>> manager.query.link('Reorder or Delete Fields').click()
+    >>> for row in manager.query_all.css('table tbody tr'):
+    ...     label = row.query.css('td:nth-child(2)').text
+    ...     button_cell = row.query.css('td:nth-child(4)')
+    ...     is_removable = str(button_cell).strip() != '<td>\n</td>'
+    ...     print '%s, %s' % (label, is_removable)
+    ID, True
+    Ethnicity, True
+    Language, True
+    Place of birth, True
+    Citizenship, True
+    Date of un-enrollment, False
+    Reason for un-enrollment, False
+    Destination school, False
+
+Set up a school year:
+
+    >>> manager.ui.schoolyear.add('2014', '2014-01-01', '2014-12-31')
+
+Add two terms:
+
+    >>> manager.ui.term.add('2014', 'Semester 1', '2014-01-01', '2014-06-30')
+    >>> manager.ui.term.add('2014', 'Semester 2', '2014-07-01', '2014-12-31')
+
+Add some people:
+
+    >>> manager.ui.person.add('Jeffrey', 'Elkner', 'jeffrey', 'schooltool')
+    >>> manager.ui.person.add('Tom', 'Hoffman', 'tom', 'schooltool')
+    >>> manager.ui.person.add('David', 'Welsh', 'david', 'schooltool')
+    >>> manager.ui.person.add('Camila', 'Cerna', 'camila', 'schooltool')
+
+Add a course with a multi-term section:
+
+    >>> manager.ui.course.add('2014', 'Math')
+    >>> manager.ui.section.add('2014', 'Semester 1', 'Math', ends='Semester 2')
+    >>> manager.ui.section.instructors.add(
+    ...     '2014', 'Semester 1', 'Math (1)', instructors=['jeffrey'],
+    ...     date='2014-01-01')
+    >>> manager.ui.section.students.add(
+    ...     '2014', 'Semester 1', 'Math (1)', students=['camila'],
+    ...     date='2014-01-01')
+
+Add another course with a section only in Semester 1:
+
+    >>> manager.ui.course.add('2014', 'Baseball')
+    >>> manager.ui.section.add('2014', 'Semester 1', 'Baseball')
+    >>> manager.ui.section.instructors.add(
+    ...     '2014', 'Semester 1', 'Baseball (2)', instructors=['tom'],
+    ...     date='2014-01-01')
+    >>> manager.ui.section.students.add(
+    ...     '2014', 'Semester 1', 'Baseball (2)', students=['camila'],
+    ...     date='2014-01-01')
+
+Add another course with a section only in Semester 2:
+
+    >>> manager.ui.course.add('2014', 'TV')
+    >>> manager.ui.section.add('2014', 'Semester 2', 'TV')
+    >>> manager.ui.section.instructors.add(
+    ...     '2014', 'Semester 2', 'TV (2)', instructors=['tom'],
+    ...     date='2014-07-01')
+    >>> manager.ui.section.students.add(
+    ...     '2014', 'Semester 2', 'TV (2)', students=['camila'],
+    ...     date='2014-07-01')
+
+Add a couple of custom groups and make Camila a member of them:
+
+    >>> manager.ui.group.add('2014', 'Chess club')
+    >>> manager.ui.group.members.add('2014', 'Chess club', ['camila'],
+    ...                              date='2014-01-01')
+    >>> manager.ui.group.add('2014', 'Science club')
+    >>> manager.ui.group.members.add('2014', 'Science club', ['camila'],
+    ...                              date='2014-01-01')
+
+Let's look at Camila's sections and groups:
+
+    >>> manager.open('http://localhost/persons/camila')
+    >>> manager.ui.person.print_section_trees()
+    Sections attended
+    |+ 2014
+       |+ Semester 2
+          |+ Math (1)
+             |- Enrolled (Jan 1, 2014)
+          |+ TV (2)
+             |- Enrolled (Jul 1, 2014)
+       |+ Semester 1
+          |+ Baseball (2)
+             |- Enrolled (Jan 1, 2014)
+          |+ Math (1)
+             |- Enrolled (Jan 1, 2014)
+
+    >>> manager.ui.person.print_group_trees()
+    Group memberships
+    |+ 2014
+       |+ Chess club
+          |- Member (Jan 1, 2014)
+       |+ Science club
+          |- Member (Jan 1, 2014)
+
+Make Camila leave the school today:
+
+    >>> manager.query.link('Un-enroll').click()
+    >>> print manager.query.id('form-widgets-leave_date').get_attribute('value')
+    2014-08-09
+    >>> manager.query.id('form-widgets-leave_reason').ui.set_value('Last reason')
+    >>> manager.query.id('form-widgets-leave_destination').ui.set_value('Another school')
+    >>> manager.query.id('form-buttons-apply').click()
+
+The leave information has been saved:
+
+    >>> for field in demo_fields(manager):
+    ...     print field
+    First name: Camila
+    Last name: Cerna
+    Username: camila
+    Date of un-enrollment: 2014-08-09
+    Reason for un-enrollment: Last reason
+    Destination school: Another school
+
+and she has been removed from her sections and groups:
+
+    >>> manager.ui.person.print_section_trees()
+    Sections attended
+    |+ 2014
+       |+ Semester 2
+          |+ Math (1)
+             |- Enrolled (Jan 1, 2014)
+             |- Withdrawn (Aug 9, 2014)
+          |+ TV (2)
+             |- Enrolled (Jul 1, 2014)
+             |- Withdrawn (Aug 9, 2014)
+       |+ Semester 1
+          |+ Baseball (2)
+             |- Enrolled (Jan 1, 2014)
+          |+ Math (1)
+             |- Enrolled (Jan 1, 2014)
+
+    >>> manager.ui.person.print_group_trees()
+    Group memberships
+    |+ 2014
+       |+ Chess club
+          |- Member (Jan 1, 2014)
+          |- Removed (Aug 9, 2014)
+       |+ Science club
+          |- Member (Jan 1, 2014)
+          |- Removed (Aug 9, 2014)

@@ -1,0 +1,244 @@
+/*
+
+  Form CSS:
+
+  - fieldset
+  - rows: labels, widgets
+
+*/
+
+form {
+    margin-top: 16px;
+    position: relative;
+}
+
+form > .count {
+    font-size: 12px;
+    line-height: 16px;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    z-index: 1;
+}
+
+form fieldset {
+    margin-bottom: 8px;
+    padding: 40px 8px 8px 8px;
+    position: relative;
+}
+
+form fieldset ~ fieldset {
+    margin-top: 16px;
+}
+
+form fieldset > legend {
+    position: absolute;
+}
+
+form fieldset > legend > span,
+.fieldset-legend {
+    font-size: 16px;
+    line-height: 16px;
+    padding: 8px;
+}
+
+form fieldset > legend > span {
+    left: -8px;
+    position: absolute;
+    top: -40px;
+}
+
+form fieldset > legend > span {
+    width: 512px;
+}
+
+.widecontainer form fieldset > legend > span {
+    width: 704px;
+}
+
+.extra-wide-container form fieldset > legend > span {
+    width: 896px;
+}
+
+form fieldset .row ~ .row {
+    margin-top: 8px;
+}
+
+form fieldset .row .label {
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+form fieldset .row .hint {
+    font-size: 10px;
+    line-height: 14px;
+    margin-bottom: 0px;
+    margin-bottom: 4px;
+    margin-top: -2px;
+}
+
+form fieldset .row .widget {
+    display: inline;
+}
+
+form fieldset .row > .error {
+    display: block;
+    float: right;
+    width: 216px;
+}
+
+form fieldset .row > .error .error {
+    font-size: 12px;
+    padding-left: 16px;
+}
+
+form fieldset .row .widget input.text-widget,
+input.text-widget,
+form fieldset .row .widget input[type="text"],
+form fieldset .row .widget input.password-widget,
+form fieldset .row .widget input[type="password"] {
+    border-style: solid;
+    border-width: 1px;
+}
+
+form fieldset .row .widget input.text-widget,
+input.text-widget,
+form fieldset .row .widget input[type="file"],
+form fieldset .row .widget input[type="text"],
+form fieldset .row .widget input.password-widget,
+form fieldset .row .widget input[type="password"] {
+    font-size: 12px;
+    height: 20px;
+    width: 286px;
+}
+
+form fieldset .row .widget input.text-widget:focus,
+input.text-widget:focus,
+form fieldset .row .widget input[type="text"]:focus,
+form fieldset .row .widget input.password-widget:focus,
+form fieldset .row .widget input[type="password"]:focus,
+form fieldset .row .widget input[type="text"].error,
+form fieldset .row .widget input[type="password"].error {
+    border-style: solid;
+    border-width: 2px;
+    height: 18px;
+    width: 284px;
+}
+
+form fieldset .row .widget span.text-widget,
+form fieldset .row .widget span.textarea-widget {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+form fieldset .row .widget select.select-widget {
+    width: 288px;
+}
+
+form fieldset .row .widget textarea.textarea-widget {
+    border-style: solid;
+    border-width: 1px;
+    font-size: 12px;
+    height: 50px;
+    width: 286px;
+}
+
+form fieldset .row .widget textarea.textarea-widget:focus,
+form fieldset .row .widget textarea.error {
+    border-style: solid;
+    border-width: 2px;
+    height: 48px;
+    width: 284px;
+}
+
+form fieldset .row .widget textarea.csvimport {
+    height: 200px;
+    width: 504px;
+}
+
+form fieldset .row .widget textarea.csvimport:focus {
+    height: 198px;
+    width: 502px;
+}
+
+form fieldset .row .widget .option {
+    display: block;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+form .buttons {
+    margin-bottom: 16px;
+}
+
+form .buttons .button-ok,
+form .buttons .button-neutral,
+form .buttons .button-cancel {
+    border-style: solid;
+    border-width: 1px;
+    font-size: 14px;
+    line-height: 20px;
+
+    -moz-border-radius: 4px 4px 4px 4px;
+    border-radius: 4px 4px 4px 4px;
+}
+
+.status > .summary {
+    font-size: 12px;
+    line-height: 16px;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+}
+
+.status > .summary .ui-icon {
+    float: left;
+    margin-right: 2px;
+}
+
+.status > textarea {
+    margin-bottom: 8px;
+    font-family: Monospace;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+form .status > .errors {
+    display: none;
+}
+
+form .required-info {
+    font-size: 16px;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    z-index: 1;
+}
+
+/* XXX: this rule assumes, the status message above
+        the fieldset will be one line only */
+.status ~ .required-info {
+    top: 42px;
+}
+
+form pre.csv-text {
+    border-style: dotted;
+    border-width: 1px;
+    line-height: 16px;
+    font-family: mono;
+    font-size: 12px;
+    padding: 4px 0px 4px 7px;
+    margin-bottom: 8px;
+}
+
+/* XXX: used in course index view */
+
+form fieldset.course-sections-list {
+    padding: 0 8px;
+    background: none;
+}
+
+/* XXX: used in temporal relationship tables */
+
+form .temporal-relationship-button-options fieldset {
+    padding: 8px;
+}

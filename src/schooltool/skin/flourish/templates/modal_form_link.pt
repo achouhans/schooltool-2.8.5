@@ -1,0 +1,30 @@
+<script>ST.state.push()</script>
+
+<tal:block define="url view/url; title view/dialog_title|nothing">
+  <tal:block condition="url">
+    <a href="#"
+       tal:attributes="id view/html_id"
+       tal:content="view/title"></a>
+    <div tal:attributes="id view/form_container_id"></div>
+
+    <tal:script tal:replace="structure scriptlocal:
+       link_id view/html_id;
+       form_id view/form_container_id;
+       title;
+       url" />
+
+    <script>
+      ST.dialogs.modal_form(ST.local.link_id,
+                            ST.local.url,
+                            ST.local.form_id,
+                            ST.local.title);
+    </script>
+
+  </tal:block>
+
+  <span tal:condition="not:url"
+        tal:attributes="id view/html_id"
+        tal:content="view/title"></span>
+</tal:block>
+
+<script>ST.state.pop()</script>

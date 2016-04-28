@@ -1,0 +1,650 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="schooltool">
+
+  <!-- Viewlet Managers -->
+
+  <zope:interface
+      interface=".skin.ICalendarEventContext"
+      type="zope.contentprovider.interfaces.ITALNamespaceData" />
+
+  <viewletManager
+      name="schooltool.CalendarEvent"
+      permission="zope.Public"
+      provides="schooltool.app.browser.skin.ICalendarEventViewletManager"
+      class="schooltool.app.browser.skin.CalendarEventViewletManager"
+      />
+
+  <viewletManager
+      name="schooltool.ManageMenu"
+      permission="zope.Public"
+      provides="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      class="schooltool.app.browser.app.ManageMenuViewletManager"
+      template="templates/manage_menu_manager.pt"
+      />
+
+  <viewletManager
+      name="schooltool.CalendarPortlet"
+      permission="zope.Public"
+      provides=".cal.ICalendarPortletViewletManager"
+      class="schooltool.skin.skin.OrderedViewletManager"
+      />
+
+  <viewlet
+      name="calendar-overlay"
+      for="*"
+      view=".interfaces.IHaveEventLegend"
+      class=".overlay.CalendarOverlayView"
+      manager=".cal.ICalendarPortletViewletManager"
+      template="templates/calendar_overlay.pt"
+      permission="zope.Public"
+      layer="schooltool.skin.ISchoolToolLayer"
+      order="10"
+      />
+
+  <viewlet
+      name="portlet-tomorrow-events"
+      for="*"
+      manager=".cal.ICalendarPortletViewletManager"
+      template="templates/portlet_tomorrow_events.pt"
+      permission="zope.Public"
+      layer="schooltool.skin.ISchoolToolLayer"
+      order="5"
+      />
+
+  <viewlet
+      name="event-info"
+      for="*"
+      manager="schooltool.app.browser.skin.ICalendarEventViewletManager"
+      template="templates/event_info_viewlet.pt"
+      permission="zope.Public"
+      order="10"
+      />
+
+ <!-- TALES path expressions -->
+
+  <zope:class class=".SortBy">
+    <allow interface="zope.traversing.interfaces.ITraversable" />
+  </zope:class>
+
+  <zope:adapter
+      for="*"
+      name="sortby"
+      provides="zope.traversing.interfaces.IPathAdapter"
+      factory=".SortBy"
+      trusted="yes"
+      />
+
+  <zope:adapter
+      for="*"
+      name="can_access"
+      provides="zope.traversing.interfaces.IPathAdapter"
+      factory=".CanAccess"
+      />
+
+  <zope:adapter
+      for="*"
+      name="can_modify"
+      provides="zope.traversing.interfaces.IPathAdapter"
+      factory=".CanModify"
+      />
+
+  <zope:adapter
+      for="*"
+      name="filter_accessible"
+      provides="zope.traversing.interfaces.IPathAdapter"
+      factory=".FilterAccessible"
+      />
+
+  <zope:adapter
+      for="*"
+      name="sorted_filter_accessible"
+      provides="zope.traversing.interfaces.IPathAdapter"
+      factory=".SortedFilterAccessible"
+      />
+
+  <zope:adapter
+      for="*"
+      name="schooltool"
+      provides="zope.traversing.interfaces.IPathAdapter"
+      factory=".SchoolToolAPI"
+      />
+
+  <!-- Skin and resources -->
+
+  <page
+      name="calendar_macros"
+      for="*"
+      permission="zope.View"
+      template="templates/calendar_macros.pt"
+      />
+
+  <page
+      name="robots.txt"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      permission="zope.View"
+      class=".app.ViewRobot"
+      />
+
+  <page
+      name="manage.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      permission="schooltool.edit"
+      class=".app.ManageView"
+      template="templates/manage_menu.pt"
+      />
+
+  <!-- Actions menu -->
+
+  <!-- TODO: remove this menu - 2006-07-04 gintas -->
+  <menu id="schooltool_actions" title="Actions" />
+
+  <!-- Adapters -->
+
+  <zope:adapter
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      provides="zope.size.interfaces.ISized"
+      factory=".SchoolToolSized"
+      />
+
+  <zope:adapter
+      for="schooltool.calendar.browser.CalendarICalendarView"
+      provides="zope.filerepresentation.interfaces.IWriteFile"
+      factory=".cal.enableICalendarUpload"
+      trusted="yes"
+      />
+
+
+  <zope:adapter
+      for="*
+           zope.publisher.interfaces.browser.IBrowserRequest
+           .report.ReportPDFView"
+      provides="schooltool.app.browser.interfaces.IReportPageTemplate"
+      name="default"
+      factory=".report.DefaultPageTemplate"
+      />
+
+  <!-- Application Traverser -->
+
+  <zope:view
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="schooltool.traverser.browser.PluggableBrowserTraverser"
+      permission="zope.Public"
+      />
+
+  <zope:adapterTraverserPlugin
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      name="preferences"
+      adapter="schooltool.app.interfaces.IApplicationPreferences"
+      />
+
+  <!-- Views for the application -->
+
+  <page
+      name="index.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class="schooltool.app.browser.app.ApplicationView"
+      template="templates/index.pt"
+      permission="zope.Public"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="site-preferences.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class="schooltool.app.browser.app.ApplicationPreferencesView"
+      template="templates/application_preferences.pt"
+      layer="schooltool.skin.ISchoolToolLayer"
+      permission="schooltool.edit"
+      />
+
+  <!-- Views for everything -->
+
+  <page
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      name="login.html"
+      layer="schooltool.skin.ISchoolToolLayer"
+      template="templates/login.pt"
+      class=".app.ApplicationLoginView"
+      permission="zope.Public"
+      />
+
+  <page
+      for="schooltool.person.interfaces.IPerson"
+      name="logindispatch"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class=".app.LoginDispatchView"
+      permission="zope.Public"
+      />
+
+  <page
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      name="logout.html"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class=".app.ApplicationLogoutView"
+      permission="zope.Public"
+      />
+
+  <page
+      name="about.html"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      class="schooltool.app.browser.app.ApplicationView"
+      template="templates/about.pt"
+      permission="zope.Public"
+      layer="schooltool.skin.ISchoolToolLayer"
+      />
+
+  <page
+      name="title"
+      for="*"
+      class=".app.TitleView"
+      permission="zope.Public"
+      layer="schooltool.skin.ISchoolToolLayer" />
+
+  <page
+      name="link"
+      for="*"
+      layer="schooltool.skin.ISchoolToolLayer"
+      template="templates/link.pt"
+      permission="zope.Public"/>
+
+  <!-- Calendar views -->
+
+  <zope:adapter
+      factory=".cal.getCalendarEventDeleteLink"
+      name="delete_link" />
+
+  <configure package="schooltool.skin">
+    <navigationViewlet
+      name="view-calendar"
+      for="schooltool.app.interfaces.IHaveCalendar"
+      manager="schooltool.skin.IActionMenuManager"
+      class="schooltool.app.browser.cal.CalendarActionMenuViewlet"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.view"
+      link="calendar"
+      title="View Calendar"
+      order="10"
+      />
+
+    <navigationViewlet
+      name="new-event"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.edit"
+      link="add.html"
+      title="New Event"
+      order="20"
+      />
+
+    <navigationViewlet
+      name="open-in-ical"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      class="schooltool.skin.skin.ActionMenuViewlet"
+      permission="schooltool.view"
+      link="calendar.ics"
+      title="Open in iCal"
+      order="20"
+      />
+
+    <navigationViewlet
+      name="edit-leaders"
+      for="schooltool.app.interfaces.IAsset"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.edit"
+      link="@@leaders.html"
+      title="Edit Leaders"
+      order="40"
+      />
+
+    <navigationViewlet
+      name="site-preferences"
+      for="*"
+      manager="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      template="templates/navigationViewlet.pt"
+      class="schooltool.skin.skin.NavigationViewlet"
+      permission="schooltool.edit"
+      link="@@site-preferences.html"
+      title="Change Site Preferences"
+      order="50"
+      />
+
+    <page
+      name="delete.html"
+      for="zope.container.interfaces.IContainer"
+      class="schooltool.skin.containers.ContainerDeleteView"
+      template="templates/container_delete.pt"
+      layer="schooltool.skin.ISchoolToolLayer"
+      permission="schooltool.edit"
+      />
+
+  </configure>
+
+
+  <navigationViewlet
+     name="pdf"
+     for="schooltool.app.interfaces.ISchoolToolCalendar"
+     manager="schooltool.skin.IActionMenuManager"
+     template="templates/print.pt"
+     permission="schooltool.view"
+     order="60"
+     />
+
+  <page
+      name="daily.html"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class=".cal.DailyCalendarView"
+      template="templates/cal_daily.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="daily.pdf"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class=".pdfcal.DailyPDFCalendarView"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="weekly.html"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class=".cal.WeeklyCalendarView"
+      template="templates/cal_weekly.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="weekly.pdf"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class=".pdfcal.WeeklyPDFCalendarView"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="monthly.html"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class=".cal.MonthlyCalendarView"
+      template="templates/cal_monthly.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="monthly.pdf"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class=".pdfcal.MonthlyPDFCalendarView"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="yearly.html"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class=".cal.YearlyCalendarView"
+      template="templates/cal_yearly.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="atom.xml"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class=".cal.AtomCalendarView"
+      template="templates/cal_atom.pt"
+      permission="schooltool.view"
+      />
+
+  <page
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      name="calendar.ics"
+      permission="schooltool.view"
+      class="schooltool.calendar.browser.CalendarICalendarView"
+      attribute="show"
+      />
+
+  <page
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      name="calendar.vfb"
+      permission="zope.Public"
+      class="schooltool.calendar.browser.CalendarVfbView"
+      attribute="show"
+      />
+
+  <page
+      name="delete.html"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      class=".cal.EventDeleteView"
+      permission="schooltool.edit"
+      />
+
+  <!-- Calendar event views -->
+
+  <page
+      name="index.html"
+      for="schooltool.app.interfaces.ICalendarEvent"
+      class="schooltool.app.browser.cal.CalendarEventView"
+      template="templates/event.pt"
+      permission="zope.View"
+      />
+
+  <addform
+      label="Add Event"
+      name="add.html"
+      for="schooltool.app.interfaces.ISchoolToolCalendar"
+      schema=".cal.ICalendarEventAddForm"
+      arguments=""
+      keyword_arguments="title allday start_date start_time duration
+                         duration_type recurrence location description
+                         recurrence_type interval range until count monthly
+                         exceptions weekdays"
+      content_factory="schooltool.app.cal.CalendarEvent"
+      permission="schooltool.edit"
+      template="templates/event_add.pt"
+      class=".cal.CalendarEventAddView">
+
+    <widget field="description" height="5" />
+    <widget field="exceptions" width="20" height="5" />
+  </addform>
+
+  <editform
+      for="schooltool.app.interfaces.ISchoolToolCalendarEvent"
+      name="edit.html"
+      label="Edit Event"
+      schema=".cal.ICalendarEventEditForm"
+      fields="title allday start_date start_time duration duration_type
+              recurrence location description recurrence_type interval
+              range until count monthly exceptions weekdays"
+      class=".cal.CalendarEventEditView"
+      permission="schooltool.edit"
+      template="templates/event_add.pt">
+
+    <widget field="description" height="5" />
+    <widget field="exceptions" width="20" height="5" />
+  </editform>
+
+  <page
+      for="schooltool.app.interfaces.ISchoolToolCalendarEvent"
+      name="booking.html"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class=".cal.CalendarEventBookingView"
+      permission="zope.View"
+      />
+
+  <page
+      for="schooltool.calendar.interfaces.ICalendar"
+      name="daily_calendar_rows"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class=".cal.DailyCalendarRowsView"
+      permission="zope.View"
+      />
+
+  <page
+      for="schooltool.app.interfaces.IAsset"
+      name="leaders.html"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class=".app.LeaderView"
+      permission="schooltool.edit"
+      />
+
+  <!-- Application Control -->
+
+  <page
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      layer="schooltool.skin.ISchoolToolLayer"
+      name="ZODBControl.html"
+      template="templates/zodbcontrol.pt"
+      class="zope.app.applicationcontrol.browser.zodbcontrol.ZODBControlView"
+      permission="zope.ManageApplication"
+      menu="schooltool_actions"
+      title="ZODB Control"/>
+
+  <navigationViewlet
+      name="calendar"
+      for="*"
+      manager="schooltool.skin.INavigationManager"
+      template="templates/calendar_tab_viewlet.pt"
+      class="schooltool.skin.skin.NavigationViewlet"
+      permission="schooltool.view"
+      title="Calendar"
+      order="30"
+      />
+
+  <configure package="schooltool.skin">
+
+    <navigationViewlet
+      name="manage"
+      for="*"
+      manager="schooltool.skin.INavigationManager"
+      template="templates/navigationViewlet.pt"
+      class="schooltool.skin.skin.NavigationViewlet"
+      permission="schooltool.edit"
+      link="manage.html"
+      title="Manage"
+      order="200"
+      />
+
+    <navigationViewlet
+      name="control"
+      for="*"
+      manager="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      template="templates/navigationViewlet.pt"
+      class="schooltool.skin.skin.NavigationViewlet"
+      permission="schooltool.edit"
+      link="control"
+      title="Application Control"
+      order="200"
+      />
+
+    <navigationViewlet
+      name="translation-domain"
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.edit"
+      link="TranslationDomain.html"
+      title="Translation Domains"
+      order="10"
+      />
+
+    <navigationViewlet
+      name="generations"
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      manager="schooltool.skin.IActionMenuManager"
+      template="templates/actionsViewlet.pt"
+      permission="schooltool.edit"
+      link="generations.html"
+      title="Generations"
+      order="20"
+      />
+
+
+  </configure>
+
+  <!-- Calendar provider subscriber  -->
+
+  <zope:subscriber
+      for="schooltool.app.interfaces.ISchoolToolCalendar
+           zope.publisher.interfaces.http.IHTTPRequest"
+      provides=".cal.ICalendarProvider"
+      factory=".cal.CalendarListSubscriber"
+      />
+
+  <zope:adapter
+      factory=".cal.CalendarMenuViewletCrowd"
+      name="schooltool.view" />
+
+  <!-- Authentication adapter traverser and views -->
+
+  <zope:adapter
+      factory=".app.getAuthentication" />
+
+
+  <zope:adapterTraverserPlugin
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      name="auth"
+      adapter="schooltool.app.interfaces.ISchoolToolAuthenticationPlugin"
+      />
+
+  <page
+      for="schooltool.app.interfaces.ISchoolToolAuthenticationPlugin"
+      name="login.html"
+      layer="schooltool.skin.ISchoolToolLayer"
+      template="templates/login.pt"
+      class=".app.LoginView"
+      permission="zope.Public"
+      />
+
+  <page
+      for="schooltool.app.interfaces.ISchoolToolAuthenticationPlugin"
+      name="logout.html"
+      layer="schooltool.skin.ISchoolToolLayer"
+      class=".app.LogoutView"
+      permission="zope.Public"
+      />
+
+  <!-- Link to Zope error reporting view for administrators -->
+
+  <configure package="schooltool.skin">
+
+    <navigationViewlet
+      name="errors"
+      for="*"
+      manager="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      template="templates/navigationViewlet.pt"
+      class="schooltool.skin.skin.NavigationViewlet"
+      permission="schooltool.view"
+      link="++etc++site/default/RootErrorReportingUtility"
+      title="Errors"
+      order="210"
+      />
+
+  </configure>
+
+  <!-- Menu entries for Error Reporting Utility -->
+
+  <menuItem
+      menu="schooltool_actions"
+      for="zope.error.error.IErrorReportingUtility"
+      action="@@configure.html"
+      title="Configure"
+      />
+
+  <menuItem
+      menu="schooltool_actions"
+      for="zope.error.error.IErrorReportingUtility"
+      action="@@index.html"
+      title="Error List"
+      />
+
+  <!-- Timetable support -->
+  <!-- XXX: disable timetable support for refactoring -->
+  <!--include file="timetable-integration.zcml" /-->
+
+</configure>

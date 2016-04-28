@@ -1,0 +1,21 @@
+<ul style="list-style: disc; left-padding: 2em;"
+    i18n:domain="schooltool">
+  <li>
+    <a tal:attributes="href string:${view/appURL}/courses"
+       href="courses" i18n:translate="">
+      Courses
+    </a>
+  </li>
+  <li>
+    <a tal:attributes="href string:${view/appURL}/sections"
+       href="sections" i18n:translate="">
+      Sections
+    </a>
+  </li>
+  <li>
+    <a tal:attributes="href string:${view/appURL}/terms"
+       href="terms" i18n:translate="">
+      Terms
+    </a>
+  </li>
+</ul>

@@ -1,0 +1,322 @@
+==================================
+SchoolTool security infrastructure
+==================================
+
+The security system of SchoolTool consists of:
+
+ * ``SchoolToolAuthenticationUtility``
+ * views for login/logout
+ * a custom security policy
+
+The login/logout views store/reset the authentication data in the
+session.  The authentication utility authenticates the request
+according to the data stored in the session.
+
+The security policy is documented in :doc:`../securitypolicy/README`.
+
+
+SchoolTool authentication utility
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+(Handwaving...)
+
+    >>> from schooltool.testing.setup import getIntegrationTestZCML
+    >>> from schooltool.testing.stubs import AppStub
+    >>> zcml = getIntegrationTestZCML()
+    >>> app = AppStub()
+
+Global auth utility::
+
+    >>> from zope.principalregistry.principalregistry import principalRegistry
+    >>> from zope.authentication.interfaces import IAuthentication
+    >>> from zope.component import provideUtility
+    >>> provideUtility(principalRegistry, IAuthentication)
+
+Session setup::
+
+    >>> from zope.component import provideAdapter
+    >>> from zope.publisher.interfaces import IRequest
+    >>> from zope.session.session import ClientId, Session
+    >>> from zope.session.session import PersistentSessionDataContainer
+    >>> from zope.session.http import CookieClientIdManager
+    >>> from zope.session.interfaces import ISessionDataContainer
+    >>> from zope.session.interfaces import IClientId
+    >>> from zope.session.interfaces import IClientIdManager, ISession
+    >>> provideAdapter(ClientId)
+    >>> provideAdapter(Session, (IRequest,), ISession)
+
+    >>> provideUtility(CookieClientIdManager(), IClientIdManager)
+    >>> sdc = PersistentSessionDataContainer()
+    >>> provideUtility(sdc, ISessionDataContainer, 'schooltool.auth')
+
+
+SchoolTool is a possible site::
+
+    >>> from zope.interface.verify import verifyObject
+    >>> from zope.component.interfaces import ISite, IPossibleSite
+
+    >>> verifyObject(IPossibleSite, app)
+    True
+    >>> verifyObject(ISite, app)
+    True
+
+    >>> from zope.component import provideAdapter
+
+The ``SchoolToolAuthenticationUtility`` is an ``IAuthentication`` utility that
+lives in that site::
+
+    >>> from schooltool.app.security import SchoolToolAuthenticationUtility
+    >>> from schooltool.app.interfaces import ISchoolToolAuthentication
+    >>> auth = SchoolToolAuthenticationUtility()
+    >>> verifyObject(IAuthentication, auth)
+    True
+    >>> verifyObject(ISchoolToolAuthentication, auth)
+    True
+
+Let's provide the location of auth::
+
+    >>> from schooltool.app.security import setUpLocalAuth
+    >>> setUpLocalAuth(app, auth)
+
+    >>> from schooltool.app.security import PersonContainerAuthenticationPlugin
+    >>> from schooltool.app.interfaces import ISchoolToolAuthenticationPlugin
+    >>> plugin = PersonContainerAuthenticationPlugin()
+    >>> provideUtility(plugin, ISchoolToolAuthenticationPlugin)
+
+    >>> from zope.component.hooks import setSite
+    >>> setSite(app)
+
+Now, we get our local authentication service::
+
+    >>> from zope.component import getUtility
+    >>> getUtility(IAuthentication, context=app) is auth
+    True
+    >>> verifyObject(ISite, app)
+    True
+
+
+getPrincipal
+------------
+
+The utility knows about the users of the application::
+
+    >>> from schooltool.person.person import Person, PersonContainer
+    >>> from zope.security.interfaces import IPrincipal
+    >>> app['persons'] = PersonContainer()
+    >>> person = Person(username=u"frog", title="Frog")
+    >>> app['persons']['frog'] = person
+
+    >>> principal = auth.getPrincipal('sb.person.frog')
+    >>> verifyObject(IPrincipal, principal)
+    True
+    >>> principal.title
+    'Frog'
+
+The utility delegates to the next service if the principal is not
+found::
+
+    >>> p = principalRegistry.definePrincipal('zope.manager', 'Mgmt', '',
+    ...                                       'gandalf', '123')
+
+    >>> p1 = auth.getPrincipal('zope.manager')
+    >>> p == p1
+    True
+    >>> p.title
+    'Mgmt'
+
+If the principal we are looking up does not exist, an exception is
+raised::
+
+    >>> auth.getPrincipal('sb.person.nonexistent')
+    Traceback (most recent call last):
+    ...
+    PrincipalLookupError: sb.person.nonexistent
+
+Let's add a group:
+
+    >>> from schooltool.group.group import Group, GroupContainer
+    >>> groups = app['groups'] = GroupContainer()
+    >>> group = groups['group'] = Group()
+    >>> group.title = "The Management"
+    >>> group.__name__ = "management"
+    >>> group.members.add(person)
+
+And the user principal has a list ids of group principals he belongs
+to.  This list is used by the security policy::
+
+    >>> from zope.security.interfaces import IGroupAwarePrincipal
+    >>> p = auth.getPrincipal('sb.person.frog')
+    >>> verifyObject(IGroupAwarePrincipal, p)
+    True
+    >>> p.groups
+    ['sb.group.management']
+
+If the global principals like ``IEveryoneGroup``, ``IAuthenticatedGroup`` are
+defined, they are added to the list of groups of a principal, too::
+
+    >>> from zope.authentication.interfaces import IAuthenticatedGroup
+    >>> from zope.authentication.interfaces import IEveryoneGroup
+    >>> from zope.principalregistry.principalregistry import AuthenticatedGroup
+    >>> from zope.principalregistry.principalregistry import EverybodyGroup
+
+    >>> authenticated = AuthenticatedGroup('zope.authenticated', '', '')
+    >>> provideUtility(authenticated, IAuthenticatedGroup)
+    >>> everyone = EverybodyGroup('zope.everybody', 'All users', '')
+    >>> provideUtility(everyone, IEveryoneGroup)
+
+    >>> p = auth.getPrincipal('sb.person.frog')
+    >>> p.groups
+    ['sb.group.management', 'zope.authenticated', 'zope.everybody']
+
+
+authenticate
+------------
+
+When no credentials are provided in the session, authenticate returns None:
+
+    >>> from zope.publisher.browser import TestRequest
+    >>> request = TestRequest()
+    >>> auth.authenticate(request)
+
+Suppose, the user 'frog' has a password:
+
+    >>> app['persons']['frog'].setPassword('pond')
+
+The frog has authenticated itself in the login form and the
+credentials are stored in the session::
+
+    >>> auth.setCredentials(request, 'frog', 'shmond')
+    Traceback (most recent call last):
+    ...
+    ValueError: bad credentials
+    >>> auth.setCredentials(request, 'snake', 'badgermushroom')
+    Traceback (most recent call last):
+    ...
+    ValueError: bad credentials
+    >>> auth.setCredentials(request, 'frog', 'pond')
+
+Now, it is authenticated by our utility:
+
+    >>> principal = auth.authenticate(request)
+    >>> verifyObject(IGroupAwarePrincipal, principal)
+    True
+    >>> principal.id
+    'sb.person.frog'
+
+Our principal is adaptable to ``IPerson``:
+
+    >>> from schooltool.person.interfaces import IPerson
+    >>> from zope.security.proxy import removeSecurityProxy
+    >>> removeSecurityProxy(IPerson(principal)) is  app['persons']['frog']
+    True
+
+The credentials can be cleared from the session:
+
+    >>> auth.clearCredentials(request)
+    >>> auth.authenticate(request)
+
+If there are no credentials set, clearing does not fail:
+
+    >>> auth.clearCredentials(request)
+
+Also, if cookie based authentication fails, we support HTTP basic
+authentication (by trying to adapt the request to ``ILoginPassword``)::
+
+    >>> from zope.interface import Interface, directlyProvides, implements
+    >>> from zope.authentication.interfaces import ILoginPassword
+
+    >>> class Adapter:
+    ...     implements(ILoginPassword)
+    ...     def __init__(self, context):
+    ...         self.context = context
+    ...     def getLogin(self):
+    ...         return "frog"
+    ...     def getPassword(self):
+    ...         return "pond"
+    ...     def needLogin(self, realm):
+    ...         self.context.unauthorized("basic realm=%s" % realm)
+    ...
+    >>> class IFrogMarker(Interface): pass
+    >>> provideAdapter(Adapter, (IFrogMarker,), ILoginPassword)
+    >>> request = TestRequest()
+    >>> directlyProvides(request, IFrogMarker)
+
+    >>> auth.authenticate(request).id
+    'sb.person.frog'
+
+
+unauthorized
+------------
+
+Our view issues the authorization challenge by redirecting to the
+login page:
+
+    >>> request = TestRequest()
+    >>> auth.unauthorized(None, request)
+    >>> request.response.getStatus()
+    302
+    >>> request.response.getHeader('Location')
+    'http://127.0.0.1/auth/@@login.html?forbidden=yes&nexturl=http%3A//127.0.0.1'
+
+The URL is properly escaped
+
+    >>> request = TestRequest()
+    >>> request.getURL = lambda *a: '/++etc++site'
+    >>> auth.unauthorized(None, request)
+    >>> request.response.getStatus()
+    302
+    >>> request.response.getHeader('Location')
+    'http://127.0.0.1/auth/@@login.html?forbidden=yes&nexturl=/%2B%2Betc%2B%2Bsite'
+
+GET parameters are passed along:
+
+    >>> request = TestRequest()
+    >>> request.getURL = lambda *a: '/++etc++site'
+    >>> request.getHeader = lambda *a: 'foo=10&bar=20'
+    >>> auth.unauthorized(None, request)
+    >>> request.response.getStatus()
+    302
+    >>> request.response.getHeader('Location')
+    'http://127.0.0.1/auth/@@login.html?forbidden=yes&nexturl=/%2B%2Betc%2B%2Bsite%3Ffoo%3D10%26bar%3D20'
+
+However it does that only for regular browser requests.  Other kinds of
+requests issue the default challenge by setting the response code to 401
+(Unauthorized).
+
+    >>> from zope.publisher.tests import httprequest
+    >>> request = httprequest.TestRequest()
+    >>> directlyProvides(request, IFrogMarker)
+    >>> auth.unauthorized(None, request)
+    >>> request.response.getStatus()
+    401
+
+HTTP PUT, does so likewise, even though it uses a real BrowserRequest.
+
+    >>> request = TestRequest()
+    >>> request.method = 'PUT'
+    >>> directlyProvides(request, IFrogMarker)
+    >>> auth.unauthorized(None, request)
+    >>> request.response.getStatus()
+    401
+
+And, since this is not a perfect world, we need a workaround for Mozilla
+Calendar -- HTTP GET requests for .ics files also issue the HTTP Basic
+authentication challenge.
+
+    >>> request = TestRequest()
+    >>> request.getURL = lambda *a: '/dir/calendar.ics'
+    >>> str(request.URL)
+    '...calendar.ics'
+    >>> directlyProvides(request, IFrogMarker)
+    >>> auth.unauthorized(None, request)
+    >>> request.response.getStatus()
+    401
+
+
+.. Tear down::
+
+    >>> from zope.app.testing import setup
+    >>> from transaction import abort
+    >>> setup.placefulTearDown()
+    >>> abort()

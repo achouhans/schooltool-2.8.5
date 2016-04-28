@@ -1,0 +1,196 @@
+<metal:block define-macro="page" i18n:domain="schooltool">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="icon" type="image/png" href="favicon.ico"
+          tal:attributes="href context/++resource++favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="layout.css" media="screen"
+          tal:attributes="href context/++resource++layout.css"/>
+    <link rel="stylesheet" type="text/css" media="print"
+          tal:attributes="href context/++resource++print.css" />
+    <metal:block use-macro="view/@@schooltool_macros/generic/stylesheets" />
+    <script type="text/javascript" src="jquery.js"
+            tal:attributes="src context/++resource++jquery.js">
+    </script>
+    <script type="text/javascript" src="schooltool.js"
+            tal:attributes="src context/++resource++schooltool.js">
+    </script>
+    <tal:block replace="structure provider:schooltool.CSS" />
+    <tal:block replace="structure provider:schooltool.JavaScript" />
+    <metal:block define-slot="title">
+      <metal:block use-macro="view/@@schooltool_macros/generic/title" />
+    </metal:block>
+    <metal:block metal:define-slot="extrahead" />
+  </head>
+  <body>
+    <div id="header">
+
+      <tal:block tal:content="structure provider:schooltool.NavigationMenu" />
+
+
+      <div id="login"
+          tal:define="user request/principal;
+                      url context/schooltool:app/@@absolute_url">
+
+        <div id="login-right">
+
+          <tal:if condition="not:user/schooltool:authenticated">
+            <a id="tools-login" i18n:translate=""
+               tal:attributes="href string:${url}/auth/@@login.html">Log In</a>
+          </tal:if>
+
+          <tal:if condition="user/schooltool:authenticated"
+                  define="person user/schooltool:person">
+            <span metal:define-macro="logged_user">
+
+              <tal:span i18n:translate="">Logged in as:</tal:span>
+
+              <tal:if condition="not:person">
+                <span id="login-name"
+                      tal:content="user/title">ZMI Principal</span>
+              </tal:if>
+
+              <tal:if condition="person">
+                <a id="login-name" tal:attributes="href string: ${person/@@absolute_url}/home.html"
+                   tal:content="user/title">Person</a>
+
+                <tal:block replace="structure provider:schooltool.Header" />
+
+                <a id="login-logout" i18n:translate=""
+                   tal:attributes="href string:${url}/auth/@@logout.html"
+                   >Log Out</a>
+              </tal:if>
+
+            </span>
+          </tal:if>
+        </div>
+        <div id="login-left">
+          <span>
+          <a id="about-link" tal:attributes="href string:${context/schooltool:app/@@absolute_url}/@@about.html">
+          SchoolTool</a> &mdash; <span i18n:translate="">free administration software for</span> 
+          <span tal:replace="context/schooltool:app/title">Lee High School</span></span>
+        </div>
+      </div>
+    </div>
+
+    <tal:block define="target view/actualContext|nocall:context">
+      <div id="content-nav-group" tal:content="structure provider:schooltool.ActionsMenu" />
+      <div class="clear"> </div>
+    </tal:block>
+
+    <div id="action-bar">
+      <div metal:define-slot="actions-bar"
+           tal:replace="structure provider:schooltool.MenuBar" />
+    </div>
+
+    <div id="columns">
+      <metal:block define-slot="column-left">
+        <metal:block define-slot="column-left-extra"/>
+      </metal:block>
+      <metal:block define-slot="content">
+        <div id="column-center">
+          <div id="content-header">
+            <metal:block define-slot="content-header"/>
+          </div>
+          <div id="content-body">
+            <metal:block define-slot="body"/>
+          </div>
+        </div>
+      </metal:block>
+      <div class="clearer">&nbsp;</div>
+    </div>
+    <div id="footer">
+    <a tal:attributes="href string:${context/schooltool:app/@@absolute_url}/@@about.html">
+      <img class="logo" tal:attributes="src context/++resource++zonki-regular.png" />
+    </a>
+      <p>
+        <strong tal:replace="context/schooltool:preferences/title"/>
+        -
+        <metal:block
+            use-macro="view/@@schooltool_macros/generic/serverinfo" />
+        <br />
+        <span i18n:translate="">
+          &copy; The <a href="http://www.shuttleworthfoundation.org">Shuttleworth Foundation</a> 2003 - 2011:
+          Supporting Social Innovation.
+        </span>
+        <br />
+        <span i18n:translate="">
+          <a href="http://www.schooltool.org">SchoolTool</a>&trade; is a Trademark of the <a href="http://www.shuttleworthfoundation.org">Shuttleworth Foundation</a>.
+        </span>
+      </p>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>
+</metal:block>
+
+<metal:block i18n:domain="schooltool">
+<metal:block define-macro="batch-search">
+  <form method="post" class="batch-search">
+    <input id="batch-search-box" type="text" name="SEARCH"
+      tal:attributes="value request/SEARCH|nothing"/>
+    <input type="submit" name="SEARCH_BUTTON" value="Find Now"
+      i18n:attributes="value"/>
+    <input type="submit" name="CLEAR_SEARCH" value="Clear"
+      i18n:attributes="value"/>
+  </form>
+</metal:block>
+
+<metal:block define-macro="update-button">
+  <input type="submit" class="button-ok" name="UPDATE_SUBMIT" value="Update"
+         title="Shortcut: Alt-U" accesskey="U"
+         i18n:attributes="value; accesskey; title" />
+</metal:block>
+
+<metal:block define-macro="apply-button">
+  <input type="submit" class="button-ok" name="UPDATE_SUBMIT" value="Apply"
+         title="Shortcut: Alt-A" accesskey="A"
+         i18n:attributes="value; accesskey; title" />
+</metal:block>
+
+<metal:block define-macro="apply-button-formlib">
+  <input type="submit" id="form.actions.apply" name="form.actions.apply"
+         value="Apply" class="button-ok"
+         title="Shortcut: Alt-A" accesskey="A"
+         i18n:attributes="value; accesskey; title" />
+</metal:block>
+
+<metal:block define-macro="add-button">
+  <input type="submit" class="button-ok" name="UPDATE_SUBMIT" value="Add"
+         title="Shortcut: Alt-A" accesskey="A"
+         i18n:attributes="value; accesskey; title" />
+</metal:block>
+
+<metal:block define-macro="add-button-disabled">
+  <input class="disabled button-ok" disabled="disabled"
+         type="submit" name="UPDATE_SUBMIT" value="Add"
+         title="Shortcut: Alt-A" accesskey="A"
+         i18n:attributes="value; accesskey; title" />
+</metal:block>
+
+<metal:block define-macro="add-button-formlib">
+  <input type="submit" id="form.actions.apply" name="form.actions.apply"
+         value="Add" class="button-ok"
+         title="Shortcut: Alt-A" accesskey="A"
+         i18n:attributes="value; accesskey; title" />
+</metal:block>
+
+<metal:block define-macro="delete-button">
+  <input type="submit" class="button-cancel" name="DELETE" value="Delete"
+         title="Shortcut: Alt-D" accesskey="D"
+         i18n:attributes="value delete-button; accesskey; title" />
+</metal:block>
+
+<metal:block define-macro="cancel-button">
+  <input type="submit" class="button-cancel" name="CANCEL" value="Cancel"
+         i18n:attributes="value cancel-button" />
+</metal:block>
+
+<metal:block define-macro="cancel-button-formlib">
+  <input type="submit" id="form.actions.cancel" name="form.actions.cancel"
+         value="Cancel" class="button-cancel"
+         i18n:attributes="value cancel-button" />
+</metal:block>
+</metal:block>

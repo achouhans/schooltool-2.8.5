@@ -1,0 +1,7 @@
+<fieldset>
+  <legend>
+    <span i18n:translate="" i18n:domain="schooltool">New person</span>
+  </legend>
+  <div metal:use-macro="macro:form-header" />
+  <div metal:use-macro="macro:widget-rows" />
+</fieldset>

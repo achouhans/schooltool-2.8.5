@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <!-- Adapters -->
+
+  <zope:adapter
+      for="schooltool.email.interfaces.IEmailContainer
+           schooltool.skin.flourish.IFlourishLayer"
+      factory=".email.FlourishEmailContainerViewTableFormatter" />
+
+  <zope:adapter factory=".email.FlourishPasswordsMatchValidator" />
+
+  <zope:adapter factory=".email.FlourishHostnameValidator" />
+
+  <!-- Pages -->
+
+  <flourish:page_breadcrumbs
+      title="Outgoing Email"
+      show_page_title="false"
+      view="schooltool.email.browser.email.FlourishEmailContainerView"
+      follow_crumb="schooltool.app.browser.app.ManageSiteBreadcrumb"
+      />
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.email.interfaces.IEmailContainer"
+      class="schooltool.email.browser.email.FlourishEmailContainerView"
+      title="Server"
+      subtitle="Outgoing Email"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="details"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".email.FlourishEmailContainerDetails"
+      view=".email.FlourishEmailContainerView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="queue.html"
+      for="schooltool.email.interfaces.IEmailContainer"
+      class="schooltool.email.browser.email.FlourishEmailQueueView"
+      content_template="templates/f_email_queue.pt"
+      title="Server"
+      subtitle="Outgoing Email Queue"
+      permission="schooltool.edit"
+      />
+
+  <configure package="schooltool.skin.flourish">
+
+    <flourish:page
+        name="settings.html"
+        for="schooltool.email.interfaces.IEmailContainer"
+        class="schooltool.email.browser.email.FlourishEmailSettingsEditView"
+        content_template="templates/z3c-schooltool-form.pt"
+        permission="schooltool.edit"
+        layer="schooltool.skin.flourish.IFlourishLayer"
+        title="Server"
+        subtitle="Outgoing Email Settings"
+        />
+
+    <flourish:page
+        name="send_test.html"
+        for="schooltool.email.interfaces.IEmailContainer"
+        class="schooltool.email.browser.email.FlourishSendEmailView"
+        content_template="templates/z3c-schooltool-form.pt"
+        permission="schooltool.edit"
+        layer="schooltool.skin.flourish.IFlourishLayer"
+        title="Server"
+        subtitle="Send Test Email"
+        />
+
+  </configure>
+
+  <flourish:page
+      name="index.html"
+      for="schooltool.email.interfaces.IEmail"
+      class="schooltool.email.browser.email.FlourishEmailView"
+      content_template="templates/f_email_view.pt"
+      permission="schooltool.edit"
+      title="Server"
+      subtitle="Email View"
+      />
+
+  <flourish:page
+      name="retry.html"
+      for="schooltool.email.interfaces.IEmail"
+      class="schooltool.email.browser.email.FlourishEmailRetryView"
+      permission="schooltool.edit"
+      />
+
+  <!-- Viewlet managers -->
+
+  <flourish:viewlet
+      name="email-actions-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.email.browser.email.EmailActionsLinks"
+      title="Actions"
+      for="schooltool.email.interfaces.IEmailContainer"
+      permission="schooltool.edit"
+      view=".email.FlourishEmailContainerView"
+      />
+
+  <!-- Viewlets -->
+
+  <flourish:viewlet
+      name="queue.html"
+      for="schooltool.email.interfaces.IEmailContainer"
+      class=".email.EmailQueueLinkViewlet"
+      manager="schooltool.email.browser.email.EmailActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="send_test.html"
+      for="schooltool.email.interfaces.IEmailContainer"
+      title="Send Test Email"
+      class=".email.SendTestLinkViewlet"
+      manager="schooltool.email.browser.email.EmailActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="email-settings-overview"
+      after="server-setttings-overview"
+      view="schooltool.app.browser.app.ManageSite"
+      permission="schooltool.edit"
+      manager="schooltool.skin.flourish.page.IPageContentManager"
+      class=".email.FlourishEmailSettingsOverview"
+      />
+
+  <flourish:viewlet
+      name="what-is-this"
+      class="schooltool.skin.flourish.page.Related"
+      template="templates/f_email_container_related.pt"
+      view="schooltool.email.browser.email.FlourishEmailContainerView"
+      manager="schooltool.skin.flourish.page.IPageRelatedManager"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="email-view-actions-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.email.browser.email.EmailViewActionsLinks"
+      title="Actions"
+      for="schooltool.email.interfaces.IEmail"
+      permission="schooltool.edit"
+      view=".email.FlourishEmailView"
+      />
+
+  <flourish:viewlet
+      name="retry.html"
+      for="schooltool.email.interfaces.IEmail"
+      title="Retry"
+      class=".email.RetryLinkViewlet"
+      manager="schooltool.email.browser.email.EmailViewActionsLinks"
+      permission="schooltool.edit"
+      />
+
+  <!-- Navigation -->
+
+  <flourish:activeViewlet
+      name="manage_site"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.email.interfaces.IEmailContainer"
+      />
+
+  <flourish:breadcrumb
+      title="Outgoing Email"
+      for="schooltool.email.interfaces.IEmailContainer"
+      follow_crumb="schooltool.app.browser.app.ManageSiteBreadcrumb"
+      />
+
+</configure>

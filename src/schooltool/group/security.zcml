@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<configure xmlns="http://schooltool.org/securitypolicy"
+           xmlns:zope="http://namespaces.zope.org/zope">
+
+  <setting
+      key="everyone_can_view_group_list"
+      text="The list of groups in the system is visible to the general public."
+      alt_text="Only school administration can view the list of groups."
+      default="False" />
+
+  <setting
+      key="everyone_can_view_group_info"
+      text="Information about each group is visible to the general public."
+      alt_text="Information about each group is visible to school administration, and members and responsible parties of the group."
+      default="False" />
+
+  <setting
+      key="everyone_can_view_group_calendar"
+      text="Each group calendar is visible to the general public."
+      alt_text="Each group calendar is visible to school administration, and members and responsible parties of the group."
+      default="False" />
+
+  <setting
+      key="members_can_edit_group_calendar"
+      text="All members of a group and school administration can edit its calendar."
+      alt_text="The responsible parties of a group and school administration can edit its calendar."
+      default="False" />
+
+  <crowd
+      name="group_viewers"
+      factory=".group.GroupViewersCrowd" />
+
+  <crowd
+      name="group_list_viewers"
+      factory=".group.GroupContainerViewersCrowd" />
+
+  <allow
+      interface="schooltool.group.interfaces.IGroupContainer"
+      crowds="administrators managers clerks group_list_viewers"
+      permission="schooltool.view" />
+  <allow
+      interface="schooltool.group.interfaces.IGroupContainer"
+      crowds="managers clerks"
+      permission="schooltool.edit" />
+
+  <allow
+      interface="schooltool.group.interfaces.IGroup"
+      crowds="administrators managers clerks leaders group_viewers"
+      permission="schooltool.view" />
+  <allow
+      interface="schooltool.group.interfaces.IGroup"
+      crowds="managers clerks leaders"
+      permission="schooltool.edit" />
+
+  <!-- Security descriptions -->
+
+  <describe_group name="schooltool.group"
+      title="Groups"
+      description="Groups are essentially sets of users."
+  />
+
+  <describe_action
+     group="schooltool.group" name="list" title="List"
+     order="10"
+     interface="schooltool.group.interfaces.IGroupContainer"
+     permission="schooltool.view"
+  />
+
+  <describe_action
+     group="schooltool.group" name="create_delete" title="Create/Delete"
+     order="20"
+     interface="schooltool.group.interfaces.IGroupContainer"
+     permission="schooltool.edit"
+  />
+
+  <describe_action
+     group="schooltool.group" name="view" title="View"
+     order="30"
+     interface="schooltool.group.interfaces.IGroup"
+     permission="schooltool.view"
+  />
+
+  <describe_action
+     group="schooltool.group" name="modify" title="Modify"
+     order="40"
+     interface="schooltool.group.interfaces.IGroup"
+     permission="schooltool.edit"
+  />
+
+  <describe_action
+     group="schooltool.group" name="view_calendar"
+     title="View calendar"
+     order="50"
+     interface="schooltool.app.interfaces.ISchoolToolCalendar"
+     permission="schooltool.view"
+  />
+
+  <describe_action
+     group="schooltool.group" name="change_calendar"
+     title="Change calendar"
+     order="60"
+     interface="schooltool.app.interfaces.ISchoolToolCalendar"
+     permission="schooltool.edit"
+  />
+
+  <!-- Parent crowds -->
+
+  <zope:adapter
+      factory=".group.GroupCalendarViewersCrowd"
+      provides="schooltool.app.interfaces.ICalendarParentCrowd"
+      name="schooltool.view" />
+
+  <zope:adapter
+      factory=".group.GroupCalendarEditorsCrowd"
+      provides="schooltool.app.interfaces.ICalendarParentCrowd"
+      name="schooltool.edit" />
+
+  <switch_description
+     group="schooltool.group"
+     crowd_factory="schooltool.app.security.CalendarViewersCrowd"
+     use_crowd_factory=".group.GroupCalendarViewersCrowd"
+  />
+
+  <switch_description
+     group="schooltool.group"
+     crowd_factory="schooltool.app.security.CalendarEditorsCrowd"
+     use_crowd_factory=".group.GroupCalendarEditorsCrowd"
+  />
+
+</configure>

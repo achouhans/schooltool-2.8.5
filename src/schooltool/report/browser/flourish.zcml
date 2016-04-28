@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           xmlns:security="http://schooltool.org/securitypolicy"
+           xmlns:flourish="http://schooltool.org/flourish"
+           i18n_domain="schooltool">
+
+  <flourish:viewletManager
+      name="schooltool.FlourishReportLinks"
+      view="schooltool.report.browser.report.FlourishReportsView"
+      provides="schooltool.report.report.IFlourishReportLinkViewletManager"
+      class="schooltool.report.report.FlourishReportLinkViewletManager"
+      permission="zope.Public"
+      />
+
+  <zope:adapter
+      factory=".report.ReportLinkViewletProxy"
+      permission="zope.Public"
+      />
+
+  <flourish:viewlet
+      name="school-reports-links"
+      after="school-actions-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.report.browser.report.ReportsLinks"
+      title="Reports"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="report_reference.html"
+      before="export.xls"
+      title="Overview"
+      class=".report.ReportReferenceLinkViewlet"
+      manager="schooltool.report.browser.report.ReportsLinks"
+      view="schooltool.app.browser.app.ManageSchool"
+      permission="schooltool.edit"
+      />
+
+  <security:allow
+      interface=".report.ReportReferenceLinkViewlet"
+      crowds="administrators clerks"
+      permission="schooltool.edit" />
+
+  <flourish:viewlet
+      name="person-reports-links"
+      after="person-settings-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.report.browser.report.ReportsLinks"
+      title="Reports"
+      view="schooltool.basicperson.browser.person.FlourishPersonView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="group-reports-links"
+      after="group-add-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.report.browser.report.ReportsLinks"
+      title="Reports"
+      view="schooltool.group.browser.group.FlourishGroupView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:viewlet
+      name="schoolyear-reports-links"
+      after="schoolyear_actions"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.report.browser.report.ReportsLinks"
+      title="Reports"
+      view="schooltool.schoolyear.browser.schoolyear.FlourishSchoolYearView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="term-reports-links"
+      after="term_actions"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.report.browser.report.ReportsLinks"
+      title="Reports"
+      view="schooltool.term.browser.term.FlourishTermView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="section-reports-links"
+      after="section-import-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.report.browser.report.ReportsLinks"
+      title="Reports"
+      view="schooltool.course.browser.section.FlourishSectionView"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewlet
+      name="section-reports-links"
+      after="section-import-links"
+      manager="schooltool.skin.flourish.page.IPageRefineManager"
+      class="schooltool.report.browser.report.ReportsLinks"
+      title="Reports"
+      view="schooltool.resource.browser.resource.FlourishResourcesView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+     name="report_reference.html"
+     for="schooltool.app.interfaces.ISchoolToolApplication"
+     class=".report.FlourishReportReferenceView"
+     title="Report Overview"
+     content_template="templates/f_report_reference.pt"
+     permission="schooltool.edit"
+     />
+
+  <security:allow
+      interface=".report.FlourishReportReferenceView"
+      crowds="administrators clerks managers"
+      permission="schooltool.edit" />
+
+  <flourish:activeViewlet
+      name="manage_school"
+      manager="schooltool.skin.flourish.page.IHeaderNavigationManager"
+      for="schooltool.app.interfaces.ISchoolToolApplication"
+      view=".report.FlourishReportReferenceView"
+      />
+
+  <!--- XXX: not needed anymore? -->
+
+  <flourish:page
+      name="reports"
+      for="schooltool.basicperson.interfaces.IBasicPerson"
+      class="schooltool.report.browser.report.FlourishReportsView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="reports"
+      for="schooltool.group.interfaces.IGroup"
+      class="schooltool.report.browser.report.FlourishReportsView"
+      permission="schooltool.edit"
+      />
+
+  <flourish:page
+      name="reports"
+      for="schooltool.course.interfaces.ISection"
+      class="schooltool.report.browser.report.FlourishReportsView"
+      permission="schooltool.edit"
+      />
+
+  <!-- XXX: are these view directives ok here? -->
+
+  <zope:view
+      for="*"
+      name="School"
+      factory="schooltool.report.report.FlourishSchoolReportLinksURL"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      permission="zope.Public"
+      provides="schooltool.report.interfaces.IReportLinksURL"
+      />
+  <zope:view
+      for="*"
+      name="Person"
+      factory="schooltool.report.report.FlourishPersonReportLinksURL"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      permission="zope.Public"
+      provides="schooltool.report.interfaces.IReportLinksURL"
+      />
+  <zope:view
+      for="*"
+      name="Group"
+      factory="schooltool.report.report.FlourishGroupReportLinksURL"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      permission="zope.Public"
+      provides="schooltool.report.interfaces.IReportLinksURL"
+      />
+  <zope:view
+      for="*"
+      name="School Year"
+      factory="schooltool.report.report.FlourishSchoolYearReportLinksURL"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      permission="zope.Public"
+      provides="schooltool.report.interfaces.IReportLinksURL"
+      />
+  <zope:view
+      for="*"
+      name="Term"
+      factory="schooltool.report.report.FlourishTermReportLinksURL"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      permission="zope.Public"
+      provides="schooltool.report.interfaces.IReportLinksURL"
+      />
+  <zope:view
+      for="*"
+      name="Section"
+      factory="schooltool.report.report.FlourishSectionReportLinksURL"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      permission="zope.Public"
+      provides="schooltool.report.interfaces.IReportLinksURL"
+      />
+  <zope:view
+      for="*"
+      name="Resource"
+      factory="schooltool.report.report.FlourishResourceReportLinksURL"
+      type="schooltool.skin.flourish.IFlourishLayer"
+      permission="zope.Public"
+      provides="schooltool.report.interfaces.IReportLinksURL"
+      />
+
+  <flourish:content
+      name="short"
+      for="schooltool.report.interfaces.IReportMessage"
+      view="zope.interface.Interface"
+      template="templates/f_short_report_message.pt"
+      class=".report.ShortReportMessage"
+      permission="schooltool.view"
+      />
+
+  <flourish:content
+      name="short"
+      for="schooltool.report.interfaces.IReportProgressMessage"
+      view="zope.interface.Interface"
+      template="templates/f_short_report_message.pt"
+      class=".report.ShortReportMessage"
+      permission="schooltool.view"
+      />
+
+  <zope:adapter
+      factory=".report.ReportAbsoluteURLAdapter"
+      provides="zope.traversing.browser.interfaces.IAbsoluteURL" />
+
+  <zope:adapter
+      factory=".report.ReportAbsoluteURLAdapter"
+      provides="zope.interface.Interface"
+      name="absolute_url"/>
+
+  <zope:traverserPlugin
+      for="schooltool.report.interfaces.IReportMessage"
+      layer="zope.publisher.interfaces.browser.IBrowserRequest"
+      name="download"
+      plugin=".report.ReportMessageDownloadsPlugin"
+      permission="schooltool.view"
+      />
+
+  <zope:class class=".report.ReportMessageDownloads">
+    <require permission="zope.Public"
+             interface="zope.publisher.interfaces.IPublishTraverse" />
+  </zope:class>
+
+  <page
+      name="dialog"
+      for="schooltool.report.interfaces.IReportMessage"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class=".report.DownloadReportDialog"
+      permission="schooltool.view"
+      />
+
+  <page
+      name="long"
+      for="schooltool.report.interfaces.IReportMessage"
+      layer="schooltool.skin.flourish.IFlourishLayer"
+      class="schooltool.task.browser.task.TaskDialogHTML"
+      permission="schooltool.view"
+      />
+
+  <flourish:viewletManager
+      name="file_manager"
+      view="schooltool.report.browser.report.ReportArchivePage"
+      class="schooltool.report.browser.report.ArchiveFileManager"
+      permission="schooltool.view"
+      />
+
+</configure>

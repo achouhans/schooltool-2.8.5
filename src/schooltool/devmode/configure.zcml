@@ -1,0 +1,55 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:security="http://schooltool.org/securitypolicy"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="schooltool">
+
+  <!-- Register the skin for devmode -->
+  <interface
+      interface=".skin.ISchoolToolDevModeSkin"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="SchoolToolDevMode"
+      />
+
+  <!-- Generic DevMode setup -->
+
+  <interface
+      interface="schooltool.devmode.skin.ISchoolToolDevModeSkin"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="SchoolToolDevMode"
+      />
+
+  <configure package="schooltool.skin">
+
+    <browser:navigationViewlet
+      name="sample-data"
+      for="*"
+      manager="schooltool.app.browser.interfaces.IManageMenuViewletManager"
+      template="templates/navigationViewlet.pt"
+      class="schooltool.skin.skin.NavigationViewlet"
+      permission="schooltool.view"
+      link="@@sampledata.html"
+      title="Sample data"
+      order="230"
+      />
+
+  </configure>
+
+  <browser:viewlet
+      name="devmode_css"
+      for="*"
+      manager="schooltool.skin.ICSSManager"
+      class=".devmode.DevmodeCSSViewlet"
+      permission="zope.View"
+      layer="schooltool.devmode.skin.IDevModeLayer"
+      />
+
+  <!-- DevTools Menu configuration -->
+
+  <browser:resource
+      name="devmode.css" file="devmode.css"
+      layer=".skin.IDevModeLayer"
+      />
+
+</configure>

@@ -1,0 +1,88 @@
+<html metal:use-macro="view/@@standard_macros/page" i18n:domain="schooltool">
+<head>
+  <title metal:fill-slot="title" tal:content="context/title" />
+</head>
+<body>
+<h1 metal:fill-slot="content-header"
+    i18n:translate="">
+  <span i18n:name="course" tal:replace="context/title" /> course for
+  <tal:block i18n:name="schoolyear"><a tal:attributes="href view/school_year/@@absolute_url"
+                                       tal:content="view/school_year/title">School Year</a></tal:block>
+</h1>
+
+<metal:block metal:fill-slot="body">
+
+  <tal:block replace="structure context/@@notes|nothing"/>
+
+  <div id="course-view">
+    <p tal:condition="context/description" class="description" tal:content="context/description"/>
+
+    <div class="info-block"
+         tal:define="details view/details"
+         tal:condition="details">
+      <h3 i18n:translate="">Details</h3>
+      <p tal:repeat="detail details">
+        <tal:block content="detail/title"/>:
+        <tal:block content="detail/value" />
+      </p>
+    </div>
+
+    <div class="info-block">
+
+      <div>
+        <h3 i18n:translate="">Sections</h3>
+        <div class="section-list">
+          <tal:loop repeat="item view/sections">
+          <tal:if condition="item/section/can_access:label">
+
+            <tal:comment condition="nothing">
+               XXX This should be moved into a macro
+            </tal:comment>
+
+            <div class="section"
+                 tal:define="instructors item/section/instructors|nothing;
+                             learners item/section/learners|nothing;
+                             calendar item/section/calendar|nothing;
+                             section item/section">
+
+              <tal:loop repeat="instructor instructors">
+                <tal:if condition="instructor/can_access:photo">
+                <tal:if condition="instructor/photo">
+                  <div class="instructor">
+                    <img src="photo" class="person-photo" alt="photo"
+                         i18n:attributes="alt"
+                         tal:attributes="src string:${instructor/@@absolute_url}/photo" />
+                  <br />
+                  <a href="" tal:content="instructor/title"
+                     tal:attributes="href instructor/@@absolute_url" />
+                  </div>
+                </tal:if>
+                </tal:if>
+              </tal:loop>
+
+                <a tal:attributes="href section/@@absolute_url">
+                  <span tal:replace="section/label" />
+                  <tal:block condition="item/term">
+                    (<span tal:replace="item/term/title" />)
+                  </tal:block>
+                </a>
+              <p>
+                  <span tal:replace="section/size" />
+                  <span i18n:translate="">students</span>
+              </p>
+
+              <p tal:content="section/description" />
+
+            </div>
+
+          </tal:if>
+          </tal:loop>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</metal:block>
+</body>
+</html>

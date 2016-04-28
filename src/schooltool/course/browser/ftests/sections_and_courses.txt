@@ -1,0 +1,258 @@
+Simple test for school years
+============================
+
+A manager logs in
+
+    >>> manager = Browser('manager', 'schooltool')
+
+Sets the time
+
+    >>> manager.open('http://localhost/time')
+    >>> manager.getControl('Today').value = "2005-02-15"
+    >>> manager.getControl('Apply').click()
+
+    >>> 'Data successfully updated.' in manager.contents
+    True
+
+And create a new school year:
+
+    >>> manager.getLink('Manage').click()
+    >>> manager.getLink('School Years').click()
+    >>> manager.getLink('New School Year').click()
+    >>> manager.getControl('Title').value = '2005-2006'
+    >>> manager.getControl('First day').value = '2005-09-01'
+    >>> manager.getControl('Last day').value = '2006-07-15'
+    >>> manager.getControl('Add').click()
+
+We should be redirected to the school year view now:
+
+    >>> manager.url
+    'http://localhost/schoolyears/2005-2006'
+
+Let's add some terms:
+
+    >>> manager.getLink('Add a new term').click()
+    >>> manager.getControl('Title').value = 'Fall'
+    >>> manager.getControl('Start date').value = '2005-09-01'
+    >>> manager.getControl('End date').value = '2006-01-10'
+    >>> manager.getControl('Next').click()
+    >>> manager.getControl('Saturday').click()
+    >>> manager.getControl('Sunday').click()
+    >>> manager.getControl('Add term').click()
+
+    >>> manager.getLink('Add a new term').click()
+    >>> manager.getControl('Title').value = 'Spring'
+    >>> manager.getControl('Start date').value = '2006-01-11'
+    >>> manager.getControl('End date').value = '2006-07-15'
+    >>> manager.getControl('Next').click()
+    >>> manager.getControl('Saturday').click()
+    >>> manager.getControl('Sunday').click()
+    >>> manager.getControl('Add term').click()
+
+And now let's add a couple of courses:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Courses').click()
+
+    >>> manager.url
+    'http://localhost/schoolyears/2005-2006/courses'
+
+    >>> manager.getLink('Add Course').click()
+    >>> manager.getControl('Title').value = "History"
+    >>> manager.getControl('Add').click()
+
+    >>> manager.url
+    'http://localhost/schoolyears/2005-2006/courses'
+
+    >>> manager.getLink('Add Course').click()
+    >>> manager.getControl('Title').value = "English"
+    >>> manager.getControl('Description').value = "English course description"
+    >>> manager.getControl('Course ID').value = "english"
+    >>> manager.getControl('Alternate ID').value = "english101"
+    >>> manager.getControl('Credits').value = "4.5"
+    >>> manager.getControl('Add').click()
+
+Now let's add some sections for our courses:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Courses').click()
+    >>> manager.getLink('English').click()
+
+    >>> manager.url
+    'http://localhost/schoolyears/2005-2006/courses/english'
+
+    >>> manager.printQuery("id('course-view')/div[@class='info-block']/p")
+    <p>
+      Course ID:
+      english
+    </p>
+    <p>
+      Alternate ID:
+      english101
+    </p>
+    <p>
+      Credits:
+      4.5
+    </p>
+
+    >>> manager.getLink('Add Section').click()
+    >>> manager.getControl('Starts in term').displayValue = ['Fall']
+    >>> manager.getControl('Ends in term').displayValue = ['Fall']
+    >>> manager.getControl('Add').click()
+
+    >>> manager.url
+    'http://localhost/schoolyears/2005-2006/courses/english'
+
+    >>> manager.getLink('Add Section').click()
+    >>> manager.getControl('Starts in term').displayValue = ['Spring']
+    >>> manager.getControl('Ends in term').displayValue = ['Spring']
+    >>> manager.getControl('Add').click()
+
+    >>> manager.printQuery("id('course-view')//div[@class='section-list']//a")
+    <a href="http://localhost/schoolyears/2005-2006/fall/sections/1">
+      -- English (1) (Fall)
+    </a>
+    <a href="http://localhost/schoolyears/2005-2006/spring/sections/1">
+      -- English (1) (Spring)
+    </a>
+
+Let's remove the section that we added to the spring term now:
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Spring').click()
+    >>> manager.getLink('Sections').click()
+    >>> manager.getControl(name='delete.1').value = True
+    >>> manager.getControl('Delete').click()
+    >>> manager.getControl('Confirm').click()
+
+add some persons:
+
+    >>> from schooltool.basicperson.browser.ftests.setup import addPerson
+    >>> addPerson('Ariana', 'Cerna', 'ariana')
+    >>> addPerson('Mario', 'Tejada', 'mario')
+
+add an instructor
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Fall').click()
+    >>> manager.getLink('Sections').click()
+    >>> manager.getLink('English (1)').click()
+    >>> manager.getLink('edit instructors').click()
+
+here we can see that the header of this view is displaying all the
+relevant information
+
+    >>> manager.printQuery("id('content-header')/h1")
+    <h1>
+          Section of
+          <a href="http://localhost/schoolyears/2005-2006/courses/english">English</a>
+          -- English (1)
+          for
+          <a href="http://localhost/schoolyears/2005-2006/fall">Fall</a> of
+          <a href="http://localhost/schoolyears/2005-2006">2005-2006</a>
+    </h1>
+
+    >>> manager.getControl('Default').click()
+    >>> manager.getControl('Add').click()
+    >>> # quick css check for the neutral buttons
+    >>> manager.printQuery('//input[@value="Invert Selection" or @value="OK"]/@class')
+    button-neutral
+    button-neutral
+    button-neutral
+    >>> manager.getControl('OK').click()
+
+and a student
+
+    >>> manager.getLink('edit individuals').click()
+    >>> manager.getControl('Default').click()
+    >>> manager.getControl('Add').click()
+    >>> # quick css check for the neutral buttons
+    >>> manager.printQuery('//input[@value="Invert Selection" or @value="OK"]/@class')
+    button-neutral
+    button-neutral
+    button-neutral
+    >>> manager.getControl('OK').click()
+
+We can also add sections that span multiple terms.  As there are two
+places where we can add sections, let's navigate to a term's sections
+view.
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Spring').click()
+    >>> manager.getLink('Sections').click()
+    >>> manager.getLink('Add Section').click()
+
+Note that Spring term is pre-selected, but a course is not.
+
+    >>> manager.printQuery("id('content-body')//form//option")
+    <option ...>English</option>
+    <option ...>History</option>
+    <option ...>Fall</option>
+    <option ... selected="selected">Spring</option>
+    <option ...>Fall</option>
+    <option ... selected="selected">Spring</option>
+
+If we mistakenly select incorrect term span, we get an error.
+
+    >>> manager.getControl('Ends in term').displayValue = ['Fall']
+    >>> manager.getControl('Add').click()
+    >>> manager.printQuery("id('content-body')//form//div[@class='error']")
+    <div class="error">Starting term (Spring) is later than ending term (Fall)</div>
+
+Correct our mistake and submit.
+
+    >>> manager.getControl('Course').displayValue = ['History']
+    >>> manager.getControl('Starts in term').displayValue = ['Fall']
+    >>> manager.getControl('Ends in term').displayValue = ['Spring']
+    >>> manager.getControl('Add').click()
+
+We can now see that the section spans both terms.
+
+    >>> manager.getLink('2005-2006').click()
+    >>> manager.getLink('Courses').click()
+    >>> manager.getLink('History').click()
+    >>> manager.printQuery("id('course-view')//div[@class='section-list']//a")
+    <a href="http://localhost/schoolyears/2005-2006/fall/sections/2">
+      -- History (2) (Fall)
+    </a>
+    <a href="http://localhost/schoolyears/2005-2006/spring/sections/2">
+      -- History (2) (Spring)
+    </a>
+
+    >>> manager.getLink('History (2)', index=0).click()
+    >>> manager.printQuery("id('content-header')/h1")
+    <h1>
+      Section of
+      <a href="http://localhost/schoolyears/2005-2006/courses/history">History</a>
+      -- History (2)
+      for
+      <a href="http://localhost/schoolyears/2005-2006/fall">Fall</a> of
+      <a href="http://localhost/schoolyears/2005-2006">2005-2006</a>
+    </h1>
+
+    >>> manager.printQuery("id('content-body')//div[@class='info-block'][1]/ul/li")
+    <li>
+      <a href="http://localhost/schoolyears/2005-2006/spring/sections/2">History (2)</a>
+      for
+      <a href="http://localhost/schoolyears/2005-2006/spring">Spring</a>
+    </li>
+
+Sections are linked, so can navigate to the next section.
+
+    >>> manager.getLink('History (2)').click()
+    >>> manager.printQuery("id('content-header')/h1")
+    <h1>
+      Section of
+      <a href="http://localhost/schoolyears/2005-2006/courses/history">History</a>
+      -- History (2)
+      for
+      <a href="http://localhost/schoolyears/2005-2006/spring">Spring</a> of
+      <a href="http://localhost/schoolyears/2005-2006">2005-2006</a>
+    </h1>
+
+    >>> manager.printQuery("id('content-body')//div[@class='info-block'][1]/ul/li")
+    <li>
+      <a href="http://localhost/schoolyears/2005-2006/fall/sections/2">History (2)</a>
+      for
+      <a href="http://localhost/schoolyears/2005-2006/fall">Fall</a>
+    </li>

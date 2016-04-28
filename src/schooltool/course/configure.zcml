@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <include file="security.zcml" />
+  <include file="course.zcml" />
+  <include file="booking.zcml" />
+
+  <!-- Misc. integration -->
+  <adapter
+      factory=".section.PersonLearnerAdapter" />
+  <adapter
+      factory=".section.PersonInstructorAdapter" />
+
+  <include package=".browser" />
+
+</configure>

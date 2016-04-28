@@ -1,0 +1,21 @@
+<html metal:use-macro="view/@@standard_macros/page" i18n:domain="schooltool">
+<head>
+  <title metal:fill-slot="title" tal:content="context/title" />
+</head>
+<body>
+<h1 metal:fill-slot="content-header"><span tal:replace="context/title" /></h1>
+<metal:block metal:fill-slot="body">
+
+  <div class="resource-info">
+    <p class="description" tal:content="context/description"/>
+    <tal:block define="widgets view/widgets">
+      <div metal:use-macro="context/@@form_macros/widget_rows" />
+    </tal:block>
+
+  </div>
+
+  <tal:block replace="structure context/@@notes|nothing"/>
+
+</metal:block>
+</body>
+</html>

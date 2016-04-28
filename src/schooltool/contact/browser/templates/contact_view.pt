@@ -1,0 +1,26 @@
+<html metal:use-macro="view/@@standard_macros/page" i18n:domain="schooltool">
+  <body>
+    <metal:nothing metal:fill-slot="content-header" />
+    <metal:block metal:fill-slot="body">
+      <div metal:use-macro="macro:display">
+        <metal:block metal:fill-slot="above-buttons">
+
+          <div>
+          <fieldset tal:define="relationships view/relationships"
+                    tal:condition="relationships">
+            <tal:block repeat="info relationships">
+
+<div class="row" i18n:translate="">
+  <span tal:replace="info/title" i18n:name="relationship" />
+  of
+  <a tal:replace="structure info/person/@@link" i18n:name="person" />
+</div>
+            </tal:block>
+          </fieldset>
+          </div>
+
+        </metal:block>
+      </div>
+    </metal:block>
+  </body>
+</html>

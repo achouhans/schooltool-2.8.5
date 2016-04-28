@@ -1,0 +1,15 @@
+<div class="manage-view" i18n:domain="schooltool"
+     tal:condition="view/has_schoolyear">
+  <h3>
+    <a tal:attributes="href view/contacts_url"
+       title="Manage contacts" i18n:attributes="title"
+       i18n:translate="">
+      Contacts
+    </a>
+  </h3>
+  <p i18n:translate="">
+    The school has
+    <metal:block tal:replace="view/total" i18n:name="total"/>
+    contact persons.
+  </p>
+</div>

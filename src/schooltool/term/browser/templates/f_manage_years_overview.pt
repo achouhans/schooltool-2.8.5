@@ -1,0 +1,36 @@
+<div class="manage-view" i18n:domain="schooltool"
+     tal:condition="view/has_schoolyear"
+     tal:define="year view/schoolyear">
+  <h3>
+    <a title="Manage terms"
+       tal:attributes="href view/terms_url"
+       i18n:attributes="title"
+       i18n:translate="">
+      Terms
+    </a>
+  </h3>
+  <table tal:define="terms view/terms">
+    <thead>
+      <tr>
+        <th i18n:translate="">Term</th>
+        <th i18n:translate="">First Day</th>
+        <th i18n:translate="">Last Day</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr tal:condition="terms"
+          tal:repeat="term terms">
+        <td tal:content="structure term/@@link" />
+        <td tal:content="term/first/@@mediumDate" />
+        <td tal:content="term/last/@@mediumDate" />
+      </tr>
+      <tr tal:condition="not:terms">
+        <td colspan="3" i18n:translate="">
+          Please set up at least one
+          <a tal:attributes="href view/terms_url"
+             i18n:name="term" i18n:translate="">term</a>.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
