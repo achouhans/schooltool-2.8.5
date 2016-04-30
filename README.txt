@@ -68,6 +68,8 @@ Other tools::
   $ sudo apt-get install libxslt1-dev enscript
 
 
+  $ sudo apt-get install g++ 
+
 Building SchoolTool from source
 -------------------------------
 
