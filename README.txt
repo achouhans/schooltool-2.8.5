@@ -81,6 +81,8 @@ the eggs folder::
 If you get a zc.buildout.buildout error, then install 
 
   $ python bootstrap.py -v 1.7.0
+  
+Then hit $ make
 
 It is a good idea to run tests to check the installation::
 
